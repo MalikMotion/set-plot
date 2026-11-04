@@ -138,7 +138,7 @@ footer .mail{user-select:all;color:var(--ink)}
       <span id="brandName"></span><span class="pill">Beta</span>
     </a>
     <nav aria-label="Sections"><a href="#features">Features</a><a href="#who">Who it's for</a></nav>
-    <a class="btn quiet sm" href="app.html">Open the app</a>
+    <a class="btn quiet sm" href="app">Open the app</a>
   </div>
 </header>
 
@@ -152,7 +152,7 @@ footer .mail{user-select:all;color:var(--ink)}
         <input id="email" type="email" placeholder="Your email" autocomplete="email" required>
         <button class="btn primary" type="submit">Sign up free</button>
       </form>
-      <p id="signMsg" class="fine" role="status">Free during the open beta. Or <a href="app.html">try it now</a> without an account.</p>
+      <p id="signMsg" class="fine" role="status">Free during the open beta. Or <a href="app">try it now</a> without an account.</p>
     </div>
 
     <div class="shot">
@@ -169,7 +169,7 @@ footer .mail{user-select:all;color:var(--ink)}
   <section id="features">
     <div class="wrap rows">
       <div class="row">
-        <div class="art" data-demo="light" data-hint="Drag the light, the diffusion frame or the flag"><svg aria-hidden="true" viewBox="0 0 320 220"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="var(--warm)" stop-opacity=".6"/><stop offset="1" stop-color="var(--warm)" stop-opacity="0"/></linearGradient><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="var(--warm)" stop-opacity=".25"/><stop offset="1" stop-color="var(--warm)" stop-opacity="0"/></linearGradient></defs><path d="M62 110 L150 50 L150 170Z" fill="url(#g1)"/><path d="M156 52 L310 14 L310 206 L156 168Z" fill="url(#g2)"/><rect x="40" y="100" width="22" height="20" rx="4" fill="var(--fixture)"/><rect x="150" y="46" width="6" height="128" rx="2" fill="var(--card)" stroke="var(--muted)" stroke-dasharray="3 3"/><circle cx="250" cy="110" r="20" fill="var(--talent)" stroke="var(--muted)"/></svg></div>
+        <div class="art" data-demo="light" data-hint="Drag the lights, the diffusion frame or the negative fill"><svg aria-hidden="true" viewBox="0 0 320 220"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="var(--warm)" stop-opacity=".6"/><stop offset="1" stop-color="var(--warm)" stop-opacity="0"/></linearGradient><linearGradient id="g2" x1="0" x2="1"><stop offset="0" stop-color="var(--warm)" stop-opacity=".25"/><stop offset="1" stop-color="var(--warm)" stop-opacity="0"/></linearGradient></defs><path d="M62 110 L150 50 L150 170Z" fill="url(#g1)"/><path d="M156 52 L310 14 L310 206 L156 168Z" fill="url(#g2)"/><rect x="40" y="100" width="22" height="20" rx="4" fill="var(--fixture)"/><rect x="150" y="46" width="6" height="128" rx="2" fill="var(--card)" stroke="var(--muted)" stroke-dasharray="3 3"/><circle cx="250" cy="110" r="20" fill="var(--talent)" stroke="var(--muted)"/></svg></div>
         <div class="copy"><h2>See the light before you rig it</h2><p>Place lights, flags, bounce and diffusion, and watch the beams and shadows follow. Try it here: move the light, the frame and the flag.</p></div>
       </div>
       <div class="row flip">
@@ -201,7 +201,7 @@ footer .mail{user-select:all;color:var(--ink)}
     <div class="closing">
       <h2>Your next shoot, planned.</h2>
       <p class="fine" style="font-size:16px">Free while it's in beta. It takes about a minute to plot your first light.</p>
-      <a class="btn primary" href="app.html">Start planning</a>
+      <a class="btn primary" href="app">Start planning</a>
     </div>
   </div>
 </main>
@@ -217,7 +217,7 @@ document.getElementById('brandName').textContent=BRAND;
 
 /* the feature pictures become live demos of the real app once the page is served next to it (on the website). Inside a preview without the app, the pictures stay */
 (()=>{ if(!/^https?:$/.test(location.protocol) || /claude/.test(location.hostname)) return;
-  document.querySelectorAll('[data-demo]').forEach(box=>{ const f=document.createElement('iframe'); f.src='app.html?embed='+box.dataset.demo; f.loading='lazy'; f.title='Try it: '+box.dataset.hint;
+  document.querySelectorAll('[data-demo]').forEach(box=>{ const f=document.createElement('iframe'); f.src='app?embed='+box.dataset.demo; f.loading='lazy'; f.title='Try it: '+box.dataset.hint;
     f.setAttribute('allow','clipboard-write'); box.classList.add('live'); box.prepend(f);
     const tag=document.createElement('span'); tag.className='live-tag'; tag.textContent='Try it'; box.append(tag);
     const bar=document.createElement('div'); bar.className='demo-bar'; bar.innerHTML='<span></span><button type="button">Reset</button>'; bar.querySelector('span').textContent=box.dataset.hint;
