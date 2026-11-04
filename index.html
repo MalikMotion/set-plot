@@ -36,13 +36,31 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--sans);-webkit-font-smoothing:antialiased;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 a{color:inherit}
+/* the app's plot grid, very faint behind the top of the page, with a soft key-light glow and a cool daylight glow */
+html{position:relative}
+html::before,html::after{content:"";position:absolute;left:0;right:0;top:0;pointer-events:none;z-index:-1}
+html::before{height:1400px;
+  --g:color-mix(in srgb,var(--ink) 9%,transparent); --gf:color-mix(in srgb,var(--ink) 4%,transparent);
+  background:
+    linear-gradient(var(--g) 1px,transparent 1px) 50% 0/96px 96px,
+    linear-gradient(90deg,var(--g) 1px,transparent 1px) 50% 0/96px 96px,
+    linear-gradient(var(--gf) 1px,transparent 1px) 50% 0/24px 24px,
+    linear-gradient(90deg,var(--gf) 1px,transparent 1px) 50% 0/24px 24px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 62% at 50% 22%,#000 0%,rgba(0,0,0,.55) 45%,transparent 80%);
+          mask-image:radial-gradient(ellipse 70% 62% at 50% 22%,#000 0%,rgba(0,0,0,.55) 45%,transparent 80%)}
+html::after{height:1100px;z-index:-2;
+  background:
+    radial-gradient(ellipse 38% 34% at 24% 14%,color-mix(in srgb,var(--warm) 13%,transparent),transparent 70%),
+    radial-gradient(ellipse 40% 36% at 78% 20%,color-mix(in srgb,var(--day) 11%,transparent),transparent 72%)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"])::after{opacity:.8} }
 h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.022em;line-height:1.08;text-wrap:balance}
 p{margin:0}
 .wrap{max-width:1100px;margin:0 auto}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
 
 /* nav */
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:transparent;transition:background .25s ease,box-shadow .25s ease}
+header.scrolled{background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
 .nav{display:flex;align-items:center;gap:24px;height:68px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:18px}
@@ -218,7 +236,8 @@ footer .mail{user-select:all;color:var(--ink)}
 </footer>
 
 <script>
-(function(){ const r=document.querySelector('.rot'); if(!r) return; const ps=[...r.children]; let k=0;
+(function(){ const h=document.getElementById('top'); if(!h) return; const f=()=>h.classList.toggle('scrolled',scrollY>8); addEventListener('scroll',f,{passive:true}); f(); })();
+(function(){ const r=document.querySelector('.rot'); if(!r) return; const ps=[...r.children]; let k=0; setTimeout(()=>ps[0].classList.remove('first'),1700);
   setInterval(()=>{ if(document.hidden) return; const a=ps[k]; k=(k+1)%ps.length; const b=ps[k]; a.classList.remove('on','first'); a.classList.add('off'); setTimeout(()=>{ a.classList.remove('off'); },700); setTimeout(()=>b.classList.add('on'),260); },3200); })();
 
 /* the product name isn't decided yet: set it here and it shows next to the logo */
