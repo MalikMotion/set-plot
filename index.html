@@ -40,7 +40,7 @@ a{color:inherit}
 html{position:relative}
 html::before,html::after{content:"";position:absolute;left:0;right:0;top:0;pointer-events:none;z-index:-1}
 html::before{height:1400px;
-  --g:color-mix(in srgb,var(--ink) 9%,transparent); --gf:color-mix(in srgb,var(--ink) 4%,transparent);
+  --g:color-mix(in srgb,var(--ink) 5%,transparent); --gf:color-mix(in srgb,var(--ink) 2%,transparent);
   background:
     linear-gradient(var(--g) 1px,transparent 1px) 50% 0/96px 96px,
     linear-gradient(90deg,var(--g) 1px,transparent 1px) 50% 0/96px 96px,
@@ -50,8 +50,8 @@ html::before{height:1400px;
           mask-image:radial-gradient(ellipse 70% 62% at 50% 22%,#000 0%,rgba(0,0,0,.55) 45%,transparent 80%)}
 html::after{height:1100px;z-index:-2;
   background:
-    radial-gradient(ellipse 38% 34% at 24% 14%,color-mix(in srgb,var(--warm) 13%,transparent),transparent 70%),
-    radial-gradient(ellipse 40% 36% at 78% 20%,color-mix(in srgb,var(--day) 11%,transparent),transparent 72%)}
+    radial-gradient(ellipse 38% 34% at 24% 14%,color-mix(in srgb,var(--warm) 5%,transparent),transparent 70%),
+    radial-gradient(ellipse 40% 36% at 78% 20%,color-mix(in srgb,var(--day) 4.5%,transparent),transparent 72%)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"])::after{opacity:.8} }
 h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.022em;line-height:1.08;text-wrap:balance}
 p{margin:0}
