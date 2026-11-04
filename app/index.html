@@ -232,6 +232,8 @@ body.presenting .bc .c-acts,body.presenting .bc .c-plus,body.presenting .bc .col
 .tile{position:relative}.tiles.rooms .tile{cursor:pointer;gap:4px;padding-bottom:7px}.tiles.rooms svg{width:100%;max-width:64px;height:40px;color:var(--ink);transition:transform .2s cubic-bezier(.2,.8,.2,1)}.tiles.rooms .tile:hover svg{transform:scale(1.06)}.upre .tile{cursor:pointer}.upre .tile>svg{width:100%;max-width:64px;height:40px;display:block}.pdel{position:absolute;top:3px;right:3px;min-width:20px;height:20px;padding:0 6px;border:0;border-radius:10px;background:var(--card);color:var(--muted);font-size:13px;font-weight:600;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s ease,background .15s ease,color .15s ease}.tile:hover .pdel,.tile:focus-within .pdel,.pdel.armed{opacity:1}.pdel:hover,.pdel.armed{background:#e5484d;color:#fff}.pdel.armed{font-size:11px}@media (hover:none){.pdel{opacity:.85}}
 .psave{border:1.5px dashed var(--line2)!important;background:transparent!important;color:var(--muted)!important}.psave:hover{color:var(--accent)!important;border-color:var(--accent)!important}
 .pre-save{display:flex;flex-direction:column;gap:8px;margin-top:12px;width:min(360px,calc(100vw - 64px))}.pre-save .th{display:block;height:130px;border-radius:10px;background:var(--field);overflow:hidden}.pre-save .th svg{width:100%;height:100%}
+.sd{width:min(440px,calc(100vw - 64px))}.sd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.sd-f{display:grid;gap:4px;font-size:12.5px;font-weight:600;color:var(--muted);min-width:0}.sd-f .fi{width:100%}@media (max-width:520px){.sd-grid{grid-template-columns:1fr}}
+html.embed .top,html.embed .rail,html.embed .bottom,html.embed #insp,html.embed #inspTab,html.embed #tourBtn,html.embed #empty,html.embed #toast,html.embed #layersPanel{display:none!important}
 .tiles.rooms small{font-size:10.5px;font-weight:500;color:var(--muted);margin-top:-3px}
 #fly:not([hidden]) .tiles.rooms .tile{animation:modTile .32s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*25ms)}@media (prefers-reduced-motion:reduce){.tiles.rooms .tile{animation:none!important}}
 .tile .tnum{position:absolute;top:6px;left:7px;font:600 10px/1 var(--mono,ui-monospace,monospace);color:var(--muted);opacity:.75;pointer-events:none}
@@ -1041,6 +1043,16 @@ body.insp-open .rail-r{right:calc(max(16px,env(safe-area-inset-right,0px)) + 332
 <div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
 <div class="modal" id="modal" hidden></div>
 <script>
+/* embed mode (?embed=light|walls|board): a small live demo for the landing page. It runs on its own scene in memory, so it never touches the visitor's saved setups */
+var EMBED=(location.search.match(/[?&]embed=(light|walls|board)/)||[])[1]||null;
+if(EMBED){ (function(){ const mem={}, st={getItem:k=>Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null, setItem:(k,v)=>{ mem[k]=String(v); }, removeItem:k=>{ delete mem[k]; }, clear:()=>{ Object.keys(mem).forEach(k=>delete mem[k]); }, key:i=>Object.keys(mem)[i]||null, get length(){ return Object.keys(mem).length; }};
+  try{ Object.defineProperty(window,'localStorage',{value:st,configurable:true}); }catch(e){}
+  const S={"light": [{"id": "tal", "type": "person", "x": 0, "y": 0, "rot": 180, "w": 0.5, "h": 0.5, "label": "Talent", "p": {}}, {"id": "key", "type": "cob", "x": -2.3, "y": -0.35, "rot": 8.6, "w": 0.32, "h": 0.32, "label": "Key", "p": {"mod": "reflector", "fixture": "Aputure 600d", "cct": 5600, "power": 80, "beam": 50, "throw": 4, "modifier": "Reflector", "gel": "", "height": 2.2, "tint": "", "notes": ""}}, {"id": "frm", "type": "frame", "x": -1.25, "y": -0.2, "rot": 0, "w": 0.05, "h": 1.2, "label": "Diff", "p": {"material": "1/2 grid cloth", "height": 2, "notes": ""}}, {"id": "flg", "type": "flag", "x": -0.45, "y": 0.5, "rot": 0, "w": 0.04, "h": 0.6, "label": "Flag", "p": {"material": "Solid black", "height": 2, "notes": ""}}], "walls": [{"id": "wn", "type": "wall", "x": 0, "y": -2, "rot": 0, "w": 5.12, "h": 0.12, "label": "", "p": {}}, {"id": "ws", "type": "wall", "x": 0, "y": 2, "rot": 0, "w": 5.12, "h": 0.12, "label": "", "p": {}}, {"id": "ww", "type": "wall", "x": -2.5, "y": 0, "rot": 90, "w": 4.12, "h": 0.12, "label": "", "p": {}}, {"id": "we", "type": "wall", "x": 2.5, "y": 0, "rot": 90, "w": 4.12, "h": 0.12, "label": "", "p": {}}, {"id": "wi", "type": "window", "x": 0, "y": -2, "rot": 0, "w": 1.6, "h": 0.16, "label": "", "p": {"open": "closed", "hinge": "left", "ang": 90, "notes": ""}}, {"id": "dr", "type": "door", "x": 1.6, "y": 2, "rot": 0, "w": 0.9, "h": 0.12, "label": "", "p": {"notes": ""}}, {"id": "sh", "type": "sheer", "x": -0.3, "y": -1.86, "rot": 0, "w": 1.2, "h": 0.06, "label": "", "p": {"notes": ""}}, {"id": "su", "type": "sun", "x": 0, "y": -3.1, "rot": 90, "w": 0.8, "h": 0.8, "label": "Sun", "p": {"fixture": "Daylight", "cct": 5600, "power": 100, "beam": 0, "throw": 3, "modifier": "", "gel": "", "height": 0, "tint": "", "notes": ""}}, {"id": "tb", "type": "table", "x": 0, "y": -0.6, "rot": 0, "w": 1.4, "h": 0.7, "label": "", "p": {"notes": ""}}, {"id": "ch", "type": "chair", "x": 0, "y": 0.1, "rot": 270, "w": 0.5, "h": 0.5, "label": "", "p": {"notes": ""}}], "board": [{"id": "n1", "type": "note", "x": 0, "y": 0, "rot": 0, "w": 220, "h": 0, "label": "", "p": {"text": "Interview look"}, "conns": [{"id": "k1", "to": "n2", "side": "right"}, {"id": "k2", "to": "n3", "side": "right"}]}, {"id": "n2", "type": "note", "x": 4.0, "y": -1.0, "rot": 0, "w": 220, "h": 0, "label": "", "p": {"text": "Soft key from camera left"}}, {"id": "n3", "type": "note", "x": 4.0, "y": 1.0, "rot": 0, "w": 220, "h": 0, "label": "", "p": {"text": "Warm practical behind"}}]};
+  st.setItem('setplot-beta-seen','1'); st.setItem('setplot-insp-nudge','done'); st.setItem('setplot-insp-hint','1'); st.setItem('setplot-guide','0');
+  st.setItem('setplot-diagrams',JSON.stringify({demo:{title:'Demo',shoot:'Demo',asked:true,items:S[EMBED],createdAt:1,updatedAt:1}})); st.setItem('setplot-last','demo');
+  document.documentElement.classList.add('embed','embed-'+EMBED);
+  addEventListener('wheel',e=>{ if(!e.ctrlKey&&!e.metaKey) e.stopImmediatePropagation(); },{capture:true});   // a plain scroll scrolls the landing page, not the plot
+})(); }
 (function(){
 "use strict";
 const $ = s=>document.querySelector(s);
@@ -1937,7 +1949,7 @@ let raf=0;
 function draw(){ guideSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); }); }
 /* ================= board ================= */
 const BOARD_SWATCHES = [['auto','Match theme'],['#ffffff','Paper'],['#eceef0','Fog'],['#e8e5df','Stone'],['#e2e9e3','Sage'],['#e3eaf4','Sky'],['#2b3037','Slate'],['#1b3a5c','Blueprint'],['#121315','Black']];
-let board = {bg:'auto', pattern:'dots', intensity:50, exportBg:false};
+let board = {bg:'auto', pattern:'grid', intensity:1, exportBg:false};
 try{ Object.assign(board, JSON.parse(localStorage.getItem('setplot-board')||'{}')); }catch(e){}
 const hexRgb = h=>{ h=String(h).replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16)||0; return [n>>16&255,n>>8&255,n&255]; };
 const toHex = a=>'#'+a.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('');
@@ -3090,7 +3102,7 @@ $('#undoBtn').onclick=undo; $('#redoBtn').onclick=redo;
 
 /* ================= persistence ================= */
 function setStatus(t,kind){ const s=$('#status'); $('#statusT').textContent=t; s.classList.toggle('warn',kind==='warn'); s.classList.toggle('busy',kind==='busy'); }
-function touch(){ if(!cur||readOnly) return; ensureLayers(cur); { const ids=new Set(cur.items.map(i=>i.id)); cur.items.forEach(i=>{ if(i.conns){ i.conns=i.conns.filter(c=>ids.has(c.to)&&c.to!==i.id); if(!i.conns.length) delete i.conns; } }); } renderLayersSoon(); cur.updatedAt=Date.now(); all[cur.id]=body(cur); pruneOrphanSetups(); dirty=true; setStatus('Saving','busy'); clearTimeout(saveT); saveT=setTimeout(flush,650); if(!$('#drawer').hidden) renderDrawer(); }
+function touch(){ if(EMBED) embedFitSoon(); if(!cur||readOnly) return; ensureLayers(cur); { const ids=new Set(cur.items.map(i=>i.id)); cur.items.forEach(i=>{ if(i.conns){ i.conns=i.conns.filter(c=>ids.has(c.to)&&c.to!==i.id); if(!i.conns.length) delete i.conns; } }); } renderLayersSoon(); cur.updatedAt=Date.now(); all[cur.id]=body(cur); pruneOrphanSetups(); dirty=true; setStatus('Saving','busy'); clearTimeout(saveT); saveT=setTimeout(flush,650); if(!$('#drawer').hidden) renderDrawer(); }
 async function flush(){
   clearTimeout(saveT);
   if(!cur||!dirty||readOnly) return;
@@ -3161,7 +3173,7 @@ function createDiagram(tplKey, base){
     base?{shoot:base.shoot,client:base.client,date:base.date,location:base.location,crew:base.crew}:{},{items:t.items(),createdAt:now,updatedAt:now});
   if(!base){ d.shoot='New shoot'; if(tplKey!=='blank') d.title=t.label; }
   all[id]=d; closeDrawer(); openDiagram(id); dirty=true; flush();
-  if(!base && innerWidth>760){ detailsOpen=true; renderInspector(); setTimeout(()=>{ const s=$('#insp [data-k="m.shoot"]'); if(s){ s.focus(); s.select(); } },60); }
+  if(!base) setTimeout(askSetupDetails,60);   // a new shoot asks for its details in a box in the middle
 }
 function duplicateDiagram(){
   if(!cur||readOnly) return;
@@ -5414,10 +5426,24 @@ $('#modal').addEventListener('click',e=>{
 var blankChosen=null;
 $('#emptyTpls').innerHTML=tplCardsLite();
 $('#modal').addEventListener('keydown',e=>{ if(e.target.id==='presetName'){ e.stopPropagation(); if(e.key==='Enter'){ e.preventDefault(); doSavePreset(); } else if(e.key==='Escape'){ e.preventDefault(); $('#modal').hidden=true; } } });
+/* the first time a setup is made, its details are asked for in a box in the middle of the screen (once per setup) */
+function askSetupDetails(){ if(!cur||readOnly||cur.asked) return; cur.asked=true; touch();
+  const f=(id,label,val,extra)=>`<label class="sd-f" for="${id}"><span>${label}</span><input class="fi" id="${id}" value="${esc(val||'')}" ${extra||''}></label>`;
+  showModal(`<div class="sd"><div style="display:flex;align-items:center;gap:10px"><h3 style="margin:0;font-size:18px">New setup</h3><div style="flex:1"></div><button class="ib" data-close aria-label="Close">${ic('close')}</button></div>
+    <p class="muted" style="margin:4px 0 14px;font-size:13.5px">Name it so you can find it again. You can change everything later in Setup details.</p>
+    <div class="sd-grid">${f('sdShoot','Project',cur.shoot==='New shoot'?'':cur.shoot,'placeholder="Project or job" autocomplete="off"')}${f('sdTitle','Setup name',cur.title,'placeholder="e.g. Interview, wide" autocomplete="off"')}
+    ${f('sdClient','Client',cur.client,'autocomplete="off"')}${f('sdDate','Date',cur.date,'type="date"')}${f('sdLoc','Location',cur.location,'autocomplete="off"')}</div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px"><button class="btn sm" data-close>Skip</button><button class="btn sm primary" data-sdsave>Start plotting</button></div></div>`);
+  setTimeout(()=>{ const i=$('#sdShoot'); if(i) i.focus(); },40); }
+function saveSetupDetails(){ if(!cur) return; const v=id=>{ const e=$('#'+id); return e?e.value.trim():''; };
+  cur.shoot=v('sdShoot')||cur.shoot||'New shoot'; cur.title=v('sdTitle')||cur.title; cur.client=v('sdClient'); cur.date=v('sdDate')||cur.date; cur.location=v('sdLoc');
+  $('#modal').hidden=true; touch(); renderHeader(); renderInspector(); if(!$('#drawer').hidden) renderDrawer(); }
+$('#modal').addEventListener('click',e=>{ if(e.target.closest('[data-sdsave]')) saveSetupDetails(); });
+$('#modal').addEventListener('keydown',e=>{ if(e.target.closest&&e.target.closest('.sd')){ e.stopPropagation(); if(e.key==='Enter'&&e.target.tagName==='INPUT'){ e.preventDefault(); saveSetupDetails(); } else if(e.key==='Escape'){ e.preventDefault(); $('#modal').hidden=true; } } });
 function tplCardsLite(){ return allTpls().map(([k,t],i)=>`<button class="sc" data-etpl="${k}"><span class="th">${thumbSVG(t.items(),'te'+i)}</span><span class="tx"><b>${esc(t.label)}</b><small>${esc(t.desc)}</small></span></button>`).join(''); }
 $('#emptyTpls').addEventListener('click',e=>{ const b=e.target.closest('[data-etpl]'); if(!b) return; const k=b.dataset.etpl;
   if(!cur){ createDiagram(k,null); if(k!=='blank'||!cur) return; }   /* first visit: make the setup, and for Blank fall through so this one click also closes the picker */
-  if(cur && !cur.items.length){ if(k==='blank'){ blankChosen=cur.id; flyCat='Lights'; renderRail(); renderFly(); $('#empty').hidden=true; return; }   /* stays blank: the picker doesn't come back when the menu closes */ checkpoint(); cur.items=tplOf(k).items(); touch(); fit(); }
+  if(cur && !cur.items.length){ if(k==='blank'){ blankChosen=cur.id; $('#empty').hidden=true; askSetupDetails(); return; }   /* stays blank: the picker doesn't come back when the menu closes */ checkpoint(); cur.items=tplOf(k).items(); touch(); fit(); askSetupDetails(); }
   else createDiagram(k,null); });
 function setReadOnly(v){ readOnly=v; $('#rail').hidden=v; $('#railR').hidden=v; if(cur) cardsEl.innerHTML=''; if(v) closeFloating(); updUndo(); renderHeader(); renderInspector(); draw(); }
 function onTheme(){ readPalette(); applyBoard(); renderFly(); $('#emptyTpls').innerHTML=tplCardsLite(); if(!$('#drawer').hidden) renderDrawer(); renderInspector(); draw(); }
@@ -5450,13 +5476,13 @@ $('#bsw').addEventListener('change',e=>{ if(e.target.id==='bgCustom') renderBoar
 $('#patSeg').addEventListener('click',e=>{ const b=e.target.closest('[data-pat]'); if(!b) return; board.pattern=b.dataset.pat; boardChanged(); });
 $('#intRange').addEventListener('input',e=>{ board.intensity=+e.target.value; boardChanged(false); });
 $('#bgExport').addEventListener('change',e=>{ board.exportBg=e.target.checked; boardChanged(false); toast(board.exportBg?'Exports use the board look':'Exports use a light sheet'); });
-$('#boardReset').onclick=()=>{ board={bg:'auto',pattern:'dots',intensity:50,exportBg:false}; boardChanged(); };
+$('#boardReset').onclick=()=>{ board={bg:'auto',pattern:'grid',intensity:1,exportBg:false}; boardChanged(); };
 async function loadBoardPrefs(usr){
   try{
     const id = usr ? await usr.id() : null; if(!id||!dbApi) return;
     boardRef = dbApi.collection('data/users/'+id).doc('prefs');
     const snap = await boardRef.get();
-    if(snap.exists && snap.data().board){ board=Object.assign({bg:'auto',pattern:'dots',intensity:50,exportBg:false},snap.data().board); try{ localStorage.setItem('setplot-board',JSON.stringify(board)); }catch(e){} applyBoard(); if(!$('#boardPop').hidden) renderBoardPop(); draw(); $('#emptyTpls').innerHTML=tplCardsLite(); }
+    if(snap.exists && snap.data().board){ board=Object.assign({bg:'auto',pattern:'grid',intensity:1,exportBg:false},snap.data().board); try{ localStorage.setItem('setplot-board',JSON.stringify(board)); }catch(e){} applyBoard(); if(!$('#boardPop').hidden) renderBoardPop(); draw(); $('#emptyTpls').innerHTML=tplCardsLite(); }
   }catch(e){ boardRef=null; }
 }
 
@@ -7069,7 +7095,21 @@ function ready(){ if(layersOpen){ $('#layersPanel').hidden=false; document.body.
   if(!cur){ let last=null; try{ last=localStorage.getItem('setplot-last'); }catch(e){} const id=(last&&all[last])?last:(sorted()[0]||[])[0]; if(id) openDiagram(id); }
   renderHeader(); renderInspector(); draw();
 }
-function startLocal(){ mode='local'; all=localRead(); setStatus('Saved in this browser'); ready(); sbInit(); }
+/* embed: keep everything in view; after a change it eases to fit, unless the visitor is mid-drag or typing */
+var embedT=0, embedRaf=0;
+function embedTarget(){ if(!cur||!cur.items.length) return null; let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  cur.items.forEach(it=>{ if(isCard(it)){ const el=cardsEl.querySelector(`[data-cid="${it.id}"]`), w=it.w/PXM0, h=(el?el.offsetHeight:120)/PXM0; x0=Math.min(x0,it.x); y0=Math.min(y0,it.y); x1=Math.max(x1,it.x+w); y1=Math.max(y1,it.y+h); return; }
+    const ra=it.rot*D2R, c=Math.abs(Math.cos(ra)), sn=Math.abs(Math.sin(ra)), ex=c*it.w/2+sn*it.h/2+.2, ey=sn*it.w/2+c*it.h/2+.2; x0=Math.min(x0,it.x-ex); y0=Math.min(y0,it.y-ey); x1=Math.max(x1,it.x+ex); y1=Math.max(y1,it.y+ey+(it.label?.4:0)); });
+  const pad=EMBED==='board'?28:22, Wd=innerWidth, Hd=innerHeight, s=clamp(Math.min((Wd-2*pad)/(x1-x0),(Hd-2*pad-(EMBED==='board'?40:0))/(y1-y0)),20,EMBED==='board'?95:150);
+  return {x:(x0+x1)/2, y:(y0+y1)/2-(EMBED==='board'?20/s:0), s}; }
+function embedFit(anim){ const T=embedTarget(); if(!T) return; cancelAnimationFrame(embedRaf);
+  if(!anim||RM()){ view.x=T.x; view.y=T.y; view.s=T.s; draw(); return; }
+  const F={x:view.x,y:view.y,s:view.s}; if(Math.abs(F.s-T.s)<.5&&Math.hypot(F.x-T.x,F.y-T.y)*T.s<2) return; const t0=performance.now();
+  const step=now=>{ const t=Math.min(1,(now-t0)/480), e=1-Math.pow(1-t,3); view.x=F.x+(T.x-F.x)*e; view.y=F.y+(T.y-F.y)*e; view.s=F.s*Math.pow(T.s/F.s,e); draw(); if(t<1) embedRaf=requestAnimationFrame(step); };
+  embedRaf=requestAnimationFrame(step); }
+function embedFitSoon(){ clearTimeout(embedT); embedT=setTimeout(function again(){ const a=document.activeElement; if(drag||ptrs.size||(a&&(a.isContentEditable||a.tagName==='TEXTAREA'||a.tagName==='INPUT'))){ embedT=setTimeout(again,500); return; } embedFit(true); },650); }
+if(EMBED){ addEventListener('resize',()=>embedFit(false)); document.addEventListener('focusout',()=>{ if(EMBED==='board') embedFitSoon(); }); }
+function startLocal(){ mode='local'; all=localRead(); setStatus('Saved in this browser'); ready(); sbInit(); if(EMBED){ embedFit(false); setTimeout(()=>embedFit(false),300); } }
 (async()=>{
   if(!window.claude || typeof window.claude.use!=='function'){ startLocal(); return; }
   const [db,dl,usr]=await Promise.all([claude.use('db').catch(()=>null),claude.use('downloads').catch(()=>null),claude.use('user').catch(()=>null)]);
