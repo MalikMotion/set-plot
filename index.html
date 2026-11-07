@@ -121,8 +121,22 @@ section{padding-block:80px}
 .copy{display:grid;gap:14px;max-width:30em}
 .copy h2{font-size:clamp(28px,3.4vw,40px)}
 .copy p{color:var(--muted)}
-@media (max-width:760px){ .row{grid-template-columns:1fr;gap:24px;padding-block:40px} .row.flip .art{order:0} section{padding-block:56px} }
+@media (max-width:760px){ .row{grid-template-columns:1fr;gap:24px;padding-block:40px} .row.flip .art{order:0} section{padding-block:56px} .row::before,.row.flip::before,.row:first-child::before{left:-40px;right:-40px;width:auto;top:-10px;bottom:auto;aspect-ratio:1/1} .band{padding-block:64px} }
 
+/* the app's grid as a quiet patch behind each live demo */
+.row{position:relative;isolation:isolate}
+.row::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:-110px;bottom:-110px;left:-150px;width:calc(50% - 28px + 300px);
+  --g:color-mix(in srgb,var(--ink) 5%,transparent); --gf:color-mix(in srgb,var(--ink) 2%,transparent);
+  background:
+    linear-gradient(var(--g) 1px,transparent 1px) 50% 50%/96px 96px,
+    linear-gradient(90deg,var(--g) 1px,transparent 1px) 50% 50%/96px 96px,
+    linear-gradient(var(--gf) 1px,transparent 1px) 50% 50%/24px 24px,
+    linear-gradient(90deg,var(--gf) 1px,transparent 1px) 50% 50%/24px 24px;
+  -webkit-mask-image:radial-gradient(closest-side,#000 0%,rgba(0,0,0,.55) 50%,transparent 100%);mask-image:radial-gradient(closest-side,#000 0%,rgba(0,0,0,.55) 50%,transparent 100%)}
+.row:first-child::before{top:-150px}
+.row.flip::before{left:auto;right:-150px}
+/* alternating bands: a full-width soft surface behind every other block */
+.band{--band:color-mix(in srgb,var(--soft) 75%,var(--bg));background:var(--band);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax);padding-block:96px}
 /* live demos: the real app, running on its own sample scene */
 .art.live{position:relative;display:block;place-items:initial;aspect-ratio:4/3}
 .art.live iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;border-radius:16px;background:var(--soft)}
@@ -280,7 +294,7 @@ footer .mail{user-select:all;color:var(--ink)}
           </div>
   </section>
 
-  <section id="who" style="padding-top:0">
+  <section id="who" class="band">
     <div class="wrap">
       <div class="center"><h2>Made for the whole crew.</h2><p>For the people who plan the shot and then go and light it.</p></div>
       <div class="roles">
@@ -294,7 +308,7 @@ footer .mail{user-select:all;color:var(--ink)}
     </div>
   </section>
 
-  <section id="pricing" style="padding-top:0">
+  <section id="pricing">
     <div class="wrap">
       <div class="center"><h2>Simple pricing.</h2><p>Free during the open beta. <a class="fnote" href="#top" data-join>Sign up now to become a founder and keep 50% off for life.</a></p>
         <div class="bill" role="radiogroup" aria-label="Billing period"><button type="button" role="radio" aria-checked="false" data-bill="m">Monthly</button><button type="button" role="radio" aria-checked="true" data-bill="y" class="on">Yearly <em>−25%</em></button></div>
