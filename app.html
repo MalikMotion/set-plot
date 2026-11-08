@@ -938,6 +938,15 @@ body.insp-open .rail-r{right:calc(max(16px,env(safe-area-inset-right,0px)) + 332
   .boardpop{bottom:auto;top:calc(124px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+#fitHint{position:absolute;left:0;bottom:calc(100% + 10px);display:flex;align-items:center;gap:8px;padding:7px 7px 7px 14px;border-radius:14px;white-space:nowrap;font-size:13px;opacity:0;transform:translateY(6px);transition:opacity .2s ease,transform .25s cubic-bezier(.2,.8,.2,1);pointer-events:auto;z-index:5}
+#fitHint.on{opacity:1;transform:none}
+#fitHint .fh-txt{color:var(--ink,inherit)}
+#fitHint kbd{font:600 11.5px/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:3px 6px;border-radius:6px;border:1px solid var(--line,rgba(128,128,128,.35));margin:0 2px}
+#fitHint .fh-off{border:0;background:none;color:var(--muted,#888);font:inherit;font-size:12.5px;cursor:pointer;padding:4px 6px;border-radius:8px}
+#fitHint .fh-off:hover{color:inherit;text-decoration:underline}
+#fitHint .fh-x{width:26px;height:26px;font-size:16px;line-height:1}
+@media (max-width:760px){ #fitHint{bottom:auto;top:calc(100% + 10px);white-space:normal;max-width:calc(100vw - 32px);flex-wrap:wrap} }
+@media (prefers-reduced-motion:reduce){ #fitHint{transition:opacity .2s ease;transform:none} }
 </style>
 
 <svg id="plot" xmlns="http://www.w3.org/2000/svg" aria-label="Lighting diagram"></svg>
@@ -1797,6 +1806,7 @@ function plotMarkup(items,Q,o){
       }
       over += `<g transform="${tr}">${g}</g>`+beamLbl; beamLbl='';
       if(o.sel.size===1 && o.handles && it.type==='curtain' && !LF.lock(it) && !readOnly) over+=curtChipSVG(it,Q,k);
+      if(o.sel.size===1 && o.handles && TYPES[it.type] && TYPES[it.type].cam && !readOnly && !camNorthBusy && Math.abs(angDiff(it.rot,-90))>.5) over+=camNorthChipSVG(it,Q,k);
       if(o.sel.size===1 && o.handles && t.light && !t.preset && !LF.lock(it)){ over+=modChipSVG(it,Q,k,o); if(it.p&&'power' in it.p) over+=powerSliderSVG(it,Q,k); }
     });
   }
@@ -1946,7 +1956,7 @@ function body(d){ return Object.assign(meta(d), {items:d.items||[], createdAt:d.
 
 /* ================= render ================= */
 let raf=0;
-function draw(){ guideSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); }); }
+function draw(){ guideSoon(); if(typeof fitHintSoon==='function') fitHintSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); }); }
 /* ================= board ================= */
 const BOARD_SWATCHES = [['auto','Match theme'],['#ffffff','Paper'],['#eceef0','Fog'],['#e8e5df','Stone'],['#e2e9e3','Sage'],['#e3eaf4','Sky'],['#2b3037','Slate'],['#1b3a5c','Blueprint'],['#121315','Black']];
 let board = {bg:'auto', pattern:'grid', intensity:1, exportBg:false};
@@ -2195,6 +2205,24 @@ function openCurtMenu(it,cx,cy){ if(!it||it.type!=='curtain'||readOnly) return; 
   if(T+h>innerHeight-8){ L=cx+28; T=cy-h/2; if(L+w>innerWidth-8) L=cx-w-28; }
   m.style.left=Math.round(clamp(L,8,innerWidth-w-8))+'px'; m.style.top=Math.round(clamp(T,8,innerHeight-h-8))+'px'; }
 function closeCurtMenu(){ const m=$('#curtMenu'); if(m) m.hidden=true; curtMenuFor=null; }
+/* camera view up: turn the whole plot (not the board cards) around the selected camera so it looks straight up the screen */
+var camNorthBusy=false;
+function angDiff(a,b){ return ((((a-b)%360)+540)%360)-180; }
+function camNorthChipSVG(it,Q,k){ const txt=`Turn plot so ${it.label||'camera'} faces up`, w=textW(txt,11,700)*k+34*k, h=20*k, x=it.x-w/2, moved=it.lo&&isFinite(it.lo.x), nl=moved?0:((it.label?1:0)+(opts.specs?specLines(it).filter(Boolean).length:0)), y=it.y+extentY(it)+16*k+nl*13.5*k;   /* under the label and spec lines, clear of the FWD / R handles */
+  return `<g data-h="camnorth" style="cursor:pointer"><title>Rotate the plot around this camera so it points up the screen. Board cards stay put.</title><rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(h/2)}" fill="${Q.paper}" stroke="${Q.accent}" stroke-width="${f(1.4*k)}"/>`
+    +`<path d="M${f(x+12*k)} ${f(y+h/2+4*k)}V${f(y+h/2-4*k)}M${f(x+8.5*k)} ${f(y+h/2-.5*k)}L${f(x+12*k)} ${f(y+h/2-4.5*k)}L${f(x+15.5*k)} ${f(y+h/2-.5*k)}" fill="none" stroke="${Q.accent}" stroke-width="${f(1.6*k)}" stroke-linecap="round" stroke-linejoin="round"/>`
+    +`<text x="${f(x+22*k)}" y="${f(y+h/2)}" font-size="${f(11*k)}" font-family="${FONT}" font-weight="700" fill="${Q.accent}" dominant-baseline="central">${esc(txt)}</text></g>`; }
+function camNorth(cam){ if(readOnly||!cur||!cam||camNorthBusy) return; const deg=angDiff(-90,cam.rot); if(Math.abs(deg)<.5) return;
+  const its=cur.items.filter(i=>TYPES[i.type]&&!isCard(i)); const pv={x:cam.x,y:cam.y};
+  const orig=new Map(its.map(i=>[i.id,{x:i.x,y:i.y,rot:i.rot,focus:i.focus?Object.assign({},i.focus):null,lo:i.lo?Object.assign({},i.lo):null}]));
+  checkpoint(); camNorthBusy=true;
+  const apply=d=>{ applyGroupRot(orig,pv,d); const a=d*D2R, c=Math.cos(a), sn=Math.sin(a);
+    orig.forEach((o,id)=>{ if(!o.lo) return; const it=itemById(id); if(it) it.lo={x:Math.round((o.lo.x*c-o.lo.y*sn)*1000)/1000, y:Math.round((o.lo.x*sn+o.lo.y*c)*1000)/1000}; }); draw(); };   /* moved labels keep their side of the object */
+  const done=()=>{ apply(deg); camNorthBusy=false; touch(); syncInspector(); toast(`Turned the plot ${deg>0?'+':''}${fmtDeg(Math.round(deg))} · ${cam.label||'Camera'} now faces up · ⌘Z to undo`); };
+  if(RM()){ done(); return; }
+  const t0=performance.now(), dur=560;
+  const step=now=>{ const t=Math.min(1,(now-t0)/dur), e=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; if(t<1){ apply(deg*e); requestAnimationFrame(step); } else done(); };
+  requestAnimationFrame(step); }
 function curtChipSVG(it,Q,k){ const txt=`${curtName(it)} · ${CURT_PATS.find(q=>q[0]===curtPatOf(it))[1]} ▾`, w=textW(txt,11,700)*k+34*k, h=20*k, x=it.x-w/2, y=it.y+extentY(it)+12*k+(it.label?12*1.1*k:0), cp=curtPaint(it);
   return `<g data-h="curtpick" style="cursor:pointer"><title>Change the curtain's colour and pattern</title>${cp.defs}<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(h/2)}" fill="${Q.paper}" stroke="${Q.accent}" stroke-width="${f(1.4*k)}"/>`
     +`<circle cx="${f(x+12*k)}" cy="${f(y+h/2)}" r="${f(5*k)}" fill="${cp.paint}" stroke="${Q.muted}" stroke-width="${f(1*k)}"/>`
@@ -2872,6 +2900,7 @@ svg.addEventListener('pointerdown',e=>{
   if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y), s:view.s, mid:{x:(a.x+b.x)/2,y:(a.y+b.y)/2}, vx:view.x, vy:view.y}; drag=null; return; }
   const pt=toWorld(e.clientX,e.clientY);
   const hEl=e.target.closest('[data-h]'); let iEl=pickItemEl(e);
+  if(hEl && hEl.dataset.h==='camnorth' && !readOnly && e.button===0){ camNorth(itemById([...sel][0])); return; }
   if(hEl && hEl.dataset.h==='curtpick' && !readOnly && e.button===0){ const it=itemById([...sel][0]); if(it){ const mm=$('#curtMenu'); if(mm&&!mm.hidden&&curtMenuFor===it.id) closeCurtMenu(); else openCurtMenu(it,e.clientX,e.clientY); } return; }
   if(hEl && hEl.dataset.h==='modpick' && !readOnly && e.button===0){ const it=itemById([...sel][0]); if(it){ const mm=$('#modMenu'); if(mm&&!mm.hidden&&modMenuFor===it.id) closeModMenu(); else openModMenu(it,e.clientX,e.clientY); } return; }
   if(hEl && hEl.dataset.h==='sunT' && !readOnly && e.button===0){ const g=hEl.closest('[data-id]'), it=g&&itemById(g.dataset.id);
@@ -3081,18 +3110,42 @@ function fitGlide(T){ cancelAnimationFrame(fitRaf); const F={x:view.x,y:view.y,s
   fitRaf=requestAnimationFrame(step); }
 function stopGlide(){ if(fitRaf){ cancelAnimationFrame(fitRaf); fitRaf=0; } }
 ['wheel','pointerdown'].forEach(ev=>addEventListener(ev,stopGlide,{capture:true,passive:true}));   /* grabbing or scrolling the plot takes over at once */
-function fit(anim){
-  W=innerWidth; H=innerHeight;
-  const b=cur&&bounds(cur.items); if(!b){ if(anim===true){ fitGlide({x:0,y:-.5,s:70}); return; } view={x:0,y:-.5,s:70}; draw(); return; }
+function fitTarget(){
+  const b=cur&&bounds(cur.items); if(!b) return null;
   const small=W<=760;
   const padL=small?24:110, padR=(!$('#insp').hidden&&!small)?350:40, padT=small?130:90, padB=small?110:80;
   const aw=Math.max(100,W-padL-padR), ah=Math.max(100,H-padT-padB);
   const s2=clamp(Math.min(aw/(b.x1-b.x0+1),ah/(b.y1-b.y0+1)),15,220);
-  const cx=(b.x0+b.x1)/2, cy=(b.y0+b.y1)/2, T={x:cx-((padL-padR)/2)/s2, y:cy-((padT-padB)/2)/s2, s:s2};
+  const cx=(b.x0+b.x1)/2, cy=(b.y0+b.y1)/2;
+  return {x:cx-((padL-padR)/2)/s2, y:cy-((padT-padB)/2)/s2, s:s2, b};
+}
+function fit(anim){
+  W=innerWidth; H=innerHeight; hideFitHint();
+  const T=fitTarget(); if(!T){ if(anim===true){ fitGlide({x:0,y:-.5,s:70}); return; } view={x:0,y:-.5,s:70}; draw(); return; }
   if(anim===true){ fitGlide(T); return; }
   stopGlide(); view.x=T.x; view.y=T.y; view.s=T.s; draw();
 }
 $('#fitBtn').onclick=()=>fit(true);
+/* "lost the plot?" hint: after the view settles far from the content (panned away, or zoomed way out / way in), point to Fit. Hides on its own when things are back in view. */
+var fitHintT=0, fitHintShut=false, fitHintOff=false; try{ fitHintOff=localStorage.getItem('setplot-fithint-off')==='1'; }catch(e){}
+(function(){ const h=document.createElement('div'); h.id='fitHint'; h.className='card'; h.setAttribute('role','status'); h.hidden=true;
+  h.innerHTML='<span class="fh-txt">Lost the plot? Press <kbd class="fh-key">Z</kbd> to fit everything in view.</span><button class="btn sm fh-fit" type="button">Fit</button><button class="fh-off" type="button">Don\'t show again</button><button class="ib fh-x" type="button" aria-label="Close">×</button>';
+  const bar=document.querySelector('.bottom'); (bar||document.body).appendChild(h);
+  h.addEventListener('pointerdown',e=>e.stopPropagation());
+  h.querySelector('.fh-fit').onclick=()=>fit(true);
+  h.querySelector('.fh-x').onclick=()=>{ fitHintShut=true; hideFitHint(); };
+  h.querySelector('.fh-off').onclick=()=>{ fitHintOff=true; try{ localStorage.setItem('setplot-fithint-off','1'); }catch(e){} hideFitHint(); toast('Okay, no more hints. The Fit button is always bottom left.'); };
+})();
+function hideFitHint(){ const h=$('#fitHint'); if(!h||h.hidden) return; h.classList.remove('on'); clearTimeout(h._t); h._t=setTimeout(()=>{ if(!h.classList.contains('on')) h.hidden=true; },220); }
+function showFitHint(){ const h=$('#fitHint'); if(!h) return; const touchOnly=matchMedia('(hover: none)').matches; if(touchOnly) h.querySelector('.fh-txt').textContent='Lost the plot? Tap Fit to see everything again.'; else try{ h.querySelector('.fh-key').textContent=keyLabel(keyOf('fit'))||'Z'; }catch(e){} clearTimeout(h._t); if(h.hidden){ h.hidden=false; void h.offsetWidth; } h.classList.add('on'); }
+function fitHintCheck(){ if(fitHintOff||fitHintShut||EMBED||!cur||!cur.items.length||drag||pinch||fitRaf||document.body.classList.contains('present')){ hideFitHint(); return; }
+  const T=fitTarget(); if(!T) return; const b=T.b;
+  const hw=innerWidth/2/view.s, hh=innerHeight/2/view.s;
+  const ix=Math.max(0,Math.min(b.x1,view.x+hw)-Math.max(b.x0,view.x-hw)), iy=Math.max(0,Math.min(b.y1,view.y+hh)-Math.max(b.y0,view.y-hh));
+  const seen=(ix*iy)/Math.max(.01,(b.x1-b.x0)*(b.y1-b.y0));   /* share of the content that is on screen */
+  const lost = seen<.12 || view.s<T.s*.3 || view.s>T.s*5;
+  if(lost) showFitHint(); else hideFitHint(); }
+function fitHintSoon(){ clearTimeout(fitHintT); fitHintT=setTimeout(fitHintCheck,900); }
 function toggleOpt(key,btn){ opts[key]=!opts[key]; btn.setAttribute('aria-pressed',opts[key]); saveOpts(); draw(); }
 $('#snapBtn').onclick=e=>toggleOpt('snap',e.currentTarget);
 $('#keysBtn').onclick=()=>openKeys();
