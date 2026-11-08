@@ -1304,6 +1304,29 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .ds-tools{margin-left:auto;flex:none}
 #drawEd .ds-onion-w{position:relative;flex:none;align-self:center}
 #drawEd .de-photo-b{display:inline-flex;align-items:center;gap:6px}
+#drawEd .de-art-b{display:inline-flex;align-items:center;gap:6px}
+#drawEd .de-art-b svg{width:16px;height:16px}
+#drawEd .de-ab{position:absolute;top:0;bottom:0;pointer-events:none}
+#drawEd .de-abn{position:absolute;left:0;top:-22px;font:500 11.5px var(--font,inherit);color:#a8a8a8;white-space:nowrap;pointer-events:auto;cursor:default;user-select:none}
+#drawEd .de-abn:hover{color:#fff}
+#drawEd .de-abn,#drawEd .de-abflip{z-index:5}
+#drawEd .de-abflip{position:absolute;right:0;top:-25px;width:22px;height:20px;padding:0;border:0;border-radius:3px;background:transparent;color:#a8a8a8;display:grid;place-items:center;cursor:pointer;pointer-events:auto}
+#drawEd .de-abflip svg{width:15px;height:15px}
+#drawEd .de-abflip:hover{background:#3e3e3e;color:#fff}
+#drawEd .de-paper.art{background:transparent!important;box-shadow:none!important;overflow:visible}
+#drawEd .de-paper.art .de-ab1{background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6),0 4px 18px rgba(0,0,0,.45)}
+#drawEd .de-paper.art[data-bg="dark"] .de-ab1{background:#1b1d22}
+#drawEd .de-paper.art[data-bg="none"] .de-ab1{background:repeating-conic-gradient(#d9dce1 0 25%,#f4f5f7 0 50%) 0 0/16px 16px}
+#drawEd .de-paper.art .de-ab2{background:repeating-linear-gradient(135deg,#2e2e2e 0 10px,#333 10px 20px);box-shadow:0 0 0 1px rgba(0,0,0,.6),0 4px 18px rgba(0,0,0,.45)}
+#drawEd .de-ab-add{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:4;display:grid;justify-items:center;gap:4px;padding:16px 20px;border:1.5px dashed #6a6a6a;border-radius:6px;background:rgba(30,30,30,.85);color:#ddd;font:500 12.5px var(--font,inherit);cursor:pointer}
+#drawEd .de-ab-add svg{width:26px;height:26px}
+#drawEd .de-ab-add small{color:#999;font-size:11px}
+#drawEd .de-ab-add:hover{border-color:#1473e6;color:#fff}
+#drawEd .drp-img{cursor:pointer;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .12s ease}
+#drawEd .drp-img.show{outline-color:#1473e6}
+#drawEd .drp-on{position:absolute;left:6px;top:5px;z-index:1;padding:2px 7px;border-radius:3px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;opacity:0;transition:opacity .12s ease}
+#drawEd .drp-img:hover .drp-on,#drawEd .drp-img.show .drp-on{opacity:1}
+#drawEd .drp-img.show .drp-on{background:#1473e6}
 #drawEd .de-photo-w{position:relative;display:inline-flex;align-items:center}
 #drawEd .de-photo-w .de-photo-b{border-top-right-radius:0;border-bottom-right-radius:0}
 #drawEd .de-photo-more{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:0;padding:0 5px;display:inline-grid;place-items:center}
@@ -1343,7 +1366,7 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .drp-empty svg{width:22px;height:22px}
 #drawEd .drp-empty:hover{color:var(--ink);border-color:var(--accent)}
 @media (hover:none){ #drawEd .drp-act{opacity:1} }
-#drawEd .de-dropzone{grid-template-columns:repeat(2,minmax(0,280px));align-content:center;justify-content:center;gap:18px;padding:20px}
+#drawEd .de-dropzone{grid-template-columns:repeat(3,minmax(0,240px));align-content:center;justify-content:center;gap:18px;padding:20px}
 #drawEd .de-dropzone .dz-t{display:grid;justify-items:center;gap:6px;padding:26px 22px;border-radius:10px;background:var(--card);color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:center;border:2px solid transparent;transition:border-color .12s ease,transform .12s ease}
 #drawEd .de-dropzone .dz-t.on{border-color:#1473e6;transform:scale(1.03)}
 #drawEd .de-dropzone p{grid-column:1/-1;margin:0;text-align:center;color:#fff;font-size:12.5px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
@@ -6478,7 +6501,7 @@ var drawEd=null;   // the open editor's state
 function drawIcon(p){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`; }
 const DRAW_SELECT_ICON='<path d="M5 3.5 18.5 12l-6 1.5L9.5 19z"/>';
 const DRAW_AREA=[['rect','Rectangle select','<rect x="4" y="5" width="16" height="13" rx="1.5" stroke-dasharray="3 2.6"/>'],['free','Lasso','<path d="M12 5c4.7 0 8 2.2 8 5s-3.3 5-8 5c-1.6 0-3-.2-4.2-.7" stroke-dasharray="3 2.6"/><path d="M7.8 14.3C5.5 13.4 4 11.8 4 10c0-2.8 3.6-5 8-5" stroke-dasharray="3 2.6"/><path d="M7.8 14.3c-1 .9-1.2 2.4-.2 3.4.8.8 2 .8 2.6.3"/>'],['poly','Point lasso','<path d="M5 17 7 6l9-1 3 8-7 5z" stroke-dasharray="3 2.6"/><circle cx="5" cy="17" r="1.6" fill="currentColor"/><circle cx="7" cy="6" r="1.6" fill="currentColor"/><circle cx="16" cy="5" r="1.6" fill="currentColor"/><circle cx="19" cy="13" r="1.6" fill="currentColor"/><circle cx="12" cy="18" r="1.6" fill="currentColor"/>']];
-function drawName(o){ if(o.t==='img') return o.nm||'Photo'; if(o.t==='fig'){ const F=DRAW_FIGS.find(q=>q[0]===o.k); return F?F[1]:'Figure'; } if(o.t==='text') return '“'+String(o.text).split('\n')[0].slice(0,22)+(String(o.text).length>22?'…':'')+'”';
+function drawName(o){ if(o.t==='img') return (o.loc?'Location · ':'')+(o.nm||'Photo'); if(o.t==='fig'){ const F=DRAW_FIGS.find(q=>q[0]===o.k); return F?F[1]:'Figure'; } if(o.t==='text') return '“'+String(o.text).split('\n')[0].slice(0,22)+(String(o.text).length>22?'…':'')+'”';
   return {rough:'Rough pencil',pen:'Brush stroke',marker:'Marker',eraser:'Eraser',line:'Line',arrow:'Arrow',rect:'Rectangle',ellipse:'Ellipse'}[o.t]||'Object'; }
 function drawOpIcon(o){ if(o.t==='img'){ const u=imgURL(o.src); return u?`<img src="${esc(u)}" alt="">`:drawIcon(DRAW_PHOTO_ICON); } if(o.t==='fig') return figIcon(o.k); const T=DRAW_TOOLS.find(q=>q[0]===o.t); return drawIcon(T?T[3]:DRAW_SELECT_ICON); }
 function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
@@ -6487,7 +6510,7 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
   let ops=saved?JSON.parse(JSON.stringify(saved.ops)):[]; { let k=ops.length-1; while(k>=0&&ops[k].t!=='clear') k--; ops=ops.slice(k+1); }   /* older drawings kept a "clear" step */
   let pages=saved&&Array.isArray(saved.pages)&&saved.pages.length?JSON.parse(JSON.stringify(saved.pages)):[{ops, info:{}}];   /* storyboard panels; a plain drawing is one panel */
   let nid=0; pages.forEach(pg=>{ pg.ops=pg.ops||[]; pg.info=pg.info||{}; pg.hist=[]; pg.fut=[]; pg.ops.forEach(o=>{ o.i=++nid; }); }); ops=pages[0].ops;
-  drawEd={id:it.id, W, H, bg:saved?saved.bg:'white', pages, pi:0, guide:Object.assign({ar:'none',thirds:false,safe:false},saved&&saved.guide||{}), onion:true, onionOp:.24, onionNext:false, onionTint:true, roughOff:false, side:'layers', ops, hist:pages[0].hist, fut:pages[0].fut, nid, sel:null, selSet:new Set(), selMode:'pointer', areaMode:'rect', region:null, bgCol:'#ffffff', alpha:1, zoom:1, fit:1, pan:[0,0], gsel:null, spaceHand:false, lastPt:null, tool:'pen', fig:'house', pressure:(()=>{ try{ return localStorage.getItem('setplot-draw-pressure')!=='0'; }catch(e){ return true; } })(), penSeen:false, pid:null, color:saved&&saved.color||'#1b1d22', size:saved&&saved.size||8, fill:false, cur:null, act:null, dirty:false, fresh:!it.p.src, name:it.p.name||'Drawing'};
+  drawEd={id:it.id, W, H, bg:saved?saved.bg:'white', pages, pi:0, art:!!(saved&&saved.art), artDir:saved&&saved.artDir||'below', G:0, CW:W, CH:H, guide:Object.assign({ar:'none',thirds:false,safe:false},saved&&saved.guide||{}), onion:true, onionOp:.24, onionNext:false, onionTint:true, roughOff:false, side:'layers', ops, hist:pages[0].hist, fut:pages[0].fut, nid, sel:null, selSet:new Set(), selMode:'pointer', areaMode:'rect', region:null, bgCol:'#ffffff', alpha:1, zoom:1, fit:1, pan:[0,0], gsel:null, spaceHand:false, lastPt:null, tool:'pen', fig:'house', pressure:(()=>{ try{ return localStorage.getItem('setplot-draw-pressure')!=='0'; }catch(e){ return true; } })(), penSeen:false, pid:null, color:saved&&saved.color||'#1b1d22', size:saved&&saved.size||8, fill:false, cur:null, act:null, dirty:false, fresh:!it.p.src, name:it.p.name||'Drawing'};
   let el=$('#drawEd'); if(el) el.remove(); el=document.createElement('div'); el.id='drawEd'; el.setAttribute('role','dialog'); el.setAttribute('aria-label','Draw an image');
   el.innerHTML=`<div class="de-top">
       <input class="de-name" value="${esc(drawEd.name)}" aria-label="Image name" maxlength="60">
@@ -6496,6 +6519,7 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
       <div class="de-rel"><button type="button" class="btn sm de-guide-b" aria-haspopup="true" title="Frame guides: aspect ratio, thirds and safe areas">${drawIcon('<rect x="3" y="6" width="18" height="12" rx="1.5"/><path d="M9 6v12M15 6v12M3 10h18M3 14h18" opacity=".45"/>')}<span>Frame</span></button>
         <div class="de-gmenu card" hidden>${[['none','No frame'],['2.39','2.39 : 1  Scope'],['1.85','1.85 : 1  Flat'],['1.78','16 : 9'],['0.5625','9 : 16  Vertical'],['0.8','4 : 5  Social']].map(([k,n])=>`<button type="button" data-ar="${k}">${n}</button>`).join('')}<hr><label><input type="checkbox" data-g="thirds"> Rule of thirds</label><label><input type="checkbox" data-g="safe"> Safe areas</label><label><input type="checkbox" data-g="center"> Centre cross</label></div></div>
       <button type="button" class="btn sm de-photo-b" title="Place photos under your drawing, e.g. location scout pictures. Pick several to get one per panel. You can also drag photos in or paste with ⌘V">${drawIcon(DRAW_PHOTO_ICON+'<path d="M19 2v5M16.5 4.5h5"/>')}<span>Place photo</span></button>
+      <button type="button" class="btn sm de-art-b" title="Location / blocking artboard beside your drawing">${drawIcon('<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/><path d="m13.5 16 2.4-2.2 1.8 1.4 1.4-1 2 1.6"/>')}<span>Location</span></button>
       <button type="button" class="btn sm de-ref-b" title="Faint tracing photo under the canvas. Not part of the image unless you choose to include it">${drawIcon('<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 4 3.5 3-2.5 4.5 3.5"/>')}<span>Trace</span></button>
       <div class="de-sp"></div>
       <button type="button" class="ib de-undo" title="Undo  ⌘Z" aria-label="Undo">${drawIcon('<path d="M9 7 4.5 11.5 9 16"/><path d="M5 11.5h9a5 5 0 0 1 0 10h-2"/>')}</button>
@@ -6511,7 +6535,7 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
           <button type="button" class="de-reset" title="Default foreground and background colors (D)" aria-label="Default colours"><i></i><i></i></button></div></div>
       <div class="de-selm card" hidden role="menu" aria-label="Tool group"></div>
       <div class="de-figs card" hidden role="listbox" aria-label="Figures"><div class="df-h">Storyboard</div>${DRAW_FIGS.filter(f=>f[3]==='sb').map(([k,n])=>`<button type="button" data-fig="${k}" title="${n}" aria-label="${n}" role="option">${figIcon(k)}<span>${n}</span></button>`).join('')}<div class="df-h">Everyday</div>${DRAW_FIGS.filter(f=>!f[3]).map(([k,n])=>`<button type="button" data-fig="${k}" title="${n}" aria-label="${n}" role="option">${figIcon(k)}<span>${n}</span></button>`).join('')}</div>
-      <div class="de-stage"><button type="button" class="de-zoom" title="Fit on screen (⌘0) · ⌘+ / ⌘− to zoom, Space-drag to pan">100%</button><div class="de-paper"><canvas class="de-under"></canvas><canvas class="de-cv"></canvas><canvas class="de-onion"></canvas><canvas class="de-guide"></canvas><canvas class="de-live"></canvas><textarea class="de-text" hidden rows="1" spellcheck="false"></textarea></div></div>
+      <div class="de-stage"><button type="button" class="de-zoom" title="Fit on screen (⌘0) · ⌘+ / ⌘− to zoom, Space-drag to pan">100%</button><div class="de-paper"><div class="de-ab de-ab1" hidden><span class="de-abn" data-abz="0" title="Double-click to zoom to the drawing">Drawing</span></div><div class="de-ab de-ab2" hidden><span class="de-abn" data-abz="1" title="Double-click to zoom to the location photo">Location / blocking</span><button type="button" class="de-abflip"></button></div><button type="button" class="de-ab-add" hidden>${drawIcon(DRAW_PHOTO_ICON)}<span>Add location / blocking photo</span><small>or drop one here</small></button><canvas class="de-under"></canvas><canvas class="de-cv"></canvas><canvas class="de-onion"></canvas><canvas class="de-guide"></canvas><canvas class="de-live"></canvas><textarea class="de-text" hidden rows="1" spellcheck="false"></textarea></div></div>
       <div class="de-side">
       <div class="de-props card">
         <div class="de-colors">${DRAW_COLORS.map(c=>`<button type="button" data-color="${c}" style="--c:${c}" title="${c}" aria-label="Colour ${c}"></button>`).join('')}<label class="de-custom" title="Any colour"><input type="color" value="${drawEd.color}" aria-label="Pick any colour"><span></span></label></div>
@@ -6549,12 +6573,22 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
   el.querySelector('.de-zoom').addEventListener('click',()=>drawZoomFit());
   { const st=el.querySelector('.de-stage');   /* Space-drag, the Hand tool or the middle button pans; Ctrl/⌘/⌥ + wheel or a pinch zooms */
     st.addEventListener('wheel',e=>{ const E=drawEd; if(!E) return; e.preventDefault(); if(e.ctrlKey||e.metaKey||e.altKey){ drawZoomTo(E.scale*Math.exp(-e.deltaY*(e.ctrlKey&&!e.metaKey&&Math.abs(e.deltaY)<50?.02:.004)),e.clientX,e.clientY); }
-      else if(E.zoom>1.001){ E.pan[0]-=e.shiftKey&&!e.deltaX?e.deltaY:e.deltaX; E.pan[1]-=e.shiftKey&&!e.deltaX?0:e.deltaY; drawFit(); } },{passive:false});
+      else { E.pan[0]-=e.shiftKey&&!e.deltaX?e.deltaY:e.deltaX; E.pan[1]-=e.shiftKey&&!e.deltaX?0:e.deltaY; drawFit(); } },{passive:false});
     st.addEventListener('pointerdown',e=>{ const E=drawEd; if(!E) return; const panIt=E.tool==='hand'||E.spaceHand||e.button===1;
       if(E.tool==='zoom'&&e.button===0&&!E.spaceHand){ e.preventDefault(); e.stopPropagation(); drawZoomStep(e.altKey?-1:1,e.clientX,e.clientY); return; }
       if(!panIt) return; e.preventDefault(); e.stopPropagation(); E.pan0={x:e.clientX,y:e.clientY,p:E.pan.slice(),id:e.pointerId}; try{ st.setPointerCapture(e.pointerId); }catch(err){} drawCursor(); },true);
-    st.addEventListener('pointermove',e=>{ const E=drawEd; if(!E||!E.pan0||e.pointerId!==E.pan0.id) return; e.stopPropagation(); if(E.zoom<=1.001) E.zoom=1.0011; E.pan=[E.pan0.p[0]+e.clientX-E.pan0.x,E.pan0.p[1]+e.clientY-E.pan0.y]; drawFit(); },true);
+    st.addEventListener('pointermove',e=>{ const E=drawEd; if(!E||!E.pan0||e.pointerId!==E.pan0.id) return; e.stopPropagation(); E.pan=[E.pan0.p[0]+e.clientX-E.pan0.x,E.pan0.p[1]+e.clientY-E.pan0.y]; drawFit(); },true);
     const endPan=e=>{ const E=drawEd; if(!E||!E.pan0||e.pointerId!==E.pan0.id) return; e.stopPropagation(); E.pan0=null; drawCursor(); };
+    { const TP=new Map(); let G2=null;
+      st.addEventListener('pointerdown',e=>{ if(e.pointerType!=='touch') return; const E=drawEd; TP.set(e.pointerId,[e.clientX,e.clientY]);
+        if(TP.size===2){ e.stopPropagation(); e.preventDefault(); if(E.cur){ E.cur=null; E.pid=null; E.live.getContext('2d').clearRect(0,0,E.CW,E.CH); drawRender(); } E.act=null; E.pid=null; if(E.region&&E.region.mode!=='poly') E.region=null;
+          const [a,b]=[...TP.values()]; G2={m0:[(a[0]+b[0])/2,(a[1]+b[1])/2], d0:Math.hypot(a[0]-b[0],a[1]-b[1])||1, s0:E.scale, p0:E.pan.slice()}; } else if(G2) e.stopPropagation(); },true);
+      st.addEventListener('pointermove',e=>{ if(e.pointerType!=='touch'||!TP.has(e.pointerId)) return; TP.set(e.pointerId,[e.clientX,e.clientY]); if(!G2) return; e.stopPropagation(); if(TP.size<2) return;
+        const E=drawEd, [a,b]=[...TP.values()], m=[(a[0]+b[0])/2,(a[1]+b[1])/2], d=Math.hypot(a[0]-b[0],a[1]-b[1])||1, rr=st.getBoundingClientRect(), scx=rr.left+rr.width/2, scy=rr.top+rr.height/2;
+        const s1=Math.max(Math.min(.1,E.fit),Math.min(8,G2.s0*d/G2.d0)), ux=(G2.m0[0]-(scx-E.CW*G2.s0/2+G2.p0[0]))/G2.s0, uy=(G2.m0[1]-(scy-E.CH*G2.s0/2+G2.p0[1]))/G2.s0;
+        E.pan=[m[0]-scx+E.CW*s1/2-ux*s1, m[1]-scy+E.CH*s1/2-uy*s1]; E.zoom=s1/E.fit; drawFit(); },true);
+      const tEnd=e=>{ if(e.pointerType!=='touch') return; TP.delete(e.pointerId); if(G2){ e.stopPropagation(); if(!TP.size) G2=null; } };
+      st.addEventListener('pointerup',tEnd,true); st.addEventListener('pointercancel',tEnd,true); }
     st.addEventListener('pointerup',endPan,true); st.addEventListener('pointercancel',endPan,true); st.addEventListener('auxclick',e=>{ if(e.button===1) e.preventDefault(); }); }
   el.querySelector('.de-figs').addEventListener('click',e=>{ const b=e.target.closest('[data-fig]'); if(!b) return; drawEd.fig=b.dataset.fig; drawSetTool('fig'); drawFigs(false); });
   el.querySelector('.de-colors').addEventListener('click',e=>{ const b=e.target.closest('[data-color]'); if(!b) return; drawSetColor(b.dataset.color); });
@@ -6623,27 +6657,29 @@ async function drawPlaceFiles(files,perPanel,mode){ const E=drawEd; if(!E) retur
   for(const f of list.slice(0,40)){ try{ const r=await shrinkImage(f), src=await storeImage(r.blob); if(!IMG[src]) IMG[src]={state:'ok',url:URL.createObjectURL(r.blob)}; done.push({src,w:r.w,h:r.h,nm:f.name.replace(/\.[a-z0-9]+$/i,'')}); }catch(err){} }
   if(drawEd!==E) return; if(!done.length){ toast('Couldn’t add that photo'); return; }
   drawCommitText(); let added=0;
-  done.forEach((d,i)=>{ const pg0=E.pages[E.pi]; if(perPanel&&(i>0||E.ops.length||pg0.refs&&pg0.refs.length)){ E.quietPage=true; drawAddPage(false); E.quietPage=false; added++; }
-    if(mode==='panel'){ const pg=E.pages[E.pi]; (pg.refs=pg.refs||[]).push({src:d.src,iw:d.w,ih:d.h,nm:d.nm}); E.refMin=false; } else drawPlaceOne(d); });
+  done.forEach((d,i)=>{ const pg0=E.pages[E.pi]; if(perPanel&&(mode==='loc'?(i>0||E.ops.some(o=>o.loc)):(i>0||E.ops.length||pg0.refs&&pg0.refs.length))){ E.quietPage=true; drawAddPage(false); E.quietPage=false; added++; }
+    if(mode==='panel'){ const pg=E.pages[E.pi]; (pg.refs=pg.refs||[]).push({src:d.src,iw:d.w,ih:d.h,nm:d.nm}); E.refMin=false; } else if(mode==='loc') drawPlaceLoc(d); else drawPlaceOne(d); });
   E.dirty=true; drawRender(); drawSyncUI(); drawStrip(); drawUnder(); drawRefPanel();
+  if(mode==='loc'){ drawArtUI(); toast(perPanel&&done.length>1?`${done.length} location photos, one per panel${added?` · ${added} new panel${added>1?'s':''}`:''} · draw on them too`:'Location photo added next to your drawing · you can draw on it too'); return; }
   if(mode==='panel'){ toast(perPanel&&done.length>1?`${done.length} photos in the reference panel, one per panel${added?` · ${added} new panel${added>1?'s':''}`:''}`:'Photo added to the reference panel below the canvas'); return; }
   toast(perPanel&&done.length>1?`${done.length} photos, one per panel${added?` · ${added} new panel${added>1?'s':''}`:''} · they’re locked so you can draw your blocking on top`:'Photo placed under your drawing · it’s locked, so drawing won’t move it. Unlock it in Layers to move or resize'); }
 function drawPickPhotos(perPanel,mode){ const E=drawEd; let pk=E.el.querySelector('.de-photo-pick'); if(!pk){ pk=document.createElement('input'); pk.type='file'; pk.accept='image/*'; pk.multiple=true; pk.hidden=true; pk.className='de-photo-pick'; E.el.appendChild(pk);
     pk.addEventListener('change',()=>{ const f=pk.files; if(f&&f.length) drawPlaceFiles(f,pk._per,pk._mode); }); } pk._per=perPanel; pk._mode=mode||E.photoMode; pk.value=''; pk.click(); }
-function drawSetPhotoMode(m){ const E=drawEd; E.photoMode=m; try{ localStorage.setItem('setplot-photo-mode',m); }catch(e){} const b=E.el.querySelector('.de-photo-b'); if(b) b.title=m==='panel'?'Place photos in the reference panel below the canvas':'Place photos under your drawing'; }
+function drawSetPhotoMode(m){ const E=drawEd; E.photoMode=m; try{ localStorage.setItem('setplot-photo-mode',m); }catch(e){} const b=E.el.querySelector('.de-photo-b'); if(b) b.title=m==='panel'?'Place photos in the reference panel below the canvas':m==='loc'?'Place location / blocking photos beside your drawing':'Place photos under your drawing'; }
 /* ---- reference panel: photos beside the drawing (below the canvas), never part of the image ---- */
 function drawRefPanel(){ const E=drawEd; if(!E||!E.el) return; const rp=E.el.querySelector('.de-refp'); if(!rp) return; const pg=E.pages[E.pi], refs=pg.refs||[], any=E.pages.some(q=>q.refs&&q.refs.length);
   rp.hidden=!any; rp.classList.toggle('min',!!E.refMin); rp.querySelector('.drp-n').textContent=refs.length?`Panel ${E.pi+1} · ${refs.length} photo${refs.length>1?'s':''}`:`Panel ${E.pi+1} · no reference`;
   rp.querySelector('.drp-body').style.height=E.refH+'px'; rp.querySelector('[data-rp="min"]').innerHTML=drawIcon(E.refMin?'<path d="m7 14 5-5 5 5"/>':'<path d="m7 10 5 5 5-5"/>');
   rp.querySelector('[data-rp="min"]').title=E.refMin?'Show the reference panel':'Collapse the reference panel';
-  const key=E.pi+'|'+refs.map(r=>r.src+imgState(r.src)).join(',')+'|'+E.refMin; const body=rp.querySelector('.drp-body'); if(body._k===key) return; body._k=key;
-  body.innerHTML=refs.length?refs.map((r,i)=>{ const u=imgURL(r.src); return `<figure class="drp-img" data-ri="${i}">${u?`<img src="${esc(u)}" alt="${esc(r.nm||'Reference')}" draggable="false">`:'<span class="drp-load">Loading…</span>'}<figcaption>${esc(r.nm||'Reference')}</figcaption>
+  { const sb=rp.querySelector('[data-rp="all"]'); if(sb){ sb.hidden=!refs.length; const all=refs.length&&refs.every(r=>r.show); sb.querySelector('span').textContent=all?'Hide all from board':'Show all on board'; } }
+  const key=E.pi+'|'+refs.map(r=>r.src+imgState(r.src)+(r.show?'S':'')).join(',')+'|'+E.refMin; const body=rp.querySelector('.drp-body'); if(body._k===key) return; body._k=key;
+  body.innerHTML=refs.length?refs.map((r,i)=>{ const u=imgURL(r.src); return `<figure class="drp-img${r.show?' show':''}" data-ri="${i}" title="${r.show?'Shown on the board · click to hide it there':'Click to show this reference on the board'}"><span class="drp-on">${r.show?'✓ On board':'Show on board'}</span>${u?`<img src="${esc(u)}" alt="${esc(r.nm||'Reference')}" draggable="false">`:'<span class="drp-load">Loading…</span>'}<figcaption>${esc(r.nm||'Reference')}</figcaption>
       <div class="drp-act"><button type="button" data-ra="under" title="Put this photo under the drawing instead">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}<span>Under drawing</span></button><button type="button" data-ra="del" title="Remove from the reference panel" aria-label="Remove">×</button></div></figure>`; }).join('')
     :`<button type="button" class="drp-empty" data-rp="add">${drawIcon(DRAW_PHOTO_ICON)}<span>Add a reference photo for panel ${E.pi+1}, or drop one here</span></button>`; }
 function drawRefToLayer(i){ const E=drawEd, pg=E.pages[E.pi], r=pg.refs&&pg.refs[i]; if(!r) return; pg.refs.splice(i,1); drawPlaceOne({src:r.src,w:r.iw,h:r.ih,nm:r.nm}); E.dirty=true; drawRender(); drawSyncUI(); drawRefPanel(); toast('Photo moved under the drawing · it’s locked so you can draw on top'); }
 function drawSendToPanel(){ const E=drawEd, L=drawSelOps().filter(o=>o.t==='img'); if(!L.length) return; drawHist(); const pg=E.pages[E.pi]; pg.refs=pg.refs||[];
   L.forEach(o=>pg.refs.push({src:o.src,iw:o.iw||Math.abs(o.pts[2]-o.pts[0]),ih:o.ih||Math.abs(o.pts[3]-o.pts[1]),nm:o.nm})); E.ops=E.ops.filter(o=>!L.includes(o)); drawSelClear(); E.refMin=false; E.dirty=true; drawRender(); drawSyncUI(); drawRefPanel(); toast('Photo moved to the reference panel below the canvas'); }
-function drawFitPhoto(mode){ const E=drawEd, L=drawSelOps().filter(o=>o.t==='img'); if(!L.length) return; drawHist(); L.forEach(o=>{ o.pts=drawPhotoRect(o.iw||Math.abs(o.pts[2]-o.pts[0]),o.ih||Math.abs(o.pts[3]-o.pts[1]),mode); }); drawRender(); drawSyncUI(); }
+function drawFitPhoto(mode){ const E=drawEd, L=drawSelOps().filter(o=>o.t==='img'); if(!L.length) return; drawHist(); L.forEach(o=>{ const w=o.iw||Math.abs(o.pts[2]-o.pts[0]), h=o.ih||Math.abs(o.pts[3]-o.pts[1]); o.pts=drawPhotoRect(w,h,mode); if(o.loc) o.pts=o.pts.map((v,i)=>i%2?v+drawLocY():v+drawLocX()); }); drawRender(); drawSyncUI(); }
 function drawLockSel(){ const E=drawEd, L=drawSelOps(); if(!L.length) return; drawHist(); const lock=L.some(o=>!o.lk); L.forEach(o=>{ if(lock) o.lk=1; else delete o.lk; }); drawRender(); drawSyncUI(); }
 /* ---- Photoshop-like workspace: menu bar, options bar, document tab, status bar, docked panels ---- */
 const DRAW_HINTS={move:'Drag to move · drag a corner to scale · ⌘T transform · ⌘J duplicate', marquee:'Drag a rectangle · Shift adds to the selection', lasso:'Drag around what you want · Shift adds', poly:'Click to place points · Enter closes · Backspace removes a point · Esc cancels',
@@ -6662,13 +6698,13 @@ function drawAlign(m){ const E=drawEd, SL=drawSelOps().filter(o=>!o.h); if(!SL.l
     o.pts=o.pts.map((v,i)=>Math.round((v+(i%2?dy:dx))*10)/10); }); drawRender(); drawSyncUI(); }
 function drawMenus(){ const E=drawEd, el=E.el, q=s=>el.querySelector(s), clk=s=>()=>{ const b=q(s); if(b) b.click(); }, sel=drawSelOps().length, on=s=>{ const b=q(s); return !!b&&b.classList.contains('on'); };
   return {
-    File:[['Place Photo Under Drawing…','',()=>{ drawSetPhotoMode('under'); drawPickPhotos(false,'under'); }],['Place Photo in Reference Panel…','',()=>{ drawSetPhotoMode('panel'); drawPickPhotos(false,'panel'); }],['Place Photos, One per Panel…','',()=>drawPickPhotos(true)],0,['Save to Board','⌘↵',()=>closeDraw(true)],['Close','Esc',()=>closeDraw(false)]],
+    File:[['Place Photo Under Drawing…','',()=>{ drawSetPhotoMode('under'); drawPickPhotos(false,'under'); }],['Place Location / Blocking Photo…','',()=>{ drawSetPhotoMode('loc'); drawPickPhotos(false,'loc'); }],['Place Photo in Reference Panel…','',()=>{ drawSetPhotoMode('panel'); drawPickPhotos(false,'panel'); }],['Place Photos, One per Panel…','',()=>drawPickPhotos(true)],0,['Save to Board','⌘↵',()=>closeDraw(true)],['Close','Esc',()=>closeDraw(false)]],
     Edit:[['Undo','⌘Z',drawUndo,!E.hist.length],['Redo','⇧⌘Z',drawRedo,!E.fut.length],0,['Duplicate','⌘J',drawDupSel,!sel],['Delete','⌫',drawDelSel,!sel],['Clear Canvas','',clk('.de-clear'),!E.ops.length],0,['Fill Shapes','F',drawToggleFill,false,E.fill],0,['Switch Colors','X',drawSwapColors],['Default Colors','D',drawResetColors]],
     Image:[...DRAW_SIZES.map(([k,w,h])=>[`Canvas ${k}  ·  ${w} × ${h}`,'',clk(`[data-size="${k}"]`),false,on(`[data-size="${k}"]`)]),0,['White Background','',clk('[data-bg="white"]'),false,E.bg==='white'],['Dark Background','',clk('[data-bg="dark"]'),false,E.bg==='dark'],['Transparent Background','',clk('[data-bg="none"]'),false,E.bg==='none'],0,['Reference Photo…','',clk('.de-ref-b')]],
     Layer:[['Duplicate Layer','⌘J',drawDupSel,!sel],['Delete Layer','⌫',drawDelSel,!sel],['Hide / Show Layer','',drawHideSel,!sel],['Lock / Unlock Layer','',drawLockSel,!sel],['Move Photo to Reference Panel','',drawSendToPanel,!drawSelOps().some(o=>o.t==='img')],0,['Bring to Front','⇧⌘]',()=>drawOrder(1,true),!sel],['Bring Forward','⌘]',()=>drawOrder(1,false),!sel],['Send Backward','⌘[',()=>drawOrder(-1,false),!sel],['Send to Back','⇧⌘[',()=>drawOrder(-1,true),!sel],0,
       ['Align Left','',()=>drawAlign('l'),!sel],['Align Centers','',()=>drawAlign('c'),!sel],['Align Right','',()=>drawAlign('r'),!sel],['Align Top','',()=>drawAlign('t'),!sel],['Align Middles','',()=>drawAlign('m'),!sel],['Align Bottom','',()=>drawAlign('b'),!sel]],
     Select:[['All','⌘A',drawSelAll],['Deselect','⌘D',drawSelNone,!E.selSet.size],['Inverse','⇧⌘I',drawSelInverse]],
-    View:[['Reference Panel','',()=>{ E.refMin=!E.refMin; drawRefPanel(); },!E.pages.some(q=>q.refs&&q.refs.length),!E.refMin&&E.pages.some(q=>q.refs&&q.refs.length)],0,['Zoom In','⌘+',()=>drawZoomStep(1)],['Zoom Out','⌘−',()=>drawZoomStep(-1)],['Fit on Screen','⌘0',drawZoomFit],['100%','⌘1',()=>drawZoomTo(1)],0,['Frame Guides…','',()=>{ const b=q('.de-guide-b'); setTimeout(()=>b.click(),0); }],['Onion Skin','O',drawToggleOnion,E.pages.length<2,E.onion&&E.pages.length>1],['Onion Skin: Show Next Panel Too','',()=>{ E.onionNext=!E.onionNext; drawOnionSave(); drawUnder(); drawLayers(); },E.pages.length<2,E.onionNext]],
+    View:[['Location Artboard','',()=>drawSetArt(!E.art),false,!!E.art],['Location Below Drawing','',()=>drawSetArtDir('below'),!E.art,E.artDir!=='right'],['Location Beside Drawing','',()=>drawSetArtDir('right'),!E.art,E.artDir==='right'],['Fit Drawing','',()=>drawZoomArt(0)],['Fit Location','',()=>drawZoomArt(1),!E.art],0,['Reference Panel','',()=>{ E.refMin=!E.refMin; drawRefPanel(); },!E.pages.some(q=>q.refs&&q.refs.length),!E.refMin&&E.pages.some(q=>q.refs&&q.refs.length)],0,['Zoom In','⌘+',()=>drawZoomStep(1)],['Zoom Out','⌘−',()=>drawZoomStep(-1)],['Fit on Screen','⌘0',drawZoomFit],['100%','⌘1',()=>drawZoomTo(1)],0,['Frame Guides…','',()=>{ const b=q('.de-guide-b'); setTimeout(()=>b.click(),0); }],['Onion Skin','O',drawToggleOnion,E.pages.length<2,E.onion&&E.pages.length>1],['Onion Skin: Show Next Panel Too','',()=>{ E.onionNext=!E.onionNext; drawOnionSave(); drawUnder(); drawLayers(); },E.pages.length<2,E.onionNext]],
     Storyboard:[['New Panel','⇧N',()=>drawAddPage(false)],['Duplicate Panel','',()=>drawAddPage(true)],0,['Previous Panel',',',()=>drawGoPage(E.pi-1),E.pi<=0],['Next Panel','.',()=>drawGoPage(E.pi+1),E.pi>=E.pages.length-1]] }; }
 function drawMenuOpen(name){ const E=drawEd, el=E.el, m=el.querySelector('.de-menu'); el.querySelectorAll('.de-menus > button').forEach(b=>b.classList.toggle('on',b.dataset.m===name));
   if(!name){ m.hidden=true; E.menuOpen=null; return; } E.menuOpen=name; const items=drawMenus()[name]; m._items=items;
@@ -6704,8 +6740,11 @@ function drawPsLayout(el){ const E=drawEd, q=s=>el.querySelector(s), mk=(tag,cls
   /* document window: tab with the name and zoom, status bar with zoom and size */
   const st=q('.de-stage'), win=mk('div','de-win'); st.before(win); const tab=mk('div','de-doc'); tab.appendChild(q('.de-name')); tab.insertAdjacentHTML('beforeend','<span class="dd-z"></span>');
   win.append(tab,st);
-  const rp=mk('div','de-refp',`<div class="drp-grip" title="Drag to resize"></div><div class="drp-h"><span class="drp-t">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}Reference</span><span class="drp-n"></span><span class="drp-sp"></span><button type="button" data-rp="add" title="Add a reference photo to this panel">${drawIcon('<path d="M12 5v14M5 12h14"/>')}<span>Add</span></button><button type="button" data-rp="min"></button></div><div class="drp-body"></div>`); rp.hidden=true; win.appendChild(rp);
-  rp.addEventListener('click',e=>{ const b=e.target.closest('[data-rp],[data-ra]'); if(!b) return; const f=e.target.closest('[data-ri]');
+  const rp=mk('div','de-refp',`<div class="drp-grip" title="Drag to resize"></div><div class="drp-h"><span class="drp-t">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}Reference</span><span class="drp-n"></span><span class="drp-sp"></span><button type="button" data-rp="all" title="Show or hide all of this panel's references on the board">${drawIcon('<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>')}<span>Show all on board</span></button><button type="button" data-rp="add" title="Add a reference photo to this panel">${drawIcon('<path d="M12 5v14M5 12h14"/>')}<span>Add</span></button><button type="button" data-rp="min"></button></div><div class="drp-body"></div>`); rp.hidden=true; win.appendChild(rp);
+  rp.addEventListener('click',e=>{ const b=e.target.closest('[data-rp],[data-ra]'), f=e.target.closest('[data-ri]'), pg=E.pages[E.pi];
+    if(!b&&f){ const r=pg.refs[+f.dataset.ri]; if(r){ r.show=!r.show; E.dirty=true; drawRefPanel(); toast(r.show?'Shown on the board below the drawing':'Hidden from the board'); } return; }
+    if(b&&b.dataset.rp==='all'){ const all=(pg.refs||[]).every(r=>r.show); (pg.refs||[]).forEach(r=>r.show=!all); E.dirty=true; drawRefPanel(); return; }
+    if(!b) return;
     if(b.dataset.rp==='add') drawPickPhotos(false,'panel'); else if(b.dataset.rp==='min'){ E.refMin=!E.refMin; try{ localStorage.setItem('setplot-refp-min',E.refMin?'1':'0'); }catch(err){} drawRefPanel(); }
     else if(b.dataset.ra==='under'&&f) drawRefToLayer(+f.dataset.ri); else if(b.dataset.ra==='del'&&f){ const pg=E.pages[E.pi]; pg.refs.splice(+f.dataset.ri,1); E.dirty=true; drawRefPanel(); } });
   rp.querySelector('.drp-h').addEventListener('dblclick',e=>{ if(e.target.closest('button')) return; E.refMin=!E.refMin; drawRefPanel(); });
@@ -6718,16 +6757,21 @@ function drawPsLayout(el){ const E=drawEd, q=s=>el.querySelector(s), mk=(tag,cls
   q('.de-props').insertAdjacentHTML('afterbegin','<div class="de-ph"><span>Swatches</span></div>');
   const lf=mk('div','dl-foot',[['photo','Place photo under the drawing','<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 4 3.5 3-2.5 4.5 3.5"/>'],['lock','Lock / unlock selected','<rect x="5.5" y="11" width="13" height="9" rx="1.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>'],['hide','Hide / show selected','<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>'],['down','Send backward  ⌘[','<path d="M12 5v14M6 13l6 6 6-6"/>'],['up','Bring forward  ⌘]','<path d="M12 19V5M6 11l6-6 6 6"/>'],['dup','Duplicate layer  ⌘J','<rect x="4" y="8" width="12" height="12" rx="1.5"/><path d="M8 8V5.5A1.5 1.5 0 0 1 9.5 4H18.5A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H16"/>'],['del','Delete layer  ⌫','<path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/>']].map(([k,t,ic])=>`<button type="button" data-lf="${k}" title="${t}" aria-label="${t}">${drawIcon(ic)}</button>`).join(''));
   q('.de-layers').appendChild(lf);
+  q('.de-art-b').addEventListener('click',()=>drawSetArt(!E.art));
+  q('.de-ab-add').addEventListener('click',()=>drawPickPhotos(false,'loc'));
+  q('.de-abflip').addEventListener('click',()=>drawSetArtDir(E.artDir==='right'?'below':'right'));
+  q('.de-paper').addEventListener('dblclick',e=>{ const n=e.target.closest('[data-abz]'); if(n) drawZoomArt(+n.dataset.abz); });
+  drawWork();
   { const pb=q('.de-photo-b'), wrap=mk('div','de-photo-w'); pb.before(wrap); wrap.appendChild(pb);
     const more=mk('button','btn sm de-photo-more',drawIcon('<path d="m7 10 5 5 5-5"/>')); more.type='button'; more.title='Choose where photos go'; more.setAttribute('aria-label','Choose where photos go'); wrap.appendChild(more);
-    const pm=mk('div','de-photomenu card',`<button type="button" data-pm="under">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}<span><b>Under the drawing</b><small>On its own locked layer, so you draw on top. Part of the image.</small></span></button><button type="button" data-pm="panel">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}<span><b>In a reference panel</b><small>Shown below the canvas, next to your drawing. Not part of the image.</small></span></button><hr><button type="button" data-pm="per"><span><b>Several photos, one per panel…</b><small>Uses the choice above</small></span></button>`); pm.hidden=true; el.appendChild(pm);
-    const sync=()=>pm.querySelectorAll('[data-pm="under"],[data-pm="panel"]').forEach(b=>b.classList.toggle('on',b.dataset.pm===E.photoMode));
+    const pm=mk('div','de-photomenu card',`<button type="button" data-pm="under">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}<span><b>Under the drawing</b><small>On its own locked layer, so you draw on top. Part of the image.</small></span></button><button type="button" data-pm="loc">${drawIcon('<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/><path d="m13.5 16 2.4-2.2 1.8 1.4 1.4-1 2 1.6"/>')}<span><b>As location / blocking photo</b><small>On its own artboard beside the drawing. Draw notes on it. Shown on the board.</small></span></button><button type="button" data-pm="panel">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}<span><b>In a reference panel</b><small>Shown below the canvas, next to your drawing. Not part of the image.</small></span></button><hr><button type="button" data-pm="per"><span><b>Several photos, one per panel…</b><small>Uses the choice above</small></span></button>`); pm.hidden=true; el.appendChild(pm);
+    const sync=()=>pm.querySelectorAll('[data-pm="under"],[data-pm="panel"],[data-pm="loc"]').forEach(b=>b.classList.toggle('on',b.dataset.pm===E.photoMode));
     pb.addEventListener('click',()=>drawPickPhotos(null));
     more.addEventListener('click',e=>{ e.stopPropagation(); pm.hidden=!pm.hidden; if(!pm.hidden){ const r=wrap.getBoundingClientRect(), t=el.getBoundingClientRect(); pm.style.left=Math.max(6,Math.min(r.left-t.left,t.width-pm.offsetWidth-6))+'px'; pm.style.top=(r.bottom-t.top+6)+'px'; } sync(); });
     pm.addEventListener('click',e=>{ const b=e.target.closest('[data-pm]'); if(!b) return; pm.hidden=true; if(b.dataset.pm==='per') drawPickPhotos(true); else { drawSetPhotoMode(b.dataset.pm); drawPickPhotos(null,b.dataset.pm); } });
     el.addEventListener('pointerdown',e=>{ if(!pm.hidden&&!e.target.closest('.de-photo-w,.de-photomenu')) pm.hidden=true; }); drawSetPhotoMode(E.photoMode); }
   q('.dl-empty').textContent='Everything you draw shows up here. Drop location photos in to draw your blocking over them.';
-  el.insertAdjacentHTML('beforeend','<div class="de-dropzone" hidden><div class="dz-t" data-dz="under">'+drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')+'<b>Under the drawing</b><span>A locked layer you draw on top of</span></div><div class="dz-t" data-dz="panel">'+drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')+'<b>Reference panel</b><span>Shown below the canvas, not in the image</span></div><p>Several photos become one panel each</p></div>');
+  el.insertAdjacentHTML('beforeend','<div class="de-dropzone" hidden><div class="dz-t" data-dz="under">'+drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')+'<b>Under the drawing</b><span>A locked layer you draw on top of</span></div><div class="dz-t" data-dz="loc">'+drawIcon('<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/><path d="m13.5 16 2.4-2.2 1.8 1.4 1.4-1 2 1.6"/>')+'<b>Location / blocking</b><span>Beside the drawing, draw notes on it</span></div><div class="dz-t" data-dz="panel">'+drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')+'<b>Reference panel</b><span>Shown below the canvas, not in the image</span></div><p>Several photos become one panel each</p></div>');
   lf.addEventListener('click',e=>{ const b=e.target.closest('[data-lf]'); if(!b) return; const k=b.dataset.lf; if(k==='photo') drawPickPhotos(false,'under'); else if(k==='lock') drawLockSel(); else if(k==='dup') drawDupSel(); else if(k==='del') drawDelSel(); else if(k==='hide') drawHideSel(); else drawOrder(k==='up'?1:-1,false); });
   /* marching ants */
   E.ants=0; E.antsT=setInterval(()=>{ const D=drawEd; if(D!==E){ clearInterval(E.antsT); return; } if(E.cur||E.act||E.pan0||document.hidden) return; if(!E.region&&!(E.tool==='select'&&E.selSet.size)) return; E.ants=(E.ants+1)%64; drawOverlay(E.region&&E.region.mode==='poly'?E.region.hover:(E.hoverP||null)); },110);
@@ -6755,7 +6799,7 @@ function drawGroupMenu(gi){ const E=drawEd, f=E.el.querySelector('.de-selm'); if
 /* ---- colours: foreground / background like Photoshop ---- */
 function drawSwapColors(){ const E=drawEd; [E.color,E.bgCol]=[E.bgCol,E.color]; drawSyncUI(); drawRestyleText(); }
 function drawResetColors(){ const E=drawEd; E.color=DRAW_COLORS[0]; E.bgCol='#ffffff'; drawSyncUI(); drawRestyleText(); }
-function drawSample(x,y){ const E=drawEd; x=Math.max(0,Math.min(E.W-1,Math.round(x))); y=Math.max(0,Math.min(E.H-1,Math.round(y)));
+function drawSample(x,y){ const E=drawEd; x=Math.max(0,Math.min(E.CW-1,Math.round(x))); y=Math.max(0,Math.min(E.CH-1,Math.round(y)));
   const top=E.cv.getContext('2d').getImageData(x,y,1,1).data, und=E.under?E.under.getContext('2d').getImageData(x,y,1,1).data:[0,0,0,0];
   const paper=E.bg==='dark'?[27,29,34]:[255,255,255], base=[0,1,2].map(i=>und[i]*und[3]/255+paper[i]*(1-und[3]/255)), a=top[3]/255;
   if(E.bg==='none'&&!top[3]&&!und[3]) return null;
@@ -6765,8 +6809,8 @@ function drawPick(x,y,toBg){ const E=drawEd, c=drawSample(x,y); if(!c) return; i
 const DRAW_ZOOMS=[.1,.125,.167,.25,.333,.5,.667,1,1.5,2,3,4,6,8];
 function drawZoomTo(s1,cx,cy){ drawFit(); const E=drawEd, st=E.el.querySelector('.de-stage').getBoundingClientRect(); s1=Math.max(Math.min(.1,E.fit),Math.min(8,s1));
   const scx=st.left+st.width/2, scy=st.top+st.height/2; if(cx==null){ cx=scx; cy=scy; }
-  const s0=E.scale, ux=(cx-(scx-E.W*s0/2+E.pan[0]))/s0, uy=(cy-(scy-E.H*s0/2+E.pan[1]))/s0;
-  E.pan=[cx-scx+E.W*s1/2-ux*s1, cy-scy+E.H*s1/2-uy*s1]; E.zoom=s1/E.fit; drawFit(); }
+  const s0=E.scale, ux=(cx-(scx-E.CW*s0/2+E.pan[0]))/s0, uy=(cy-(scy-E.CH*s0/2+E.pan[1]))/s0;
+  E.pan=[cx-scx+E.CW*s1/2-ux*s1, cy-scy+E.CH*s1/2-uy*s1]; E.zoom=s1/E.fit; drawFit(); }
 function drawZoomStep(dir,cx,cy){ const E=drawEd, s=E.scale; const nx=dir>0?DRAW_ZOOMS.find(z=>z>s*1.01):DRAW_ZOOMS.slice().reverse().find(z=>z<s*.99); if(nx) drawZoomTo(nx,cx,cy); }
 function drawZoomFit(){ const E=drawEd; E.zoom=1; E.pan=[0,0]; drawFit(); }
 function drawSetColor(c,live){ const E=drawEd; const L=drawSelOps().filter(o=>o.t!=='eraser'&&o.t!=='img');
@@ -6776,12 +6820,35 @@ function drawApplySize(){ const E=drawEd, L=drawSelOps().filter(o=>o.t!=='img');
   L.forEach(o=>{ if(o.t==='text') o.fs=Math.max(24,E.size*6); else if(o.t==='rough') o.w=Math.max(1,Math.round(E.size*.6)); else if(o.t==='marker') o.w=Math.round(E.size*2.2); else if(o.t==='eraser') o.w=Math.round(E.size*2); else o.w=E.size; }); drawRender(); }
 function drawToggleFill(){ const E=drawEd, L=drawSelOps().filter(o=>['rect','ellipse','fig'].includes(o.t));
   if(L.length){ drawHist(); const v=L.every(o=>o.f)?0:1; L.forEach(o=>o.f=v); E.fill=!!v; drawRender(); } else E.fill=!E.fill; drawSyncUI(); }
-function drawSetSize(W,H,first){ const E=drawEd; if(!first&&E.ops.length){ const sx=W/E.W, sy=H/E.H, s=Math.min(sx,sy), ox=(W-E.W*s)/2, oy=(H-E.H*s)/2;   /* keep what's drawn, centred and scaled to the new shape */
-    E.ops.forEach(o=>{ if(o.pts) o.pts=o.pts.map((v,i)=>Math.round(i%2?v*s+oy:v*s+ox)); if(o.w) o.w=Math.max(1,Math.round(o.w*s)); if(o.fs) o.fs=Math.max(6,Math.round(o.fs*s)); }); E.dirty=true; }
-  E.W=W; E.H=H; [E.cv,E.live,E.layer,E.under,E.guideCv,E.onionCv].forEach(c=>{ if(c){ c.width=W; c.height=H; } }); drawFit(); drawRender(); drawUnder(); drawGuide(); }
-function drawFit(){ const E=drawEd; if(!E) return; const st=E.el.querySelector('.de-stage'), pp=E.el.querySelector('.de-paper'); const r=st.getBoundingClientRect(); E.fit=Math.max(.02,Math.min((r.width-32)/E.W,(r.height-32)/E.H,1)); const s=E.fit*(E.zoom||1); E.scale=s;
-  if(E.zoom<=1.001&&E.zoom>=.999) E.pan=[0,0]; const mx=Math.max(0,(E.W*s+r.width)/2-60), my=Math.max(0,(E.H*s+r.height)/2-60); E.pan=[Math.max(-mx,Math.min(mx,E.pan[0])),Math.max(-my,Math.min(my,E.pan[1]))];
-  pp.style.width=Math.round(E.W*s)+'px'; pp.style.height=Math.round(E.H*s)+'px'; pp.style.transform=`translate(-50%,-50%) translate(${Math.round(E.pan[0])}px,${Math.round(E.pan[1])}px)`;
+function drawSetSize(W,H,first){ const E=drawEd; if(!first){ drawPageSync(); const sx=W/E.W, sy=H/E.H, s=Math.min(sx,sy), ox=(W-E.W*s)/2, oy=(H-E.H*s)/2, oO=drawLocO(), nG=Math.round(Math.max(W,H)*.06), nO=E.artDir==='right'?[W+nG,0]:[0,H+nG];   /* keep what's drawn, centred and scaled to the new shape */
+    E.pages.forEach(pg=>pg.ops.forEach(o=>{ const loc=E.art&&drawIsLoc(o), b0=loc?oO:[0,0], b1=loc?nO:[0,0];
+      if(o.pts) o.pts=o.pts.map((v,i)=>Math.round(i%2?(v-b0[1])*s+oy+b1[1]:(v-b0[0])*s+ox+b1[0])); if(o.w) o.w=Math.max(1,Math.round(o.w*s)); if(o.fs) o.fs=Math.max(6,Math.round(o.fs*s)); })); E.dirty=true; }
+  E.W=W; E.H=H; E.G=Math.round(Math.max(W,H)*.06);
+  E.pages.forEach(pg=>pg.ops.forEach(o=>{ if(o.loc){ o.pts=drawLocRect(o.iw,o.ih); o.clip=[drawLocX(),drawLocY(),W,H]; } }));   /* location photos refill their artboard */
+  drawWork(); }
+function drawLocO(dir){ const E=drawEd; dir=dir||E.artDir; return dir==='right'?[E.W+(E.G||0),0]:[0,E.H+(E.G||0)]; }
+function drawLocX(){ return drawLocO()[0]; }
+function drawLocY(){ return drawLocO()[1]; }
+function drawIsLoc(o,dir){ const E=drawEd; if(o.loc) return true; const b=drawBox(o), G=E.G||0; return (dir||E.artDir)==='right'?b.x>=E.W+G/2:b.y>=E.H+G/2; }
+function drawSetArtDir(d){ const E=drawEd; if(E.artDir===d) return; drawPageSync(); const [ox,oy]=drawLocO(E.artDir), [nx,ny]=drawLocO(d);
+  if(E.art) E.pages.forEach(pg=>pg.ops.forEach(o=>{ if(!drawIsLoc(o,E.artDir)) return; o.pts=o.pts.map((v,i)=>i%2?v-oy+ny:v-ox+nx); if(o.clip) o.clip=[nx,ny,E.W,E.H]; }));
+  E.artDir=d; E.dirty=true; drawWork(); drawZoomFit(); drawSyncUI(); }
+function drawLocRect(w,h){ const E=drawEd, s=Math.max(E.W/w,E.H/h), pw=w*s, ph=h*s, x=drawLocX()+(E.W-pw)/2, y=drawLocY()+(E.H-ph)/2; return [Math.round(x),Math.round(y),Math.round(x+pw),Math.round(y+ph)]; }
+function drawWork(){ const E=drawEd; E.G=E.G||Math.round(Math.max(E.W,E.H)*.06); const R2=E.art&&E.artDir==='right', B2=E.art&&E.artDir!=='right'; E.CW=R2?E.W*2+E.G:E.W; E.CH=B2?E.H*2+E.G:E.H; [E.cv,E.live,E.layer,E.under,E.guideCv,E.onionCv].forEach(c=>{ if(c){ c.width=E.CW; c.height=E.CH; } });
+  drawArtUI(); drawFit(); drawRender(); drawUnder(); drawGuide(); }
+function drawArtUI(){ const E=drawEd; if(!E||!E.el) return; const pp=E.el.querySelector('.de-paper'); if(!pp) return; pp.classList.toggle('art',!!E.art);
+  const a1=pp.querySelector('.de-ab1'), a2=pp.querySelector('.de-ab2'), add=pp.querySelector('.de-ab-add'), f=v=>(v/E.CW*100)+'%', fy=v=>(v/E.CH*100)+'%'; a1.hidden=a2.hidden=!E.art; pp.dataset.dir=E.artDir;
+  if(E.art){ a1.style.left='0'; a1.style.top='0'; a1.style.width=f(E.W); a1.style.height=fy(E.H); a2.style.left=f(drawLocX()); a2.style.top=fy(drawLocY()); a2.style.width=f(E.W); a2.style.height=fy(E.H); add.style.left=f(drawLocX()+E.W/2); add.style.top=fy(drawLocY()+E.H/2);
+    const fl=pp.querySelector('.de-abflip'); fl.title=E.artDir==='right'?'Put the location photo below the drawing':'Put the location photo beside the drawing'; fl.innerHTML=drawIcon(E.artDir==='right'?'<rect x="5" y="3" width="14" height="8" rx="1"/><rect x="5" y="13" width="14" height="8" rx="1"/>':'<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/>'); }
+  add.hidden=!E.art||E.ops.some(o=>o.loc); const b=E.el.querySelector('.de-art-b'); if(b) b.classList.toggle('on',!!E.art); }
+function drawSetArt(on){ const E=drawEd; if(!!E.art===!!on) return; drawCommitText(); E.art=!!on; E.dirty=true; drawWork(); drawZoomFit(); drawSyncUI();
+  toast(on?'Location artboard on · add a location or blocking photo next to your drawing. Two-finger scroll or Space-drag to move around':'Location artboard hidden · its photos and notes are kept'); }
+function drawZoomArt(i){ const E=drawEd, st=E.el.querySelector('.de-stage').getBoundingClientRect(); drawFit(); const s=Math.min((st.width-40)/E.W,(st.height-64)/E.H), cx=i?drawLocX()+E.W/2:E.W/2, cy=i?drawLocY()+E.H/2:E.H/2; E.zoom=s/E.fit; E.pan=[(E.CW/2-cx)*s,(E.CH/2-cy)*s]; drawFit(); }
+function drawPlaceLoc(d){ const E=drawEd; if(!E.art){ E.art=true; drawWork(); drawZoomFit(); } drawHist(); E.ops=E.ops.filter(o=>!o.loc);
+  const o={t:'img', loc:1, src:d.src, iw:d.w, ih:d.h, nm:d.nm||'Location', c:'transparent', w:0, lk:1, pts:drawLocRect(d.w,d.h), clip:[drawLocX(),drawLocY(),E.W,E.H]}; o.i=++E.nid; E.ops.unshift(o); return o; }
+function drawFit(){ const E=drawEd; if(!E) return; const st=E.el.querySelector('.de-stage'), pp=E.el.querySelector('.de-paper'); const r=st.getBoundingClientRect(); E.fit=Math.max(.02,Math.min((r.width-32)/E.CW,(r.height-(E.art?64:32))/E.CH,1)); const s=E.fit*(E.zoom||1); E.scale=s;
+  const mx=Math.max(0,(E.CW*s+r.width)/2-60), my=Math.max(0,(E.CH*s+r.height)/2-60); E.pan=[Math.max(-mx,Math.min(mx,E.pan[0])),Math.max(-my,Math.min(my,E.pan[1]))];
+  pp.style.width=Math.round(E.CW*s)+'px'; pp.style.height=Math.round(E.CH*s)+'px'; pp.style.transform=`translate(-50%,-50%) translate(${Math.round(E.pan[0])}px,${Math.round(E.pan[1])}px)`;
   const zb=E.el.querySelector('.de-zoom'); if(zb){ zb.textContent=Math.round(s*100)+'%'; zb.classList.toggle('on',Math.abs(E.zoom-1)>.001); }
   const dz=E.el.querySelector('.dd-z'); if(dz) dz.textContent=`@ ${Math.round(s*100)}% (RGB/8)${E.dirty?' *':''}`;
   if(E.el.querySelector('.de-text')&&!E.el.querySelector('.de-text').hidden){ const ta=E.el.querySelector('.de-text'); ta.style.left=(E.textAt[0]*s)+'px'; ta.style.top=(E.textAt[1]*s)+'px'; drawRestyleText(); }
@@ -6792,7 +6859,7 @@ function drawSyncUI(){ const E=drawEd, el=E.el, cv=drawCurV(); if(!E.gsel) E.gse
     if(b.dataset.v!==key){ b.dataset.v=key; b.innerHTML=drawPsIcon(v); b.title=`${DRAW_PS[v][0]} (${DRAW_PS[v][1]})${G.length>1?' · right-click for more':''}`; b.setAttribute('aria-label',DRAW_PS[v][0]); }
     b.classList.toggle('on',G.includes(cv)); });
   { const fg=el.querySelector('.de-fg'), bg=el.querySelector('.de-bgc'); fg.style.setProperty('--c',E.color); bg.style.setProperty('--c',E.bgCol); const fi=fg.querySelector('input'), bi=bg.querySelector('input'); if(document.activeElement!==fi) fi.value=/^#[0-9a-f]{6}$/i.test(E.color)?E.color:'#000000'; if(document.activeElement!==bi) bi.value=/^#[0-9a-f]{6}$/i.test(E.bgCol)?E.bgCol:'#ffffff'; }
-  el.querySelector('.de-paper').dataset.sel=E.tool==='select'?E.selMode:'';
+  el.querySelector('.de-paper').dataset.sel=E.tool==='select'?E.selMode:''; drawArtUI();
   { el.querySelectorAll('[data-fig]').forEach(b=>b.classList.toggle('on',b.dataset.fig===E.fig)); }
   const so=E.tool==='select'&&E.sel&&drawById(E.sel);
   if(so&&so.t!=='img'){ if(so.t!=='eraser') E.color=so.c; if(['rect','ellipse','fig'].includes(so.t)) E.fill=!!so.f; E.size=so.t==='text'?Math.round(so.fs/6):so.t==='marker'?Math.round(so.w/2.2):so.t==='eraser'?Math.round(so.w/2):so.t==='rough'?Math.round(so.w/.6):so.w; E.size=Math.max(1,Math.min(60,E.size)); E.alpha=so.a!=null?so.a:1; }   /* the panel shows the selected object's look */
@@ -6849,7 +6916,7 @@ function drawOrder(dir,all){ const E=drawEd; if(!E.selSet.size) return; const be
   else { for(let i=1;i<A.length;i++) if(E.selSet.has(A[i].i)&&!E.selSet.has(A[i-1].i)){ [A[i],A[i-1]]=[A[i-1],A[i]]; } }
   if(A.map(o=>o.i).join(',')===before) return; drawHist(); E.ops=A; drawRender(); drawSyncUI(); }
 /* ---- geometry: boxes, hit testing, moving and scaling ---- */
-function drawBox(o){ const P=o.pts; if(o.t==='text'){ const g=drawEd.layer.getContext('2d'); g.font=`600 ${o.fs}px ${FONT}`; const L=String(o.text).split('\n'); const w=Math.max(...L.map(l=>g.measureText(l).width)); return {x:P[0],y:P[1],w:Math.max(8,w),h:L.length*o.fs*1.25}; }
+function drawBox(o){ const P=o.pts; if(o.t==='img'&&o.clip){ const x0=Math.max(Math.min(P[0],P[2]),o.clip[0]), y0=Math.max(Math.min(P[1],P[3]),o.clip[1]), x1=Math.min(Math.max(P[0],P[2]),o.clip[0]+o.clip[2]), y1=Math.min(Math.max(P[1],P[3]),o.clip[1]+o.clip[3]); return {x:x0,y:y0,w:Math.max(1,x1-x0),h:Math.max(1,y1-y0)}; } if(o.t==='text'){ const g=drawEd.layer.getContext('2d'); g.font=`600 ${o.fs}px ${FONT}`; const L=String(o.text).split('\n'); const w=Math.max(...L.map(l=>g.measureText(l).width)); return {x:P[0],y:P[1],w:Math.max(8,w),h:L.length*o.fs*1.25}; }
   let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity; for(let i=0;i<P.length;i+=2){ x0=Math.min(x0,P[i]); x1=Math.max(x1,P[i]); y0=Math.min(y0,P[i+1]); y1=Math.max(y1,P[i+1]); }
   const pad=['pen','marker','eraser','rough','line','arrow'].includes(o.t)?o.w/2+(o.t==='arrow'?o.w*1.6:0):(o.f?0:o.w/2);
   return {x:x0-pad,y:y0-pad,w:x1-x0+pad*2,h:y1-y0+pad*2}; }
@@ -6867,7 +6934,7 @@ function drawTransform(o,src,b0,b1){ const sx=b0.w?b1.w/b0.w:1, sy=b0.h?b1.h/b0.
   o.pts=src.pts.map((v,i)=>i%2?Math.round((b1.y+(v-b0.y)*sy)*10)/10:Math.round((b1.x+(v-b0.x)*sx)*10)/10);
   if(o.t==='text') o.fs=Math.max(8,Math.round(src.fs*Math.min(sx,sy))); }
 /* ---- overlay on the live canvas: brush cursor and the selection box ---- */
-function drawOverlay(p){ const E=drawEd; if(!E||E.cur) return; const g=E.live.getContext('2d'); g.clearRect(0,0,E.W,E.H);
+function drawOverlay(p){ const E=drawEd; if(!E||E.cur) return; const g=E.live.getContext('2d'); g.clearRect(0,0,E.CW,E.CH);
   if(p&&['pen','marker','eraser','rough'].includes(E.tool)){ const w=E.tool==='marker'?E.size*2.2:E.tool==='eraser'?E.size*2:E.size; g.beginPath(); g.arc(p[0],p[1],Math.max(1.5,w/2),0,Math.PI*2); g.lineWidth=Math.max(1,1.2/E.scale); g.strokeStyle=E.tool==='eraser'?'rgba(128,128,128,.9)':E.color; g.globalAlpha=.7; g.stroke(); g.globalAlpha=1; }
   if(E.tool==='select'){ const k=1/E.scale, R=E.region;
     if(p&&!E.act&&!R&&E.selMode==='pointer'){ const h=drawHit(p[0],p[1]); if(h&&!E.selSet.has(h.i)){ const b=drawBox(h); g.setLineDash([]); g.lineWidth=1.2*k; g.strokeStyle=E.accent; g.globalAlpha=.55; g.strokeRect(b.x,b.y,b.w,b.h); g.globalAlpha=1; } }   /* hover outline */
@@ -6884,7 +6951,7 @@ function drawOverlay(p){ const E=drawEd; if(!E||E.cur) return; const g=E.live.ge
   E.live.style.cursor=E.tool!=='select'?'':hd?(hd==='nw'||hd==='se'?'nwse-resize':'nesw-resize'):E.region?'crosshair':p&&(E.selMode==='pointer'?(drawHit(p[0],p[1])||E.selSet.size>1&&drawInSel(p[0],p[1])):(h=>h&&E.selSet.has(h.i))(drawHit(p[0],p[1])))?'move':E.selMode==='pointer'?'default':'crosshair'; }
 function drawCursorFor(){ const E=drawEd; return E.pan0?'grabbing':(E.spaceHand||E.tool==='hand')?'grab':E.tool==='zoom'?(E.altDown?'zoom-out':'zoom-in'):(E.tool==='eyedrop'||E.altDown&&['pen','rough','marker','line','arrow','rect','ellipse','fig','text'].includes(E.tool))?DRAW_DROP_CUR:''; }
 function drawCursor(){ const E=drawEd; if(!E) return; const c=drawCursorFor(); E.el.querySelector('.de-stage').style.cursor=c&&c!==DRAW_DROP_CUR?c:''; if(c) E.live.style.cursor=c; else E.live.style.cursor=E.tool==='select'?(E.selMode==='pointer'?'default':'crosshair'):''; }
-function drawPt(e){ const r=drawEd.live.getBoundingClientRect(); return [ (e.clientX-r.left)/r.width*drawEd.W, (e.clientY-r.top)/r.height*drawEd.H ]; }
+function drawPt(e){ const r=drawEd.live.getBoundingClientRect(); return [ (e.clientX-r.left)/r.width*drawEd.CW, (e.clientY-r.top)/r.height*drawEd.CH ]; }
 function drawUsesPressure(e){ return drawEd.pressure && (e.pointerType==='pen' || (e.pointerType==='touch' && e.pressure>0 && e.pressure!==.5 && e.pressure!==1)); }   /* tablets and styluses report real pressure; a mouse is always 0.5 */
 function drawDown(e){ const E=drawEd; if(e.button!==0&&e.pointerType==='mouse') return; e.preventDefault();
   if(e.pointerType==='pen'&&!E.penSeen){ E.penSeen=true; drawSyncUI(); }
@@ -6959,8 +7026,8 @@ function drawUp(e){ const E=drawEd; if(!E) return; if(e&&E.pid!=null&&e.pointerI
   if(o.t==='fig'&&Math.hypot(o.pts[2]-o.pts[0],o.pts[3]-o.pts[1])<6){ const h=Math.round(Math.min(E.W,E.H)*.12); o.pts=[o.pts[0]-h,o.pts[1]-h,o.pts[0]+h,o.pts[1]+h]; }   /* a click drops it at a handy size */
   const tiny=o.pts.length===4&&!['pen','marker','eraser','rough'].includes(o.t)&&Math.hypot(o.pts[2]-o.pts[0],o.pts[3]-o.pts[1])<3;
   if(!tiny){ if(o.pr===undefined||o.pr===null) delete o.pr; drawAdd(o); }
-  E.live.getContext('2d').clearRect(0,0,E.W,E.H); drawRender(); drawSyncUI(); }
-function drawLive(){ const E=drawEd, g=E.live.getContext('2d'); g.clearRect(0,0,E.W,E.H); const o=E.cur; if(!o) return;
+  E.live.getContext('2d').clearRect(0,0,E.CW,E.CH); drawRender(); drawSyncUI(); }
+function drawLive(){ const E=drawEd, g=E.live.getContext('2d'); g.clearRect(0,0,E.CW,E.CH); const o=E.cur; if(!o) return;
   if(o.t==='eraser'){ drawRender(o); return; }   /* the eraser shows its real effect while you drag */
   drawOp(g,o); }
 function drawStroke(g,o){ const P=o.pts; if(P.length<2) return; g.lineCap='round'; g.lineJoin='round';
@@ -7004,6 +7071,7 @@ function drawOp(g,o){ if(o.t==='clear'){ g.clearRect(0,0,g.canvas.width,g.canvas
       if(o.f&&!DRAW_FIG_OPEN.has(o.k)){ const ga=g.globalAlpha; g.globalAlpha=ga*.28; g.fillStyle=o.c; g.fill(P2); g.globalAlpha=ga; }   /* filled figures get a soft tint inside the line */
       g.strokeStyle=o.c; g.lineWidth=o.w/sc; g.stroke(P2); } }
   else if(o.t==='img'){ const [x0,y0,x1,y1]=o.pts, x=Math.min(x0,x1), y=Math.min(y0,y1), w=Math.abs(x1-x0), h=Math.abs(y1-y0), im=drawImgGet(o.src);
+    if(o.clip){ g.beginPath(); g.rect(o.clip[0],o.clip[1],o.clip[2],o.clip[3]); g.clip(); }
     if(im&&im.complete&&im.naturalWidth){ g.imageSmoothingQuality='high'; g.drawImage(im,x,y,w,h); } else { g.fillStyle='rgba(128,128,128,.18)'; g.fillRect(x,y,w,h); } }
   else if(o.t==='text'){ g.fillStyle=o.c; g.font=`600 ${o.fs}px ${FONT}`; g.textBaseline='top'; String(o.text).split('\n').forEach((ln,i)=>g.fillText(ln,o.pts[0],o.pts[1]+i*o.fs*1.25)); }
   g.restore(); }
@@ -7044,7 +7112,7 @@ function drawGuideMenuSync(){ const E=drawEd, gm=E.el.querySelector('.de-gmenu')
   E.el.querySelector('.de-guide-b').classList.toggle('on',E.guide.ar!=='none'||E.guide.thirds||E.guide.safe||E.guide.center); }
 /* the frame: the largest rectangle of the chosen ratio inside the sheet */
 function drawFrameRect(){ const E=drawEd, ar=parseFloat(E.guide.ar); if(!ar) return {x:0,y:0,w:E.W,h:E.H}; let w=E.W, h=w/ar; if(h>E.H){ h=E.H; w=h*ar; } return {x:(E.W-w)/2,y:(E.H-h)/2,w,h}; }
-function drawGuide(){ const E=drawEd; if(!E||!E.guideCv) return; const g=E.guideCv.getContext('2d'); g.clearRect(0,0,E.W,E.H); const G=E.guide, F=drawFrameRect(), k=1/(E.scale||1);
+function drawGuide(){ const E=drawEd; if(!E||!E.guideCv) return; const g=E.guideCv.getContext('2d'); g.clearRect(0,0,E.CW,E.CH); const G=E.guide, F=drawFrameRect(), k=1/(E.scale||1);
   if(G.ar!=='none'){ g.fillStyle='rgba(20,22,26,.42)'; g.beginPath(); g.rect(0,0,E.W,E.H); g.rect(F.x,F.y,F.w,F.h); g.fill('evenodd'); g.strokeStyle='rgba(20,22,26,.55)'; g.lineWidth=1.2*k; g.strokeRect(F.x,F.y,F.w,F.h); }   /* letterbox outside the frame */
   g.strokeStyle='rgba(80,120,255,.55)'; g.lineWidth=1*k;
   if(G.thirds){ g.beginPath(); for(let i=1;i<3;i++){ g.moveTo(F.x+F.w*i/3,F.y); g.lineTo(F.x+F.w*i/3,F.y+F.h); g.moveTo(F.x,F.y+F.h*i/3); g.lineTo(F.x+F.w,F.y+F.h*i/3); } g.stroke(); }
@@ -7052,9 +7120,9 @@ function drawGuide(){ const E=drawEd; if(!E||!E.guideCv) return; const g=E.guide
   if(G.center){ const cx=F.x+F.w/2, cy=F.y+F.h/2, r=Math.min(F.w,F.h)*.04; g.beginPath(); g.moveTo(cx-r,cy); g.lineTo(cx+r,cy); g.moveTo(cx,cy-r); g.lineTo(cx,cy+r); g.stroke(); } }
 function drawLoadRef(pg){ if(!pg.ref||pg.ref.img) return; const im=new Image(); im.onload=()=>{ pg.ref.img=im; if(drawEd&&drawEd.pages[drawEd.pi]===pg) drawUnder(); }; im.src=pg.ref.src; }
 function drawRefInto(g,pg,alpha){ const E=drawEd; if(!pg.ref||!pg.ref.img) return; const im=pg.ref.img, s=Math.max(E.W/im.naturalWidth,E.H/im.naturalHeight), w=im.naturalWidth*s, h=im.naturalHeight*s; g.save(); g.globalAlpha=alpha; g.drawImage(im,(E.W-w)/2,(E.H-h)/2,w,h); g.restore(); }
-function drawUnder(){ const E=drawEd; if(!E||!E.under) return; const g=E.under.getContext('2d'); g.clearRect(0,0,E.W,E.H); const pg=E.pages[E.pi];
+function drawUnder(){ const E=drawEd; if(!E||!E.under) return; const g=E.under.getContext('2d'); g.clearRect(0,0,E.CW,E.CH); const pg=E.pages[E.pi];
   if(pg.ref&&!pg.ref.hide) drawRefInto(g,pg,pg.ref.op);
-  const og=E.onionCv?E.onionCv.getContext('2d'):g; if(E.onionCv) og.clearRect(0,0,E.W,E.H);
+  const og=E.onionCv?E.onionCv.getContext('2d'):g; if(E.onionCv) og.clearRect(0,0,E.CW,E.CH);
   const ghost=(pg2,col)=>{ if(!pg2||!pg2.ops.length) return; const c=document.createElement('canvas'); c.width=E.W; c.height=E.H; const cg=c.getContext('2d'); drawPaintOps(cg,pg2.ops.filter(o=>o.t!=='img'));
     if(E.onionTint){ cg.globalCompositeOperation='source-atop'; cg.fillStyle=col; cg.fillRect(0,0,E.W,E.H); } og.save(); og.globalAlpha=E.onionOp; og.drawImage(c,0,0); og.restore(); };   /* drawn above the drawing, so it also shows over a location photo */
   if(E.onion&&E.pi>0) ghost(E.pages[E.pi-1],'#e5484d');   /* the panel before, faintly, for continuity */
@@ -7116,12 +7184,26 @@ function drawCompose(){ const E=drawEd; drawPageSync();
     const l=document.createElement('canvas'); l.width=E.W; l.height=E.H; const lg=l.getContext('2d'); drawPaintOps(lg,pg.ops); g.drawImage(l,0,0);
     const F=drawFrameRect(); if(E.guide.ar!=='none'){ const o=document.createElement('canvas'); o.width=Math.round(F.w); o.height=Math.round(F.h); o.getContext('2d').drawImage(c,F.x,F.y,F.w,F.h,0,0,o.width,o.height); return o; }   /* with a frame guide, the image is the frame */
     return c; };
-  if(E.pages.length===1) return renderPanel(E.pages[0]);
-  const P=E.pages.map(renderPanel), pw=640, ph=Math.round(pw*P[0].height/P[0].width), cols=E.pages.length===2||E.pages.length===4?2:3, rows=Math.ceil(P.length/cols), cap=96, gap=28, pad=40, head=64;
-  const out=document.createElement('canvas'); out.width=pad*2+cols*pw+(cols-1)*gap; out.height=pad+head+rows*(ph+cap)+(rows-1)*gap+pad; const g=out.getContext('2d');
+  const renderLoc=pg=>{ if(!E.art) return null; const LX=drawLocX(), LY=drawLocY(); if(!pg.ops.some(o=>!o.h&&drawIsLoc(o))) return null;
+    const big=document.createElement('canvas'); big.width=E.CW; big.height=E.CH; drawPaintOps(big.getContext('2d'),pg.ops);
+    const c=document.createElement('canvas'); c.width=E.W; c.height=E.H; const g=c.getContext('2d'); g.fillStyle='#e9eaec'; g.fillRect(0,0,E.W,E.H); g.drawImage(big,LX,LY,E.W,E.H,0,0,E.W,E.H); return c; };
+  const refImgs=pg=>(pg.refs||[]).filter(r=>r.show).map(r=>drawImgGet(r.src)).filter(im=>im&&im.complete&&im.naturalWidth);
+  const extras=E.pages.some(pg=>renderLoc(pg)||refImgs(pg).length);
+  if(E.pages.length===1&&!extras) return renderPanel(E.pages[0]);
+  const P=E.pages.map(renderPanel), pw=640, ph=Math.round(pw*P[0].height/P[0].width), cols=E.pages.length===1?1:E.pages.length===2||E.pages.length===4?2:3, rows=Math.ceil(P.length/cols), cap=96, gap=28, pad=40, head=64, lab=26, sub=14;
+  /* each panel is a column: drawing + notes, then the location photo, then the references */
+  const LOC=E.pages.map(renderLoc), REF=E.pages.map(refImgs), lh=Math.round(pw*E.H/E.W);
+  const refRows=imgs=>{ const out=[]; for(let i=0;i<imgs.length;i+=2){ const pair=imgs.slice(i,i+2), w=pair.length>1?(pw-sub)/2:pw; out.push({pair,w,h:Math.min(Math.round(pw*.75),Math.max(...pair.map(im=>Math.round(w*im.naturalHeight/im.naturalWidth))))}); } return out; };
+  const RR=REF.map(refRows), colH=E.pages.map((_,i)=>ph+cap+(LOC[i]?lab+lh+sub:0)+(RR[i].length?lab+RR[i].reduce((a,r)=>a+r.h+sub,0):0));
+  const rowH=[]; for(let r=0;r<rows;r++) rowH.push(Math.max(...colH.slice(r*cols,r*cols+cols)));
+  const out=document.createElement('canvas'); out.width=pad*2+cols*pw+(cols-1)*gap; out.height=pad+head+rowH.reduce((a,h)=>a+h,0)+(rows-1)*gap+pad; const g=out.getContext('2d');
   g.fillStyle='#ffffff'; g.fillRect(0,0,out.width,out.height); g.fillStyle='#1b1d22'; g.font=`700 28px ${FONT}`; g.textBaseline='top'; g.fillText((E.name||'Storyboard').trim()||'Storyboard',pad,pad);
-  g.fillStyle='#8a9099'; g.font=`600 16px ${FONT}`; g.fillText(`${P.length} panels`,pad,pad+36);
-  P.forEach((c,i)=>{ const col=i%cols, row=Math.floor(i/cols), x=pad+col*(pw+gap), y=pad+head+row*(ph+cap+gap), inf=E.pages[i].info||{};
+  g.fillStyle='#8a9099'; g.font=`600 16px ${FONT}`; g.fillText(P.length>1?`${P.length} panels`:'Storyboard',pad,pad+36);
+  const label=(t,x,y)=>{ g.fillStyle='#8a9099'; g.font=`700 12px ${FONT}`; g.textBaseline='top'; g.fillText(t.toUpperCase(),x,y+7); };
+  P.forEach((c,i)=>{ const col=i%cols, row=Math.floor(i/cols), x=pad+col*(pw+gap), y0=pad+head+rowH.slice(0,row).reduce((a,h)=>a+h+gap,0); let yy=y0+ph+cap;
+    if(LOC[i]){ label('Location / blocking',x,yy); yy+=lab; g.drawImage(LOC[i],x,yy,pw,lh); g.strokeStyle='#d6d9de'; g.lineWidth=1.5; g.strokeRect(x+.75,yy+.75,pw-1.5,lh-1.5); yy+=lh+sub; }
+    if(RR[i].length){ label('References',x,yy); yy+=lab; RR[i].forEach(r=>{ r.pair.forEach((im,k)=>{ const ix=x+k*(r.w+sub), s2=Math.min(r.w/im.naturalWidth,r.h/im.naturalHeight), dw=im.naturalWidth*s2, dh=im.naturalHeight*s2; g.fillStyle='#f1f2f4'; g.fillRect(ix,yy,r.w,r.h); g.drawImage(im,ix+(r.w-dw)/2,yy+(r.h-dh)/2,dw,dh); }); yy+=r.h+sub; }); }
+    const y=y0, inf=E.pages[i].info||{};
     g.drawImage(c,x,y,pw,ph); g.strokeStyle='#d6d9de'; g.lineWidth=1.5; g.strokeRect(x+.75,y+.75,pw-1.5,ph-1.5);
     g.fillStyle='#1b1d22'; g.beginPath(); g.arc(x+18,y+18,14,0,Math.PI*2); g.fill(); g.fillStyle='#fff'; g.font=`700 15px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.fillText(String(i+1),x+18,y+18.5); g.textAlign='left'; g.textBaseline='top';
     const meta=[inf.shot&&inf.shot.split(' ·')[0], inf.cam, inf.lens, inf.move, inf.dur].filter(Boolean).join(' · ');
@@ -7130,8 +7212,8 @@ function drawCompose(){ const E=drawEd; drawPageSync();
     g.fillStyle='#4a4f57'; g.font=`500 15px ${FONT}`; if(inf.action) g.fillText(fit(inf.action,pw),x,y+ph+34);
     if(inf.dlg){ g.fillStyle='#6b7280'; g.font=`italic 500 15px ${FONT}`; g.fillText(fit('“'+inf.dlg+'”',pw),x,y+ph+(inf.action?56:34)); } });
   return out; }
-function drawRender(extra){ const E=drawEd; if(!E) return; const L=E.layer.getContext('2d'); L.clearRect(0,0,E.W,E.H); drawPaintOps(L,E.ops,extra); drawThumbSoon();
-  const g=E.cv.getContext('2d'); g.clearRect(0,0,E.W,E.H); g.drawImage(E.layer,0,0); }
+function drawRender(extra){ const E=drawEd; if(!E) return; const L=E.layer.getContext('2d'); L.clearRect(0,0,E.CW,E.CH); drawPaintOps(L,E.ops,extra); drawThumbSoon();
+  const g=E.cv.getContext('2d'); g.clearRect(0,0,E.CW,E.CH); g.drawImage(E.layer,0,0); }
 function drawStartText(x,y,edit){ const E=drawEd, ta=E.el.querySelector('.de-text'); E.textAt=[Math.round(x),Math.round(y)]; E.editId=edit?edit.i:null; ta.hidden=false; ta.value=edit?edit.text:'';
   if(edit){ E.color=edit.c; E.size=Math.max(1,Math.round(edit.fs/6)); edit.h=1; drawRender(); }   /* hide the original while it's being edited */
   drawRestyleText(); ta.style.left=(x*E.scale)+'px'; ta.style.top=(y*E.scale)+'px'; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; ta.focus(); setTimeout(()=>{ ta.focus(); if(edit) ta.select(); },0); }
@@ -7144,12 +7226,14 @@ async function closeDraw(save){ const E=drawEd; if(!E) return; drawCommitText();
   const it=itemById(E.id);
   if(save&&it){ if(!visible&&!it.p.src){ toast('Draw something first'); return; }
     drawSelClear(); E.region=null; drawRender();
+    { const ims=[]; E.pages.forEach(pg=>{ pg.ops.forEach(o=>{ if(o.t==='img'&&!o.h){ const im=drawImgGet(o.src); if(im) ims.push(im); } }); (pg.refs||[]).forEach(r=>{ if(r.show){ const im=drawImgGet(r.src); if(im) ims.push(im); } }); });
+      await Promise.race([Promise.all(ims.map(im=>im.complete?0:im.decode().catch(()=>0))),new Promise(r=>setTimeout(r,4000))]); }
     const out=drawCompose();
     const blob=await new Promise(r=>out.toBlob(r,'image/png')); if(!blob){ toast('Couldn’t save the drawing'); return; }
     checkpoint(); it.p.name=(E.name||'Drawing').trim()||'Drawing';
     const clean=ops=>ops.map(o=>{ const c=Object.assign({},o); delete c.i; return c; });   /* hidden layers stay hidden, and stay editable */
-    const pages=E.pages.map(pg=>{ const q={ops:clean(pg.ops), info:pg.info||{}}; if(pg.ref) q.ref={src:pg.ref.src, op:pg.ref.op, out:!!pg.ref.out, hide:!!pg.ref.hide}; if(pg.refs&&pg.refs.length) q.refs=pg.refs.map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm})); return q; });
-    it.p.draw={W:E.W,H:E.H,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
+    const pages=E.pages.map(pg=>{ const q={ops:clean(pg.ops), info:pg.info||{}}; if(pg.ref) q.ref={src:pg.ref.src, op:pg.ref.op, out:!!pg.ref.out, hide:!!pg.ref.hide}; if(pg.refs&&pg.refs.length) q.refs=pg.refs.map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})); return q; });
+    it.p.draw={W:E.W,H:E.H,art:!!E.art,artDir:E.artDir,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
     fillImage(it,new File([blob],it.p.name+'.png',{type:'image/png'}));
     toast(E.pages.length>1?`Storyboard with ${E.pages.length} panels added to the board · double-click to edit`:(E.fresh?'Drawing added to the board · double-click it to keep drawing':'Drawing updated')); }
   removeEventListener('resize',drawFit); clearInterval(E.antsT); if(E.ro) E.ro.disconnect(); E.el.classList.remove('on'); const el=E.el; drawEd=null; setTimeout(()=>el.remove(),200); }
