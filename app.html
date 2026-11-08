@@ -1312,6 +1312,13 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .de-abn,#drawEd .de-abflip{z-index:5}
 #drawEd .de-abflip{position:absolute;right:0;top:-25px;width:22px;height:20px;padding:0;border:0;border-radius:3px;background:transparent;color:#a8a8a8;display:grid;place-items:center;cursor:pointer;pointer-events:auto}
 #drawEd .de-abflip svg{width:15px;height:15px}
+#drawEd .de-abshow{position:absolute;right:26px;top:-25px;z-index:5;display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 6px;border:0;border-radius:3px;background:transparent;color:#a8a8a8;font:500 11px var(--font,inherit);cursor:pointer;pointer-events:auto}
+#drawEd .de-abshow svg{width:14px;height:14px}
+#drawEd .de-abshow:hover{background:#3e3e3e;color:#fff}
+#drawEd .de-abshow.off{color:#e8a33c}
+#drawEd .drp-h .drp-board.off{color:#e8a33c}
+#drawEd .de-refp.board-off .drp-img.show{outline-color:#6a6a6a}
+#drawEd .de-refp.board-off .drp-img.show .drp-on{background:#555}
 #drawEd .de-abflip:hover{background:#3e3e3e;color:#fff}
 #drawEd .de-paper.art{background:transparent!important;box-shadow:none!important;overflow:visible}
 #drawEd .de-paper.art .de-ab1{background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.6),0 4px 18px rgba(0,0,0,.45)}
@@ -1377,6 +1384,45 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd.ps .drp-h{background:#262626;border-bottom:1px solid #1a1a1a;color:#ddd}
 #drawEd.ps .drp-body{padding-top:8px;background:#1e1e1e}
 #drawEd.ps .drp-t{font-weight:500}
+#drawEd .drp-tabs{display:flex;width:100%;gap:2px;padding:2px;background:#1e1e1e;border-radius:4px}
+#drawEd .drp-tabs button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;height:24px;border:0;border-radius:3px;background:transparent;color:#9a9a9a;font:500 11.5px var(--font,inherit);cursor:pointer}
+#drawEd .drp-tabs button svg{width:13px;height:13px}
+#drawEd .drp-tabs button i{font-style:normal;font-size:10.5px;color:#777}
+#drawEd .drp-tabs button.on{background:#3d3d3d;color:#fff}
+#drawEd .drp-tabs button.on i{color:#bbb}
+#drawEd .de-refp.min .drp-tabs{display:none}
+#drawEd .de-refp.global .drp-img.show{outline-color:#2f9e5a}
+#drawEd .de-refp.global .drp-img.show .drp-on{background:#2f9e5a}
+#drawEd .drp-note{margin:0 0 2px;font-size:11.5px;line-height:1.4;color:#999}
+#drawEd .de-sibs{position:absolute;inset:0;z-index:0;pointer-events:none}
+#drawEd .de-stage>.de-paper{z-index:1}
+#drawEd .de-sib{position:absolute;left:50%;top:50%;pointer-events:auto;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+#drawEd .de-sib canvas{display:block;width:100%;height:100%;filter:brightness(.38) saturate(.7);transition:filter .15s ease}
+#drawEd .de-sib:hover canvas{filter:brightness(.62) saturate(.85)}
+#drawEd .de-sib span{position:absolute;left:0;top:-20px;font:500 11.5px var(--font,inherit);color:#9a9a9a;white-space:nowrap}
+#drawEd .de-sib:hover span{color:#fff}
+#drawEd .dsb-sibs{margin-left:auto;height:18px;padding:0 8px;border:1px solid #3c3c3c;border-radius:2px;background:transparent;color:#a8a8a8;font:400 11px var(--font,inherit);cursor:pointer}
+#drawEd .dsb-sibs.on{background:#1473e6;border-color:#1473e6;color:#fff}
+/* vertical reference panel, docked left of the right-hand panels */
+#drawEd.ps .de-main{grid-template-columns:auto 1fr auto auto}
+#drawEd.ps .de-refp{align-self:stretch;min-height:0;width:260px;border-top:0;border-left:1px solid #1a1a1a;background:#2b2b2b}
+#drawEd.ps .drp-grip{top:0;bottom:0;left:-4px;right:auto;width:8px;height:auto;cursor:ew-resize}
+#drawEd.ps .drp-grip::after{left:3px;top:50%;width:3px;height:36px;margin:-18px 0 0}
+#drawEd.ps .drp-h{flex-wrap:wrap;height:auto;padding:5px 6px;gap:4px 6px;row-gap:4px}
+#drawEd.ps .drp-n{font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#drawEd.ps .drp-sp{display:none}
+#drawEd.ps .drp-tools{display:flex;flex-wrap:wrap;gap:2px;width:100%}
+#drawEd.ps .drp-h .drp-min{padding:0 3px;order:0}
+#drawEd.ps .drp-body{flex:1;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:8px;gap:8px;height:auto!important}
+#drawEd.ps .drp-img{height:auto;width:100%;min-width:0;flex:none}
+#drawEd.ps .drp-img img{width:100%;height:auto}
+#drawEd.ps .drp-empty{flex:none;flex-direction:column;padding:22px 12px;text-align:center}
+#drawEd.ps .de-refp.min{width:30px!important}
+#drawEd.ps .de-refp.min .drp-h{flex-direction:column;align-items:center;padding:6px 0;border-bottom:0;height:100%;flex-wrap:nowrap}
+#drawEd.ps .de-refp.min .drp-tools,#drawEd.ps .de-refp.min .drp-n{display:none}
+#drawEd.ps .de-refp.min .drp-t{writing-mode:vertical-rl;margin-top:6px}
+#drawEd.ps .de-refp.min .drp-t svg{display:none}
+@media (max-width:760px){ #drawEd.ps .de-refp{width:auto!important;border-left:0;border-top:1px solid #1a1a1a;max-height:220px} #drawEd.ps .de-refp .drp-body{flex-direction:row;overflow-x:auto} #drawEd.ps .drp-img{width:auto;height:150px} #drawEd.ps .drp-img img{height:100%;width:auto} }
 #drawEd .de-photo-b svg{width:16px;height:16px}
 #drawEd .dl-ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #drawEd .dl-ic{overflow:hidden}
@@ -6510,7 +6556,7 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
   let ops=saved?JSON.parse(JSON.stringify(saved.ops)):[]; { let k=ops.length-1; while(k>=0&&ops[k].t!=='clear') k--; ops=ops.slice(k+1); }   /* older drawings kept a "clear" step */
   let pages=saved&&Array.isArray(saved.pages)&&saved.pages.length?JSON.parse(JSON.stringify(saved.pages)):[{ops, info:{}}];   /* storyboard panels; a plain drawing is one panel */
   let nid=0; pages.forEach(pg=>{ pg.ops=pg.ops||[]; pg.info=pg.info||{}; pg.hist=[]; pg.fut=[]; pg.ops.forEach(o=>{ o.i=++nid; }); }); ops=pages[0].ops;
-  drawEd={id:it.id, W, H, bg:saved?saved.bg:'white', pages, pi:0, art:!!(saved&&saved.art), artDir:saved&&saved.artDir||'below', G:0, CW:W, CH:H, guide:Object.assign({ar:'none',thirds:false,safe:false},saved&&saved.guide||{}), onion:true, onionOp:.24, onionNext:false, onionTint:true, roughOff:false, side:'layers', ops, hist:pages[0].hist, fut:pages[0].fut, nid, sel:null, selSet:new Set(), selMode:'pointer', areaMode:'rect', region:null, bgCol:'#ffffff', alpha:1, zoom:1, fit:1, pan:[0,0], gsel:null, spaceHand:false, lastPt:null, tool:'pen', fig:'house', pressure:(()=>{ try{ return localStorage.getItem('setplot-draw-pressure')!=='0'; }catch(e){ return true; } })(), penSeen:false, pid:null, color:saved&&saved.color||'#1b1d22', size:saved&&saved.size||8, fill:false, cur:null, act:null, dirty:false, fresh:!it.p.src, name:it.p.name||'Drawing'};
+  drawEd={id:it.id, W, H, bg:saved?saved.bg:'white', pages, pi:0, art:!!(saved&&saved.art), artDir:saved&&saved.artDir||'below', showLoc:!(saved&&saved.showLoc===false), showRefs:!(saved&&saved.showRefs===false), grefs:JSON.parse(JSON.stringify(saved&&saved.grefs||[])), refTab:'local', sibs:true, G0:saved&&saved.G||0, G:0, CW:W, CH:H, guide:Object.assign({ar:'none',thirds:false,safe:false},saved&&saved.guide||{}), onion:true, onionOp:.24, onionNext:false, onionTint:true, roughOff:false, side:'layers', ops, hist:pages[0].hist, fut:pages[0].fut, nid, sel:null, selSet:new Set(), selMode:'pointer', areaMode:'rect', region:null, bgCol:'#ffffff', alpha:1, zoom:1, fit:1, pan:[0,0], gsel:null, spaceHand:false, lastPt:null, tool:'pen', fig:'house', pressure:(()=>{ try{ return localStorage.getItem('setplot-draw-pressure')!=='0'; }catch(e){ return true; } })(), penSeen:false, pid:null, color:saved&&saved.color||'#1b1d22', size:saved&&saved.size||8, fill:false, cur:null, act:null, dirty:false, fresh:!it.p.src, name:it.p.name||'Drawing'};
   let el=$('#drawEd'); if(el) el.remove(); el=document.createElement('div'); el.id='drawEd'; el.setAttribute('role','dialog'); el.setAttribute('aria-label','Draw an image');
   el.innerHTML=`<div class="de-top">
       <input class="de-name" value="${esc(drawEd.name)}" aria-label="Image name" maxlength="60">
@@ -6535,7 +6581,7 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
           <button type="button" class="de-reset" title="Default foreground and background colors (D)" aria-label="Default colours"><i></i><i></i></button></div></div>
       <div class="de-selm card" hidden role="menu" aria-label="Tool group"></div>
       <div class="de-figs card" hidden role="listbox" aria-label="Figures"><div class="df-h">Storyboard</div>${DRAW_FIGS.filter(f=>f[3]==='sb').map(([k,n])=>`<button type="button" data-fig="${k}" title="${n}" aria-label="${n}" role="option">${figIcon(k)}<span>${n}</span></button>`).join('')}<div class="df-h">Everyday</div>${DRAW_FIGS.filter(f=>!f[3]).map(([k,n])=>`<button type="button" data-fig="${k}" title="${n}" aria-label="${n}" role="option">${figIcon(k)}<span>${n}</span></button>`).join('')}</div>
-      <div class="de-stage"><button type="button" class="de-zoom" title="Fit on screen (⌘0) · ⌘+ / ⌘− to zoom, Space-drag to pan">100%</button><div class="de-paper"><div class="de-ab de-ab1" hidden><span class="de-abn" data-abz="0" title="Double-click to zoom to the drawing">Drawing</span></div><div class="de-ab de-ab2" hidden><span class="de-abn" data-abz="1" title="Double-click to zoom to the location photo">Location / blocking</span><button type="button" class="de-abflip"></button></div><button type="button" class="de-ab-add" hidden>${drawIcon(DRAW_PHOTO_ICON)}<span>Add location / blocking photo</span><small>or drop one here</small></button><canvas class="de-under"></canvas><canvas class="de-cv"></canvas><canvas class="de-onion"></canvas><canvas class="de-guide"></canvas><canvas class="de-live"></canvas><textarea class="de-text" hidden rows="1" spellcheck="false"></textarea></div></div>
+      <div class="de-stage"><button type="button" class="de-zoom" title="Fit on screen (⌘0) · ⌘+ / ⌘− to zoom, Space-drag to pan">100%</button><div class="de-paper"><div class="de-ab de-ab1" hidden><span class="de-abn" data-abz="0" title="Double-click to zoom to the drawing">Drawing</span></div><div class="de-ab de-ab2" hidden><span class="de-abn" data-abz="1" title="Location / blocking photo · double-click to zoom to it">Location</span><button type="button" class="de-abflip"></button><button type="button" class="de-abshow"></button></div><button type="button" class="de-ab-add" hidden>${drawIcon(DRAW_PHOTO_ICON)}<span>Add location / blocking photo</span><small>or drop one here</small></button><canvas class="de-under"></canvas><canvas class="de-cv"></canvas><canvas class="de-onion"></canvas><canvas class="de-guide"></canvas><canvas class="de-live"></canvas><textarea class="de-text" hidden rows="1" spellcheck="false"></textarea></div></div>
       <div class="de-side">
       <div class="de-props card">
         <div class="de-colors">${DRAW_COLORS.map(c=>`<button type="button" data-color="${c}" style="--c:${c}" title="${c}" aria-label="Colour ${c}"></button>`).join('')}<label class="de-custom" title="Any colour"><input type="color" value="${drawEd.color}" aria-label="Pick any colour"><span></span></label></div>
@@ -6612,7 +6658,7 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
   const ta=el.querySelector('.de-text'); ta.addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Escape'){ e.preventDefault(); if(!drawEd.editId) ta.value=''; drawCommitText(); } else if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); drawCommitText(); } });
   ta.addEventListener('input',()=>{ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
   try{ const o=JSON.parse(localStorage.getItem('setplot-onion')||'null'); if(o){ drawEd.onion=o.on!==false; drawEd.onionOp=+o.op||.24; drawEd.onionNext=!!o.next; drawEd.onionTint=o.tint!==false; } }catch(e){}
-  try{ drawEd.photoMode=localStorage.getItem('setplot-photo-mode')||'under'; drawEd.refMin=localStorage.getItem('setplot-refp-min')==='1'; drawEd.refH=Math.max(80,+localStorage.getItem('setplot-refp-h')||200); }catch(e){ drawEd.photoMode='under'; drawEd.refH=200; }
+  try{ drawEd.photoMode=localStorage.getItem('setplot-photo-mode')||'under'; drawEd.refMin=localStorage.getItem('setplot-refp-min')==='1'; drawEd.refW=Math.max(160,+localStorage.getItem('setplot-refp-w')||260); drawEd.sibs=localStorage.getItem('setplot-sibs')!=='0'; }catch(e){ drawEd.photoMode='under'; drawEd.refW=260; }
   drawPsLayout(el); drawUnder(); drawRefPanel(); addEventListener('resize',drawFit); }
 /* undo: whole snapshots, so moves, reorders and edits all undo the same way */
 function drawHist(){ const E=drawEd; E.hist.push(JSON.stringify(E.ops)); if(E.hist.length>120) E.hist.shift(); E.fut=[]; E.dirty=true; }
@@ -6647,36 +6693,61 @@ function drawRegionDone(){ const E=drawEd, R=E.region; if(!R) return; E.region=n
   const ids=drawRegionHits(R); if(R.add) drawSelSet(ids,true); else drawSelSet(ids,false); drawSyncUI(); drawOverlay(null);
   if(!ids.length&&R.mode!=='rect') toast('Nothing inside the lasso'); }
 let drawPolyTipShown=false;
+const DRAW_SIB_GAP=.12;   /* space between panels, as a share of the workspace width */
+function drawSibStep(){ const E=drawEd; return E.CW*(1+DRAW_SIB_GAP); }
+function drawSibRender(i){ const E=drawEd, pg=E.pages[i], c=document.createElement('canvas'), k=Math.min(1,900/Math.max(E.CW,E.CH)); c.width=Math.round(E.CW*k); c.height=Math.round(E.CH*k); const g=c.getContext('2d');
+  const full=document.createElement('canvas'); full.width=E.CW; full.height=E.CH; const fg=full.getContext('2d');
+  fg.fillStyle=E.bg==='dark'?'#1b1d22':E.bg==='none'?'#e9eaec':'#ffffff'; fg.fillRect(0,0,E.W,E.H); if(E.art){ fg.fillStyle='#303030'; fg.fillRect(drawLocX(),drawLocY(),E.W,E.H); }
+  drawPaintOps(fg,pg.ops); g.drawImage(full,0,0,c.width,c.height); return c; }
+function drawSibs(){ const E=drawEd; if(!E||!E.el) return; const st=E.el.querySelector('.de-stage'); if(!st) return; let box=st.querySelector('.de-sibs'); if(!box){ box=document.createElement('div'); box.className='de-sibs'; st.prepend(box);
+    box.addEventListener('click',e=>{ const s2=e.target.closest('[data-sp]'); if(!s2) return; const j=+s2.dataset.sp, D=drawEd; D.pan[0]+=(j-D.pi)*drawSibStep()*D.scale; drawGoPage(j); drawFit(); }); }
+  const on=E.sibs&&E.pages.length>1; box.hidden=!on; if(!on) return; const s=E.scale;
+  [...box.children].forEach(n=>{ if(+n.dataset.sp>=E.pages.length) n.remove(); });
+  E.pages.forEach((pg,j)=>{ let n=box.querySelector(`[data-sp="${j}"]`); if(j===E.pi){ if(n) n.hidden=true; return; }
+    if(!n){ n=document.createElement('div'); n.className='de-sib'; n.dataset.sp=j; n.innerHTML='<span></span>'; box.appendChild(n); }
+    n.hidden=false; const sig=E.W+'x'+E.H+':'+E.art+E.artDir+E.bg+':'+JSON.stringify(pg.ops).length+':'+pg.ops.length+':'+pg.ops.map(o=>o.t==='img'?imgState(o.src):'').join('');
+    if(n._sig!==sig){ n._sig=sig; const old=n.querySelector('canvas'); if(old) old.remove(); n.prepend(drawSibRender(j)); }
+    n.querySelector('span').textContent=`Panel ${j+1}`; n.title=`Panel ${j+1} · click to draw on it`;
+    n.style.width=Math.round(E.CW*s)+'px'; n.style.height=Math.round(E.CH*s)+'px'; n.style.transform=`translate(-50%,-50%) translate(${Math.round(E.pan[0]+(j-E.pi)*drawSibStep()*s)}px,${Math.round(E.pan[1])}px)`; }); }
+function drawToggleSibs(v){ const E=drawEd; E.sibs=v==null?!E.sibs:!!v; try{ localStorage.setItem('setplot-sibs',E.sibs?'1':'0'); }catch(e){} drawFit(); drawSyncUI(); }
+function drawBoardShow(k,v){ const E=drawEd; E[k]=v==null?!E[k]:!!v; E.dirty=true; drawArtUI(); drawRefPanel(); const on=E[k];
+  toast(k==='showLoc'?(on?'Location photos will show on the board':'Location photos hidden on the board · they stay in the editor'):(on?'Selected references will show on the board':'References hidden on the board · your selection is kept')); }
 const DRAW_PHOTO_ICON='<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 4 3.5 3-2.5 4.5 3.5"/>';
 function drawPhotoRect(w,h,mode){ const E=drawEd, ar=w/h, car=E.W/E.H; const cover=mode==='fill'||(mode!=='fit'&&Math.max(ar/car,car/ar)<1.25);   /* close in shape: fill the frame; very different: show it all */
   const s=cover?Math.max(E.W/w,E.H/h):Math.min(E.W/w,E.H/h), pw=w*s, ph=h*s, x=(E.W-pw)/2, y=(E.H-ph)/2; return [Math.round(x),Math.round(y),Math.round(x+pw),Math.round(y+ph)]; }
 function drawPlaceOne(d){ const E=drawEd; drawHist(); const o={t:'img', src:d.src, iw:d.w, ih:d.h, nm:d.nm||'Photo', c:'transparent', w:0, lk:1, pts:drawPhotoRect(d.w,d.h)}; o.i=++E.nid; E.ops.unshift(o); return o; }   /* photos go to the bottom, locked, so you draw over them */
 async function drawPlaceFiles(files,perPanel,mode){ const E=drawEd; if(!E) return; mode=mode||E.photoMode||'under'; const list=[...files].filter(f=>/^image\//.test(f.type)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
-  if(!list.length){ toast('That file isn’t an image'); return; } if(perPanel==null) perPanel=list.length>1;
+  if(!list.length){ toast('That file isn’t an image'); return; } if(mode==='gpanel'){ mode='panel'; E.refTab='global'; } if(mode==='panel'&&E.refTab==='global') perPanel=false; if(perPanel==null) perPanel=list.length>1;
   toast(list.length>1?`Adding ${list.length} photos…`:'Adding photo…'); const done=[];
   for(const f of list.slice(0,40)){ try{ const r=await shrinkImage(f), src=await storeImage(r.blob); if(!IMG[src]) IMG[src]={state:'ok',url:URL.createObjectURL(r.blob)}; done.push({src,w:r.w,h:r.h,nm:f.name.replace(/\.[a-z0-9]+$/i,'')}); }catch(err){} }
   if(drawEd!==E) return; if(!done.length){ toast('Couldn’t add that photo'); return; }
   drawCommitText(); let added=0;
   done.forEach((d,i)=>{ const pg0=E.pages[E.pi]; if(perPanel&&(mode==='loc'?(i>0||E.ops.some(o=>o.loc)):(i>0||E.ops.length||pg0.refs&&pg0.refs.length))){ E.quietPage=true; drawAddPage(false); E.quietPage=false; added++; }
-    if(mode==='panel'){ const pg=E.pages[E.pi]; (pg.refs=pg.refs||[]).push({src:d.src,iw:d.w,ih:d.h,nm:d.nm}); E.refMin=false; } else if(mode==='loc') drawPlaceLoc(d); else drawPlaceOne(d); });
+    if(mode==='panel'){ drawRefList().push({src:d.src,iw:d.w,ih:d.h,nm:d.nm}); E.refMin=false; } else if(mode==='loc') drawPlaceLoc(d); else drawPlaceOne(d); });
   E.dirty=true; drawRender(); drawSyncUI(); drawStrip(); drawUnder(); drawRefPanel();
   if(mode==='loc'){ drawArtUI(); toast(perPanel&&done.length>1?`${done.length} location photos, one per panel${added?` · ${added} new panel${added>1?'s':''}`:''} · draw on them too`:'Location photo added next to your drawing · you can draw on it too'); return; }
+  if(mode==='panel'&&E.refTab==='global'){ toast(`${done.length} global reference${done.length>1?'s':''} added · they belong to the whole storyboard`); return; }
   if(mode==='panel'){ toast(perPanel&&done.length>1?`${done.length} photos in the reference panel, one per panel${added?` · ${added} new panel${added>1?'s':''}`:''}`:'Photo added to the reference panel below the canvas'); return; }
   toast(perPanel&&done.length>1?`${done.length} photos, one per panel${added?` · ${added} new panel${added>1?'s':''}`:''} · they’re locked so you can draw your blocking on top`:'Photo placed under your drawing · it’s locked, so drawing won’t move it. Unlock it in Layers to move or resize'); }
 function drawPickPhotos(perPanel,mode){ const E=drawEd; let pk=E.el.querySelector('.de-photo-pick'); if(!pk){ pk=document.createElement('input'); pk.type='file'; pk.accept='image/*'; pk.multiple=true; pk.hidden=true; pk.className='de-photo-pick'; E.el.appendChild(pk);
     pk.addEventListener('change',()=>{ const f=pk.files; if(f&&f.length) drawPlaceFiles(f,pk._per,pk._mode); }); } pk._per=perPanel; pk._mode=mode||E.photoMode; pk.value=''; pk.click(); }
 function drawSetPhotoMode(m){ const E=drawEd; E.photoMode=m; try{ localStorage.setItem('setplot-photo-mode',m); }catch(e){} const b=E.el.querySelector('.de-photo-b'); if(b) b.title=m==='panel'?'Place photos in the reference panel below the canvas':m==='loc'?'Place location / blocking photos beside your drawing':'Place photos under your drawing'; }
 /* ---- reference panel: photos beside the drawing (below the canvas), never part of the image ---- */
-function drawRefPanel(){ const E=drawEd; if(!E||!E.el) return; const rp=E.el.querySelector('.de-refp'); if(!rp) return; const pg=E.pages[E.pi], refs=pg.refs||[], any=E.pages.some(q=>q.refs&&q.refs.length);
-  rp.hidden=!any; rp.classList.toggle('min',!!E.refMin); rp.querySelector('.drp-n').textContent=refs.length?`Panel ${E.pi+1} · ${refs.length} photo${refs.length>1?'s':''}`:`Panel ${E.pi+1} · no reference`;
-  rp.querySelector('.drp-body').style.height=E.refH+'px'; rp.querySelector('[data-rp="min"]').innerHTML=drawIcon(E.refMin?'<path d="m7 14 5-5 5 5"/>':'<path d="m7 10 5 5 5-5"/>');
+function drawRefList(){ const E=drawEd; if(E.refTab==='global') return E.grefs=E.grefs||[]; const pg=E.pages[E.pi]; return pg.refs=pg.refs||[]; }
+function drawRefPanel(){ const E=drawEd; if(!E||!E.el) return; const rp=E.el.querySelector('.de-refp'); if(!rp) return; const G=E.refTab==='global', refs=drawRefList(), nL=(E.pages[E.pi].refs||[]).length, nG=(E.grefs||[]).length, any=nG||E.pages.some(q=>q.refs&&q.refs.length);
+  rp.hidden=!any&&!E.refOpen; rp.classList.toggle('min',!!E.refMin); rp.classList.toggle('global',G);
+  rp.querySelector('.drp-n').textContent=G?`Whole storyboard · ${nG} photo${nG===1?'':'s'}`:`Panel ${E.pi+1} · ${nL?nL+' photo'+(nL>1?'s':''):'no reference'}`;
+  rp.querySelectorAll('[data-rt]').forEach(b=>{ const on=(b.dataset.rt==='global')===G; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); b.querySelector('i').textContent=b.dataset.rt==='global'?(nG||''):(nL||''); });
+  rp.style.width=E.refMin?'':E.refW+'px'; rp.querySelector('[data-rp="min"]').innerHTML=drawIcon(E.refMin?'<path d="m14 7-5 5 5 5"/>':'<path d="m10 7 5 5-5 5"/>');
   rp.querySelector('[data-rp="min"]').title=E.refMin?'Show the reference panel':'Collapse the reference panel';
-  { const sb=rp.querySelector('[data-rp="all"]'); if(sb){ sb.hidden=!refs.length; const all=refs.length&&refs.every(r=>r.show); sb.querySelector('span').textContent=all?'Hide all from board':'Show all on board'; } }
-  const key=E.pi+'|'+refs.map(r=>r.src+imgState(r.src)+(r.show?'S':'')).join(',')+'|'+E.refMin; const body=rp.querySelector('.drp-body'); if(body._k===key) return; body._k=key;
-  body.innerHTML=refs.length?refs.map((r,i)=>{ const u=imgURL(r.src); return `<figure class="drp-img${r.show?' show':''}" data-ri="${i}" title="${r.show?'Shown on the board · click to hide it there':'Click to show this reference on the board'}"><span class="drp-on">${r.show?'✓ On board':'Show on board'}</span>${u?`<img src="${esc(u)}" alt="${esc(r.nm||'Reference')}" draggable="false">`:'<span class="drp-load">Loading…</span>'}<figcaption>${esc(r.nm||'Reference')}</figcaption>
-      <div class="drp-act"><button type="button" data-ra="under" title="Put this photo under the drawing instead">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}<span>Under drawing</span></button><button type="button" data-ra="del" title="Remove from the reference panel" aria-label="Remove">×</button></div></figure>`; }).join('')
-    :`<button type="button" class="drp-empty" data-rp="add">${drawIcon(DRAW_PHOTO_ICON)}<span>Add a reference photo for panel ${E.pi+1}, or drop one here</span></button>`; }
-function drawRefToLayer(i){ const E=drawEd, pg=E.pages[E.pi], r=pg.refs&&pg.refs[i]; if(!r) return; pg.refs.splice(i,1); drawPlaceOne({src:r.src,w:r.iw,h:r.ih,nm:r.nm}); E.dirty=true; drawRender(); drawSyncUI(); drawRefPanel(); toast('Photo moved under the drawing · it’s locked so you can draw on top'); }
+  { const bb=rp.querySelector('[data-rp="board"]'); bb.classList.toggle('off',!E.showRefs); bb.title=E.showRefs?'References you select are shown on the board · click to hide them all there':'References are hidden on the board · click to show the ones you selected'; bb.innerHTML=drawIcon(E.showRefs?'<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>':'<path d="M3 3l18 18"/><path d="M10.6 6.2A9.6 9.6 0 0 1 12 6c5 0 8.5 4.5 9 6-.3.9-1.4 2.6-3.2 4M6.4 7.6C4.6 8.9 3.4 10.7 3 12c.5 1.5 4 6 9 6 1.4 0 2.6-.3 3.7-.8"/>')+'<span>'+(E.showRefs?'On board':'Hidden on board')+'</span>'; rp.classList.toggle('board-off',!E.showRefs); }
+  { const sb=rp.querySelector('[data-rp="all"]'); if(sb){ sb.hidden=!refs.length; const all=refs.length&&refs.every(r=>r.show); sb.querySelector('span').textContent=all?'Hide all':'Show all'; } }
+  const key=E.showRefs+'|'+E.refTab+'|'+E.pi+'|'+refs.map(r=>r.src+imgState(r.src)+(r.show?'S':'')).join(',')+'|'+E.refMin; const body=rp.querySelector('.drp-body'); if(body._k===key) return; body._k=key;
+  const onTxt=r=>r.show?(E.showRefs?(G?'✓ On board · storyboard':'✓ On board'):'✓ Selected · board hidden'):'Show on board';
+  body.innerHTML=(G?'<p class="drp-note">Used across every panel. Shown once on the board, under all the panels.</p>':'')+(refs.length?refs.map((r,i)=>{ const u=imgURL(r.src); return `<figure class="drp-img${r.show?' show':''}" data-ri="${i}" title="${r.show?'Shown on the board · click to hide it there':'Click to show this reference on the board'}"><span class="drp-on">${onTxt(r)}</span>${u?`<img src="${esc(u)}" alt="${esc(r.nm||'Reference')}" draggable="false">`:'<span class="drp-load">Loading…</span>'}<figcaption>${esc(r.nm||'Reference')}</figcaption>
+      <div class="drp-act"><button type="button" data-ra="move" title="${G?'Only for this panel':'Use for every panel (global)'}">${drawIcon(G?'<rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M8 9h8M8 13h5"/>':'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.4 5.4 3.4 8.5s-1 6.1-3.4 8.5c-2.4-2.4-3.4-5.4-3.4-8.5s1-6.1 3.4-8.5z"/>')}<span>${G?'This panel only':'Make global'}</span></button><button type="button" data-ra="under" title="${G?'Put a copy under this panel’s drawing':'Put this photo under the drawing instead'}">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}</button><button type="button" data-ra="del" title="Remove from the reference panel" aria-label="Remove">×</button></div></figure>`; }).join('')
+    :`<button type="button" class="drp-empty" data-rp="add">${drawIcon(DRAW_PHOTO_ICON)}<span>${G?'Add a reference for the whole storyboard, or drop one here':`Add a reference photo for panel ${E.pi+1}, or drop one here`}</span></button>`); }
+function drawRefToLayer(i){ const E=drawEd, L=drawRefList(), r=L[i]; if(!r) return; if(E.refTab!=='global') L.splice(i,1); drawPlaceOne({src:r.src,w:r.iw,h:r.ih,nm:r.nm}); E.dirty=true; drawRender(); drawSyncUI(); drawRefPanel(); toast('Photo moved under the drawing · it’s locked so you can draw on top'); }
 function drawSendToPanel(){ const E=drawEd, L=drawSelOps().filter(o=>o.t==='img'); if(!L.length) return; drawHist(); const pg=E.pages[E.pi]; pg.refs=pg.refs||[];
   L.forEach(o=>pg.refs.push({src:o.src,iw:o.iw||Math.abs(o.pts[2]-o.pts[0]),ih:o.ih||Math.abs(o.pts[3]-o.pts[1]),nm:o.nm})); E.ops=E.ops.filter(o=>!L.includes(o)); drawSelClear(); E.refMin=false; E.dirty=true; drawRender(); drawSyncUI(); drawRefPanel(); toast('Photo moved to the reference panel below the canvas'); }
 function drawFitPhoto(mode){ const E=drawEd, L=drawSelOps().filter(o=>o.t==='img'); if(!L.length) return; drawHist(); L.forEach(o=>{ const w=o.iw||Math.abs(o.pts[2]-o.pts[0]), h=o.ih||Math.abs(o.pts[3]-o.pts[1]); o.pts=drawPhotoRect(w,h,mode); if(o.loc) o.pts=o.pts.map((v,i)=>i%2?v+drawLocY():v+drawLocX()); }); drawRender(); drawSyncUI(); }
@@ -6698,13 +6769,13 @@ function drawAlign(m){ const E=drawEd, SL=drawSelOps().filter(o=>!o.h); if(!SL.l
     o.pts=o.pts.map((v,i)=>Math.round((v+(i%2?dy:dx))*10)/10); }); drawRender(); drawSyncUI(); }
 function drawMenus(){ const E=drawEd, el=E.el, q=s=>el.querySelector(s), clk=s=>()=>{ const b=q(s); if(b) b.click(); }, sel=drawSelOps().length, on=s=>{ const b=q(s); return !!b&&b.classList.contains('on'); };
   return {
-    File:[['Place Photo Under Drawing…','',()=>{ drawSetPhotoMode('under'); drawPickPhotos(false,'under'); }],['Place Location / Blocking Photo…','',()=>{ drawSetPhotoMode('loc'); drawPickPhotos(false,'loc'); }],['Place Photo in Reference Panel…','',()=>{ drawSetPhotoMode('panel'); drawPickPhotos(false,'panel'); }],['Place Photos, One per Panel…','',()=>drawPickPhotos(true)],0,['Save to Board','⌘↵',()=>closeDraw(true)],['Close','Esc',()=>closeDraw(false)]],
+    File:[['Place Photo Under Drawing…','',()=>{ drawSetPhotoMode('under'); drawPickPhotos(false,'under'); }],['Place Location / Blocking Photo…','',()=>{ drawSetPhotoMode('loc'); drawPickPhotos(false,'loc'); }],['Place Global Reference…','',()=>drawPickPhotos(false,'gpanel')],['Place Photo in Reference Panel…','',()=>{ drawSetPhotoMode('panel'); drawPickPhotos(false,'panel'); }],['Place Photos, One per Panel…','',()=>drawPickPhotos(true)],0,['Save to Board','⌘↵',()=>closeDraw(true)],['Close','Esc',()=>closeDraw(false)]],
     Edit:[['Undo','⌘Z',drawUndo,!E.hist.length],['Redo','⇧⌘Z',drawRedo,!E.fut.length],0,['Duplicate','⌘J',drawDupSel,!sel],['Delete','⌫',drawDelSel,!sel],['Clear Canvas','',clk('.de-clear'),!E.ops.length],0,['Fill Shapes','F',drawToggleFill,false,E.fill],0,['Switch Colors','X',drawSwapColors],['Default Colors','D',drawResetColors]],
     Image:[...DRAW_SIZES.map(([k,w,h])=>[`Canvas ${k}  ·  ${w} × ${h}`,'',clk(`[data-size="${k}"]`),false,on(`[data-size="${k}"]`)]),0,['White Background','',clk('[data-bg="white"]'),false,E.bg==='white'],['Dark Background','',clk('[data-bg="dark"]'),false,E.bg==='dark'],['Transparent Background','',clk('[data-bg="none"]'),false,E.bg==='none'],0,['Reference Photo…','',clk('.de-ref-b')]],
     Layer:[['Duplicate Layer','⌘J',drawDupSel,!sel],['Delete Layer','⌫',drawDelSel,!sel],['Hide / Show Layer','',drawHideSel,!sel],['Lock / Unlock Layer','',drawLockSel,!sel],['Move Photo to Reference Panel','',drawSendToPanel,!drawSelOps().some(o=>o.t==='img')],0,['Bring to Front','⇧⌘]',()=>drawOrder(1,true),!sel],['Bring Forward','⌘]',()=>drawOrder(1,false),!sel],['Send Backward','⌘[',()=>drawOrder(-1,false),!sel],['Send to Back','⇧⌘[',()=>drawOrder(-1,true),!sel],0,
       ['Align Left','',()=>drawAlign('l'),!sel],['Align Centers','',()=>drawAlign('c'),!sel],['Align Right','',()=>drawAlign('r'),!sel],['Align Top','',()=>drawAlign('t'),!sel],['Align Middles','',()=>drawAlign('m'),!sel],['Align Bottom','',()=>drawAlign('b'),!sel]],
     Select:[['All','⌘A',drawSelAll],['Deselect','⌘D',drawSelNone,!E.selSet.size],['Inverse','⇧⌘I',drawSelInverse]],
-    View:[['Location Artboard','',()=>drawSetArt(!E.art),false,!!E.art],['Location Below Drawing','',()=>drawSetArtDir('below'),!E.art,E.artDir!=='right'],['Location Beside Drawing','',()=>drawSetArtDir('right'),!E.art,E.artDir==='right'],['Fit Drawing','',()=>drawZoomArt(0)],['Fit Location','',()=>drawZoomArt(1),!E.art],0,['Reference Panel','',()=>{ E.refMin=!E.refMin; drawRefPanel(); },!E.pages.some(q=>q.refs&&q.refs.length),!E.refMin&&E.pages.some(q=>q.refs&&q.refs.length)],0,['Zoom In','⌘+',()=>drawZoomStep(1)],['Zoom Out','⌘−',()=>drawZoomStep(-1)],['Fit on Screen','⌘0',drawZoomFit],['100%','⌘1',()=>drawZoomTo(1)],0,['Frame Guides…','',()=>{ const b=q('.de-guide-b'); setTimeout(()=>b.click(),0); }],['Onion Skin','O',drawToggleOnion,E.pages.length<2,E.onion&&E.pages.length>1],['Onion Skin: Show Next Panel Too','',()=>{ E.onionNext=!E.onionNext; drawOnionSave(); drawUnder(); drawLayers(); },E.pages.length<2,E.onionNext]],
+    View:[['Other Panels Side by Side','',()=>drawToggleSibs(),E.pages.length<2,E.sibs&&E.pages.length>1],0,['Location Artboard','',()=>drawSetArt(!E.art),false,!!E.art],['Location Below Drawing','',()=>drawSetArtDir('below'),!E.art,E.artDir!=='right'],['Location Beside Drawing','',()=>drawSetArtDir('right'),!E.art,E.artDir==='right'],0,['Show Location on Board','',()=>drawBoardShow('showLoc'),false,E.showLoc],['Show References on Board','',()=>drawBoardShow('showRefs'),false,E.showRefs],['Fit Drawing','',()=>drawZoomArt(0)],['Fit Location','',()=>drawZoomArt(1),!E.art],0,['Reference Panel','',()=>{ E.refMin=!E.refMin; drawRefPanel(); },!E.pages.some(q=>q.refs&&q.refs.length),!E.refMin&&E.pages.some(q=>q.refs&&q.refs.length)],0,['Zoom In','⌘+',()=>drawZoomStep(1)],['Zoom Out','⌘−',()=>drawZoomStep(-1)],['Fit on Screen','⌘0',drawZoomFit],['100%','⌘1',()=>drawZoomTo(1)],0,['Frame Guides…','',()=>{ const b=q('.de-guide-b'); setTimeout(()=>b.click(),0); }],['Onion Skin','O',drawToggleOnion,E.pages.length<2,E.onion&&E.pages.length>1],['Onion Skin: Show Next Panel Too','',()=>{ E.onionNext=!E.onionNext; drawOnionSave(); drawUnder(); drawLayers(); },E.pages.length<2,E.onionNext]],
     Storyboard:[['New Panel','⇧N',()=>drawAddPage(false)],['Duplicate Panel','',()=>drawAddPage(true)],0,['Previous Panel',',',()=>drawGoPage(E.pi-1),E.pi<=0],['Next Panel','.',()=>drawGoPage(E.pi+1),E.pi>=E.pages.length-1]] }; }
 function drawMenuOpen(name){ const E=drawEd, el=E.el, m=el.querySelector('.de-menu'); el.querySelectorAll('.de-menus > button').forEach(b=>b.classList.toggle('on',b.dataset.m===name));
   if(!name){ m.hidden=true; E.menuOpen=null; return; } E.menuOpen=name; const items=drawMenus()[name]; m._items=items;
@@ -6740,35 +6811,40 @@ function drawPsLayout(el){ const E=drawEd, q=s=>el.querySelector(s), mk=(tag,cls
   /* document window: tab with the name and zoom, status bar with zoom and size */
   const st=q('.de-stage'), win=mk('div','de-win'); st.before(win); const tab=mk('div','de-doc'); tab.appendChild(q('.de-name')); tab.insertAdjacentHTML('beforeend','<span class="dd-z"></span>');
   win.append(tab,st);
-  const rp=mk('div','de-refp',`<div class="drp-grip" title="Drag to resize"></div><div class="drp-h"><span class="drp-t">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}Reference</span><span class="drp-n"></span><span class="drp-sp"></span><button type="button" data-rp="all" title="Show or hide all of this panel's references on the board">${drawIcon('<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>')}<span>Show all on board</span></button><button type="button" data-rp="add" title="Add a reference photo to this panel">${drawIcon('<path d="M12 5v14M5 12h14"/>')}<span>Add</span></button><button type="button" data-rp="min"></button></div><div class="drp-body"></div>`); rp.hidden=true; win.appendChild(rp);
-  rp.addEventListener('click',e=>{ const b=e.target.closest('[data-rp],[data-ra]'), f=e.target.closest('[data-ri]'), pg=E.pages[E.pi];
-    if(!b&&f){ const r=pg.refs[+f.dataset.ri]; if(r){ r.show=!r.show; E.dirty=true; drawRefPanel(); toast(r.show?'Shown on the board below the drawing':'Hidden from the board'); } return; }
+  const rp=mk('div','de-refp',`<div class="drp-grip" title="Drag to resize"></div><div class="drp-h"><button type="button" data-rp="min" class="drp-min"></button><span class="drp-t">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}Reference</span><span class="drp-n"></span><span class="drp-sp"></span><div class="drp-tabs" role="tablist"><button type="button" data-rt="local" role="tab" title="References for the panel you're drawing">${drawIcon('<rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M8 9h8M8 13h5"/>')}This panel <i></i></button><button type="button" data-rt="global" role="tab" title="References for the whole storyboard: a mood image, the location overview, a lighting look">${drawIcon('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.4 5.4 3.4 8.5s-1 6.1-3.4 8.5c-2.4-2.4-3.4-5.4-3.4-8.5s1-6.1 3.4-8.5z"/>')}All panels <i></i></button></div><span class="drp-tools"><button type="button" data-rp="board" class="drp-board"></button><button type="button" data-rp="all" title="Show or hide all of these references on the board">${drawIcon('<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>')}<span>Show all on board</span></button><button type="button" data-rp="add" title="Add a reference photo to this panel">${drawIcon('<path d="M12 5v14M5 12h14"/>')}<span>Add</span></button></span></div><div class="drp-body"></div>`); rp.hidden=true; q('.de-side').before(rp);
+  rp.addEventListener('click',e=>{ const t=e.target.closest('[data-rt]'); if(t){ E.refTab=t.dataset.rt; drawRefPanel(); return; }
+    const b=e.target.closest('[data-rp],[data-ra]'), f=e.target.closest('[data-ri]'), pg={refs:drawRefList()};
+    if(b&&b.dataset.ra==='move'&&f){ const i=+f.dataset.ri, r=pg.refs.splice(i,1)[0]; if(r){ if(E.refTab==='global'){ const p2=E.pages[E.pi]; (p2.refs=p2.refs||[]).push(r); toast(`Moved to panel ${E.pi+1} only`); } else { (E.grefs=E.grefs||[]).push(r); toast('Now a global reference · used for the whole storyboard'); } E.dirty=true; drawRefPanel(); } return; }
+    if(!b&&f){ const r=pg.refs[+f.dataset.ri]; if(r){ r.show=!r.show; E.dirty=true; drawRefPanel(); toast(r.show?(E.refTab==='global'?'Shown once on the board, under all the panels':'Shown on the board below the drawing'):'Hidden from the board'); } return; }
+    if(b&&b.dataset.rp==='board'){ drawBoardShow('showRefs'); return; }
     if(b&&b.dataset.rp==='all'){ const all=(pg.refs||[]).every(r=>r.show); (pg.refs||[]).forEach(r=>r.show=!all); E.dirty=true; drawRefPanel(); return; }
     if(!b) return;
     if(b.dataset.rp==='add') drawPickPhotos(false,'panel'); else if(b.dataset.rp==='min'){ E.refMin=!E.refMin; try{ localStorage.setItem('setplot-refp-min',E.refMin?'1':'0'); }catch(err){} drawRefPanel(); }
-    else if(b.dataset.ra==='under'&&f) drawRefToLayer(+f.dataset.ri); else if(b.dataset.ra==='del'&&f){ const pg=E.pages[E.pi]; pg.refs.splice(+f.dataset.ri,1); E.dirty=true; drawRefPanel(); } });
+    else if(b.dataset.ra==='under'&&f) drawRefToLayer(+f.dataset.ri); else if(b.dataset.ra==='del'&&f){ pg.refs.splice(+f.dataset.ri,1); E.dirty=true; drawRefPanel(); } });
   rp.querySelector('.drp-h').addEventListener('dblclick',e=>{ if(e.target.closest('button')) return; E.refMin=!E.refMin; drawRefPanel(); });
-  { const grip=rp.querySelector('.drp-grip'); let g0=null; grip.addEventListener('pointerdown',e=>{ e.preventDefault(); g0={y:e.clientY,h:E.refH}; grip.setPointerCapture(e.pointerId); if(E.refMin){ E.refMin=false; drawRefPanel(); } });
-    grip.addEventListener('pointermove',e=>{ if(!g0) return; const mx=Math.max(120,win.getBoundingClientRect().height*.65); E.refH=Math.round(Math.max(80,Math.min(mx,g0.h-(e.clientY-g0.y)))); rp.querySelector('.drp-body').style.height=E.refH+'px'; });
-    grip.addEventListener('pointerup',()=>{ if(!g0) return; g0=null; try{ localStorage.setItem('setplot-refp-h',String(E.refH)); }catch(err){} }); }
+  { const grip=rp.querySelector('.drp-grip'); let g0=null; grip.addEventListener('pointerdown',e=>{ e.preventDefault(); g0={x:e.clientX,w:E.refW}; grip.setPointerCapture(e.pointerId); if(E.refMin){ E.refMin=false; drawRefPanel(); } });
+    grip.addEventListener('pointermove',e=>{ if(!g0) return; const mx=Math.max(220,innerWidth*.4); E.refW=Math.round(Math.max(160,Math.min(mx,g0.w-(e.clientX-g0.x)))); rp.style.width=E.refW+'px'; });
+    grip.addEventListener('pointerup',()=>{ if(!g0) return; g0=null; try{ localStorage.setItem('setplot-refp-w',String(E.refW)); }catch(err){} }); }
   E.ro=new ResizeObserver(()=>{ if(drawEd===E) drawFit(); }); E.ro.observe(st);
-  const sb=mk('div','de-status'); sb.appendChild(q('.de-zoom')); sb.insertAdjacentHTML('beforeend','<span class="dsb-dim"></span><span class="dsb-sel"></span>'); win.appendChild(sb);
+  const sb=mk('div','de-status'); sb.appendChild(q('.de-zoom')); sb.insertAdjacentHTML('beforeend','<span class="dsb-dim"></span><span class="dsb-sel"></span><button type="button" class="dsb-sibs" title="Show the other panels side by side, dimmed">Side by side</button>');
+  sb.querySelector('.dsb-sibs').addEventListener('click',()=>drawToggleSibs()); win.appendChild(sb);
   /* docked panels */
   q('.de-props').insertAdjacentHTML('afterbegin','<div class="de-ph"><span>Swatches</span></div>');
   const lf=mk('div','dl-foot',[['photo','Place photo under the drawing','<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 4 3.5 3-2.5 4.5 3.5"/>'],['lock','Lock / unlock selected','<rect x="5.5" y="11" width="13" height="9" rx="1.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>'],['hide','Hide / show selected','<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>'],['down','Send backward  ⌘[','<path d="M12 5v14M6 13l6 6 6-6"/>'],['up','Bring forward  ⌘]','<path d="M12 19V5M6 11l6-6 6 6"/>'],['dup','Duplicate layer  ⌘J','<rect x="4" y="8" width="12" height="12" rx="1.5"/><path d="M8 8V5.5A1.5 1.5 0 0 1 9.5 4H18.5A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H16"/>'],['del','Delete layer  ⌫','<path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/>']].map(([k,t,ic])=>`<button type="button" data-lf="${k}" title="${t}" aria-label="${t}">${drawIcon(ic)}</button>`).join(''));
   q('.de-layers').appendChild(lf);
   q('.de-art-b').addEventListener('click',()=>drawSetArt(!E.art));
   q('.de-ab-add').addEventListener('click',()=>drawPickPhotos(false,'loc'));
+  q('.de-abshow').addEventListener('click',()=>drawBoardShow('showLoc'));
   q('.de-abflip').addEventListener('click',()=>drawSetArtDir(E.artDir==='right'?'below':'right'));
   q('.de-paper').addEventListener('dblclick',e=>{ const n=e.target.closest('[data-abz]'); if(n) drawZoomArt(+n.dataset.abz); });
   drawWork();
   { const pb=q('.de-photo-b'), wrap=mk('div','de-photo-w'); pb.before(wrap); wrap.appendChild(pb);
     const more=mk('button','btn sm de-photo-more',drawIcon('<path d="m7 10 5 5 5-5"/>')); more.type='button'; more.title='Choose where photos go'; more.setAttribute('aria-label','Choose where photos go'); wrap.appendChild(more);
-    const pm=mk('div','de-photomenu card',`<button type="button" data-pm="under">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}<span><b>Under the drawing</b><small>On its own locked layer, so you draw on top. Part of the image.</small></span></button><button type="button" data-pm="loc">${drawIcon('<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/><path d="m13.5 16 2.4-2.2 1.8 1.4 1.4-1 2 1.6"/>')}<span><b>As location / blocking photo</b><small>On its own artboard beside the drawing. Draw notes on it. Shown on the board.</small></span></button><button type="button" data-pm="panel">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}<span><b>In a reference panel</b><small>Shown below the canvas, next to your drawing. Not part of the image.</small></span></button><hr><button type="button" data-pm="per"><span><b>Several photos, one per panel…</b><small>Uses the choice above</small></span></button>`); pm.hidden=true; el.appendChild(pm);
+    const pm=mk('div','de-photomenu card',`<button type="button" data-pm="under">${drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')}<span><b>Under the drawing</b><small>On its own locked layer, so you draw on top. Part of the image.</small></span></button><button type="button" data-pm="loc">${drawIcon('<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/><path d="m13.5 16 2.4-2.2 1.8 1.4 1.4-1 2 1.6"/>')}<span><b>As location / blocking photo</b><small>On its own artboard beside the drawing. Draw notes on it. Shown on the board.</small></span></button><button type="button" data-pm="gpanel">${drawIcon('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.4 5.4 3.4 8.5s-1 6.1-3.4 8.5c-2.4-2.4-3.4-5.4-3.4-8.5s1-6.1 3.4-8.5z"/>')}<span><b>Global reference</b><small>For the whole storyboard. Shown once on the board, under all panels.</small></span></button><button type="button" data-pm="panel">${drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')}<span><b>In a reference panel</b><small>Shown below the canvas, next to your drawing. Not part of the image.</small></span></button><hr><button type="button" data-pm="per"><span><b>Several photos, one per panel…</b><small>Uses the choice above</small></span></button>`); pm.hidden=true; el.appendChild(pm);
     const sync=()=>pm.querySelectorAll('[data-pm="under"],[data-pm="panel"],[data-pm="loc"]').forEach(b=>b.classList.toggle('on',b.dataset.pm===E.photoMode));
     pb.addEventListener('click',()=>drawPickPhotos(null));
     more.addEventListener('click',e=>{ e.stopPropagation(); pm.hidden=!pm.hidden; if(!pm.hidden){ const r=wrap.getBoundingClientRect(), t=el.getBoundingClientRect(); pm.style.left=Math.max(6,Math.min(r.left-t.left,t.width-pm.offsetWidth-6))+'px'; pm.style.top=(r.bottom-t.top+6)+'px'; } sync(); });
-    pm.addEventListener('click',e=>{ const b=e.target.closest('[data-pm]'); if(!b) return; pm.hidden=true; if(b.dataset.pm==='per') drawPickPhotos(true); else { drawSetPhotoMode(b.dataset.pm); drawPickPhotos(null,b.dataset.pm); } });
+    pm.addEventListener('click',e=>{ const b=e.target.closest('[data-pm]'); if(!b) return; pm.hidden=true; if(b.dataset.pm==='per') drawPickPhotos(true); else if(b.dataset.pm==='gpanel') drawPickPhotos(false,'gpanel'); else { drawSetPhotoMode(b.dataset.pm); drawPickPhotos(null,b.dataset.pm); } });
     el.addEventListener('pointerdown',e=>{ if(!pm.hidden&&!e.target.closest('.de-photo-w,.de-photomenu')) pm.hidden=true; }); drawSetPhotoMode(E.photoMode); }
   q('.dl-empty').textContent='Everything you draw shows up here. Drop location photos in to draw your blocking over them.';
   el.insertAdjacentHTML('beforeend','<div class="de-dropzone" hidden><div class="dz-t" data-dz="under">'+drawIcon('<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="m4 16 5-4 4 3 3-2 4 3"/><path d="M7 8.5h6" stroke-dasharray="1.6 1.8"/>')+'<b>Under the drawing</b><span>A locked layer you draw on top of</span></div><div class="dz-t" data-dz="loc">'+drawIcon('<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/><path d="m13.5 16 2.4-2.2 1.8 1.4 1.4-1 2 1.6"/>')+'<b>Location / blocking</b><span>Beside the drawing, draw notes on it</span></div><div class="dz-t" data-dz="panel">'+drawIcon('<rect x="3.5" y="3.5" width="17" height="10" rx="1.5"/><rect x="3.5" y="15.5" width="17" height="5" rx="1.2"/><path d="m6 19 2-1.6 1.6 1.1 1.2-.8 1.7 1.3"/>')+'<b>Reference panel</b><span>Shown below the canvas, not in the image</span></div><p>Several photos become one panel each</p></div>');
@@ -6820,10 +6896,10 @@ function drawApplySize(){ const E=drawEd, L=drawSelOps().filter(o=>o.t!=='img');
   L.forEach(o=>{ if(o.t==='text') o.fs=Math.max(24,E.size*6); else if(o.t==='rough') o.w=Math.max(1,Math.round(E.size*.6)); else if(o.t==='marker') o.w=Math.round(E.size*2.2); else if(o.t==='eraser') o.w=Math.round(E.size*2); else o.w=E.size; }); drawRender(); }
 function drawToggleFill(){ const E=drawEd, L=drawSelOps().filter(o=>['rect','ellipse','fig'].includes(o.t));
   if(L.length){ drawHist(); const v=L.every(o=>o.f)?0:1; L.forEach(o=>o.f=v); E.fill=!!v; drawRender(); } else E.fill=!E.fill; drawSyncUI(); }
-function drawSetSize(W,H,first){ const E=drawEd; if(!first){ drawPageSync(); const sx=W/E.W, sy=H/E.H, s=Math.min(sx,sy), ox=(W-E.W*s)/2, oy=(H-E.H*s)/2, oO=drawLocO(), nG=Math.round(Math.max(W,H)*.06), nO=E.artDir==='right'?[W+nG,0]:[0,H+nG];   /* keep what's drawn, centred and scaled to the new shape */
+function drawSetSize(W,H,first){ const E=drawEd; if(!first){ drawPageSync(); const sx=W/E.W, sy=H/E.H, s=Math.min(sx,sy), ox=(W-E.W*s)/2, oy=(H-E.H*s)/2, oO=drawLocO(), nG=Math.round(Math.max(W,H)*.14), nO=E.artDir==='right'?[W+nG,0]:[0,H+nG];   /* keep what's drawn, centred and scaled to the new shape */
     E.pages.forEach(pg=>pg.ops.forEach(o=>{ const loc=E.art&&drawIsLoc(o), b0=loc?oO:[0,0], b1=loc?nO:[0,0];
       if(o.pts) o.pts=o.pts.map((v,i)=>Math.round(i%2?(v-b0[1])*s+oy+b1[1]:(v-b0[0])*s+ox+b1[0])); if(o.w) o.w=Math.max(1,Math.round(o.w*s)); if(o.fs) o.fs=Math.max(6,Math.round(o.fs*s)); })); E.dirty=true; }
-  E.W=W; E.H=H; E.G=Math.round(Math.max(W,H)*.06);
+  E.W=W; E.H=H; E.G=first&&E.G0?E.G0:Math.round(Math.max(W,H)*.14);
   E.pages.forEach(pg=>pg.ops.forEach(o=>{ if(o.loc){ o.pts=drawLocRect(o.iw,o.ih); o.clip=[drawLocX(),drawLocY(),W,H]; } }));   /* location photos refill their artboard */
   drawWork(); }
 function drawLocO(dir){ const E=drawEd; dir=dir||E.artDir; return dir==='right'?[E.W+(E.G||0),0]:[0,E.H+(E.G||0)]; }
@@ -6834,11 +6910,12 @@ function drawSetArtDir(d){ const E=drawEd; if(E.artDir===d) return; drawPageSync
   if(E.art) E.pages.forEach(pg=>pg.ops.forEach(o=>{ if(!drawIsLoc(o,E.artDir)) return; o.pts=o.pts.map((v,i)=>i%2?v-oy+ny:v-ox+nx); if(o.clip) o.clip=[nx,ny,E.W,E.H]; }));
   E.artDir=d; E.dirty=true; drawWork(); drawZoomFit(); drawSyncUI(); }
 function drawLocRect(w,h){ const E=drawEd, s=Math.max(E.W/w,E.H/h), pw=w*s, ph=h*s, x=drawLocX()+(E.W-pw)/2, y=drawLocY()+(E.H-ph)/2; return [Math.round(x),Math.round(y),Math.round(x+pw),Math.round(y+ph)]; }
-function drawWork(){ const E=drawEd; E.G=E.G||Math.round(Math.max(E.W,E.H)*.06); const R2=E.art&&E.artDir==='right', B2=E.art&&E.artDir!=='right'; E.CW=R2?E.W*2+E.G:E.W; E.CH=B2?E.H*2+E.G:E.H; [E.cv,E.live,E.layer,E.under,E.guideCv,E.onionCv].forEach(c=>{ if(c){ c.width=E.CW; c.height=E.CH; } });
+function drawWork(){ const E=drawEd; E.G=E.G||Math.round(Math.max(E.W,E.H)*.14); const R2=E.art&&E.artDir==='right', B2=E.art&&E.artDir!=='right'; E.CW=R2?E.W*2+E.G:E.W; E.CH=B2?E.H*2+E.G:E.H; [E.cv,E.live,E.layer,E.under,E.guideCv,E.onionCv].forEach(c=>{ if(c){ c.width=E.CW; c.height=E.CH; } });
   drawArtUI(); drawFit(); drawRender(); drawUnder(); drawGuide(); }
 function drawArtUI(){ const E=drawEd; if(!E||!E.el) return; const pp=E.el.querySelector('.de-paper'); if(!pp) return; pp.classList.toggle('art',!!E.art);
   const a1=pp.querySelector('.de-ab1'), a2=pp.querySelector('.de-ab2'), add=pp.querySelector('.de-ab-add'), f=v=>(v/E.CW*100)+'%', fy=v=>(v/E.CH*100)+'%'; a1.hidden=a2.hidden=!E.art; pp.dataset.dir=E.artDir;
   if(E.art){ a1.style.left='0'; a1.style.top='0'; a1.style.width=f(E.W); a1.style.height=fy(E.H); a2.style.left=f(drawLocX()); a2.style.top=fy(drawLocY()); a2.style.width=f(E.W); a2.style.height=fy(E.H); add.style.left=f(drawLocX()+E.W/2); add.style.top=fy(drawLocY()+E.H/2);
+    const sh=pp.querySelector('.de-abshow'); sh.classList.toggle('off',!E.showLoc); sh.title=E.showLoc?'Shown on the board · click to hide it there':'Hidden on the board · click to show it'; sh.innerHTML=drawIcon(E.showLoc?'<path d="M3 12c.5-1.5 4-6 9-6s8.5 4.5 9 6c-.5 1.5-4 6-9 6s-8.5-4.5-9-6z"/><circle cx="12" cy="12" r="2.6"/>':'<path d="M3 3l18 18"/><path d="M10.6 6.2A9.6 9.6 0 0 1 12 6c5 0 8.5 4.5 9 6-.3.9-1.4 2.6-3.2 4M6.4 7.6C4.6 8.9 3.4 10.7 3 12c.5 1.5 4 6 9 6 1.4 0 2.6-.3 3.7-.8"/>')+'<span>'+(E.showLoc?'On board':'Hidden on board')+'</span>';
     const fl=pp.querySelector('.de-abflip'); fl.title=E.artDir==='right'?'Put the location photo below the drawing':'Put the location photo beside the drawing'; fl.innerHTML=drawIcon(E.artDir==='right'?'<rect x="5" y="3" width="14" height="8" rx="1"/><rect x="5" y="13" width="14" height="8" rx="1"/>':'<rect x="2.5" y="6" width="8.5" height="12" rx="1"/><rect x="13" y="6" width="8.5" height="12" rx="1"/>'); }
   add.hidden=!E.art||E.ops.some(o=>o.loc); const b=E.el.querySelector('.de-art-b'); if(b) b.classList.toggle('on',!!E.art); }
 function drawSetArt(on){ const E=drawEd; if(!!E.art===!!on) return; drawCommitText(); E.art=!!on; E.dirty=true; drawWork(); drawZoomFit(); drawSyncUI();
@@ -6846,9 +6923,9 @@ function drawSetArt(on){ const E=drawEd; if(!!E.art===!!on) return; drawCommitTe
 function drawZoomArt(i){ const E=drawEd, st=E.el.querySelector('.de-stage').getBoundingClientRect(); drawFit(); const s=Math.min((st.width-40)/E.W,(st.height-64)/E.H), cx=i?drawLocX()+E.W/2:E.W/2, cy=i?drawLocY()+E.H/2:E.H/2; E.zoom=s/E.fit; E.pan=[(E.CW/2-cx)*s,(E.CH/2-cy)*s]; drawFit(); }
 function drawPlaceLoc(d){ const E=drawEd; if(!E.art){ E.art=true; drawWork(); drawZoomFit(); } drawHist(); E.ops=E.ops.filter(o=>!o.loc);
   const o={t:'img', loc:1, src:d.src, iw:d.w, ih:d.h, nm:d.nm||'Location', c:'transparent', w:0, lk:1, pts:drawLocRect(d.w,d.h), clip:[drawLocX(),drawLocY(),E.W,E.H]}; o.i=++E.nid; E.ops.unshift(o); return o; }
-function drawFit(){ const E=drawEd; if(!E) return; const st=E.el.querySelector('.de-stage'), pp=E.el.querySelector('.de-paper'); const r=st.getBoundingClientRect(); E.fit=Math.max(.02,Math.min((r.width-32)/E.CW,(r.height-(E.art?64:32))/E.CH,1)); const s=E.fit*(E.zoom||1); E.scale=s;
-  const mx=Math.max(0,(E.CW*s+r.width)/2-60), my=Math.max(0,(E.CH*s+r.height)/2-60); E.pan=[Math.max(-mx,Math.min(mx,E.pan[0])),Math.max(-my,Math.min(my,E.pan[1]))];
-  pp.style.width=Math.round(E.CW*s)+'px'; pp.style.height=Math.round(E.CH*s)+'px'; pp.style.transform=`translate(-50%,-50%) translate(${Math.round(E.pan[0])}px,${Math.round(E.pan[1])}px)`;
+function drawFit(){ const E=drawEd; if(!E) return; const st=E.el.querySelector('.de-stage'), pp=E.el.querySelector('.de-paper'); const r=st.getBoundingClientRect(); E.fit=Math.max(.02,Math.min((r.width-32)/(E.CW*(E.sibs&&E.pages.length>1?1.7:1)),(r.height-(E.art?64:32))/E.CH,1)); const s=E.fit*(E.zoom||1); E.scale=s;
+  const mx=Math.max(0,(E.CW*s+r.width)/2-60), my=Math.max(0,(E.CH*s+r.height)/2-60), sp=E.sibs&&E.pages.length>1?E.CW*(1+DRAW_SIB_GAP)*s:0; E.pan=[Math.max(-mx-sp*(E.pages.length-1-E.pi),Math.min(mx+sp*E.pi,E.pan[0])),Math.max(-my,Math.min(my,E.pan[1]))];
+  pp.style.width=Math.round(E.CW*s)+'px'; pp.style.height=Math.round(E.CH*s)+'px'; pp.style.transform=`translate(-50%,-50%) translate(${Math.round(E.pan[0])}px,${Math.round(E.pan[1])}px)`; drawSibs();
   const zb=E.el.querySelector('.de-zoom'); if(zb){ zb.textContent=Math.round(s*100)+'%'; zb.classList.toggle('on',Math.abs(E.zoom-1)>.001); }
   const dz=E.el.querySelector('.dd-z'); if(dz) dz.textContent=`@ ${Math.round(s*100)}% (RGB/8)${E.dirty?' *':''}`;
   if(E.el.querySelector('.de-text')&&!E.el.querySelector('.de-text').hidden){ const ta=E.el.querySelector('.de-text'); ta.style.left=(E.textAt[0]*s)+'px'; ta.style.top=(E.textAt[1]*s)+'px'; drawRestyleText(); }
@@ -6868,6 +6945,7 @@ function drawSyncUI(){ const E=drawEd, el=E.el, cv=drawCurV(); if(!E.gsel) E.gse
       o.querySelector('.do-hint').textContent=DRAW_HINTS[cv]||''; o.querySelectorAll('[data-sm]').forEach(b=>b.classList.toggle('on',(b.dataset.sm==='add')===!!E.selAdd));
       { const SP=drawSelOps().filter(q=>q.t==='img'), ph=o.querySelector('.do-photo'); ph.hidden=!(cv==='move'&&SP.length); if(SP.length) ph.querySelector('[data-pf="lock"]').textContent=SP.some(q=>!q.lk)?'Lock':'Unlock'; }
       const sv=o.querySelector('.de-sz-v'); if(sv) sv.textContent=(cv==='text'?Math.max(24,E.size*6):E.size)+' px'; o.querySelectorAll('[data-al]').forEach(b=>b.disabled=!drawSelOps().length); }
+    { const sbb=el.querySelector('.dsb-sibs'); if(sbb){ sbb.hidden=E.pages.length<2; sbb.classList.toggle('on',!!E.sibs); } }
     const dim=el.querySelector('.dsb-dim'); if(dim){ dim.textContent=`${E.W} × ${E.H} px`; const n=drawSelOps().length; el.querySelector('.dsb-sel').textContent=n?`${n} selected`:''; } }
   el.querySelector('.de-fill').classList.toggle('on',E.fill); el.querySelector('.de-fill').setAttribute('aria-pressed',E.fill);
   el.querySelectorAll('[data-color]').forEach(b=>b.classList.toggle('on',b.dataset.color.toLowerCase()===E.color.toLowerCase()&&E.tool!=='eraser'));
@@ -7146,7 +7224,7 @@ function drawRefMenu(){ const E=drawEd, pg=E.pages[E.pi]; let m=E.el.querySelect
 /* panels */
 function drawPageSync(){ const E=drawEd, pg=E.pages[E.pi]; pg.ops=E.ops; pg.hist=E.hist; pg.fut=E.fut; }
 function drawGoPage(i){ const E=drawEd; if(i<0||i>=E.pages.length||i===E.pi&&E.ops===E.pages[i].ops) { return; } drawCommitText(); if(E.pi>=0&&E.pages[E.pi]) drawPageSync(); E.pi=i; const pg=E.pages[i]; E.ops=pg.ops; E.hist=pg.hist; E.fut=pg.fut; drawSelClear(); E.region=null;
-  drawRender(); drawUnder(); drawSyncUI(); drawStrip(); drawRefPanel(); }
+  drawRender(); drawUnder(); drawSyncUI(); drawStrip(); drawRefPanel(); drawSibs(); }
 function drawAddPage(dup){ const E=drawEd; drawCommitText(); drawPageSync(); const cur0=E.pages[E.pi];
   const pg=dup?{ops:JSON.parse(JSON.stringify(cur0.ops)).map(o=>(o.i=++E.nid,o)), info:Object.assign({},cur0.info), ref:cur0.ref?{src:cur0.ref.src,op:cur0.ref.op,out:cur0.ref.out,hide:cur0.ref.hide}:undefined, refs:(cur0.refs||[]).map(r=>Object.assign({},r)), hist:[], fut:[]}:{ops:[], info:{cam:cur0.info.cam||'', lens:cur0.info.lens||''}, hist:[], fut:[]};
   E.pages.splice(E.pi+1,0,pg); E.dirty=true; drawLoadRef(pg); drawGoPage(E.pi+1); if(!E.quietPage) toast(dup?`Panel ${E.pi+1} duplicated`:`Panel ${E.pi+1} added`); }
@@ -7184,11 +7262,12 @@ function drawCompose(){ const E=drawEd; drawPageSync();
     const l=document.createElement('canvas'); l.width=E.W; l.height=E.H; const lg=l.getContext('2d'); drawPaintOps(lg,pg.ops); g.drawImage(l,0,0);
     const F=drawFrameRect(); if(E.guide.ar!=='none'){ const o=document.createElement('canvas'); o.width=Math.round(F.w); o.height=Math.round(F.h); o.getContext('2d').drawImage(c,F.x,F.y,F.w,F.h,0,0,o.width,o.height); return o; }   /* with a frame guide, the image is the frame */
     return c; };
-  const renderLoc=pg=>{ if(!E.art) return null; const LX=drawLocX(), LY=drawLocY(); if(!pg.ops.some(o=>!o.h&&drawIsLoc(o))) return null;
+  const renderLoc=pg=>{ if(!E.art||!E.showLoc) return null; const LX=drawLocX(), LY=drawLocY(); if(!pg.ops.some(o=>!o.h&&drawIsLoc(o))) return null;
     const big=document.createElement('canvas'); big.width=E.CW; big.height=E.CH; drawPaintOps(big.getContext('2d'),pg.ops);
     const c=document.createElement('canvas'); c.width=E.W; c.height=E.H; const g=c.getContext('2d'); g.fillStyle='#e9eaec'; g.fillRect(0,0,E.W,E.H); g.drawImage(big,LX,LY,E.W,E.H,0,0,E.W,E.H); return c; };
-  const refImgs=pg=>(pg.refs||[]).filter(r=>r.show).map(r=>drawImgGet(r.src)).filter(im=>im&&im.complete&&im.naturalWidth);
-  const extras=E.pages.some(pg=>renderLoc(pg)||refImgs(pg).length);
+  const refImgs=pg=>!E.showRefs?[]:(pg.refs||[]).filter(r=>r.show).map(r=>drawImgGet(r.src)).filter(im=>im&&im.complete&&im.naturalWidth);
+  const GR=!E.showRefs?[]:(E.grefs||[]).filter(r=>r.show).map(r=>drawImgGet(r.src)).filter(im=>im&&im.complete&&im.naturalWidth);
+  const extras=GR.length||E.pages.some(pg=>renderLoc(pg)||refImgs(pg).length);
   if(E.pages.length===1&&!extras) return renderPanel(E.pages[0]);
   const P=E.pages.map(renderPanel), pw=640, ph=Math.round(pw*P[0].height/P[0].width), cols=E.pages.length===1?1:E.pages.length===2||E.pages.length===4?2:3, rows=Math.ceil(P.length/cols), cap=96, gap=28, pad=40, head=64, lab=26, sub=14;
   /* each panel is a column: drawing + notes, then the location photo, then the references */
@@ -7196,7 +7275,10 @@ function drawCompose(){ const E=drawEd; drawPageSync();
   const refRows=imgs=>{ const out=[]; for(let i=0;i<imgs.length;i+=2){ const pair=imgs.slice(i,i+2), w=pair.length>1?(pw-sub)/2:pw; out.push({pair,w,h:Math.min(Math.round(pw*.75),Math.max(...pair.map(im=>Math.round(w*im.naturalHeight/im.naturalWidth))))}); } return out; };
   const RR=REF.map(refRows), colH=E.pages.map((_,i)=>ph+cap+(LOC[i]?lab+lh+sub:0)+(RR[i].length?lab+RR[i].reduce((a,r)=>a+r.h+sub,0):0));
   const rowH=[]; for(let r=0;r<rows;r++) rowH.push(Math.max(...colH.slice(r*cols,r*cols+cols)));
-  const out=document.createElement('canvas'); out.width=pad*2+cols*pw+(cols-1)*gap; out.height=pad+head+rowH.reduce((a,h)=>a+h,0)+(rows-1)*gap+pad; const g=out.getContext('2d');
+  const OW=pad*2+cols*pw+(cols-1)*gap, gh=Math.round(Math.min(360,Math.max(220,pw*.5))), GRW=OW-pad*2;
+  const grRows=[]; { let row=[], w=0; GR.forEach(im=>{ const iw=Math.round(gh*im.naturalWidth/im.naturalHeight); if(row.length&&w+iw>GRW){ grRows.push(row); row=[]; w=0; } row.push([im,Math.min(iw,GRW)]); w+=Math.min(iw,GRW)+sub; }); if(row.length) grRows.push(row); }
+  const grH=grRows.length?gap+lab+18+grRows.length*(gh+sub):0;
+  const out=document.createElement('canvas'); out.width=OW; out.height=pad+head+rowH.reduce((a,h)=>a+h,0)+(rows-1)*gap+grH+pad; const g=out.getContext('2d');
   g.fillStyle='#ffffff'; g.fillRect(0,0,out.width,out.height); g.fillStyle='#1b1d22'; g.font=`700 28px ${FONT}`; g.textBaseline='top'; g.fillText((E.name||'Storyboard').trim()||'Storyboard',pad,pad);
   g.fillStyle='#8a9099'; g.font=`600 16px ${FONT}`; g.fillText(P.length>1?`${P.length} panels`:'Storyboard',pad,pad+36);
   const label=(t,x,y)=>{ g.fillStyle='#8a9099'; g.font=`700 12px ${FONT}`; g.textBaseline='top'; g.fillText(t.toUpperCase(),x,y+7); };
@@ -7211,6 +7293,8 @@ function drawCompose(){ const E=drawEd; drawPageSync();
     const fit=(t,max)=>{ if(g.measureText(t).width<=max) return t; while(t.length&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; };
     g.fillStyle='#4a4f57'; g.font=`500 15px ${FONT}`; if(inf.action) g.fillText(fit(inf.action,pw),x,y+ph+34);
     if(inf.dlg){ g.fillStyle='#6b7280'; g.font=`italic 500 15px ${FONT}`; g.fillText(fit('“'+inf.dlg+'”',pw),x,y+ph+(inf.action?56:34)); } });
+  if(grRows.length){ let yy=pad+head+rowH.reduce((a,h)=>a+h,0)+(rows-1)*gap+gap; g.fillStyle='#e3e5e8'; g.fillRect(pad,yy,GRW,1.5); yy+=18; g.fillStyle='#8a9099'; g.font=`700 12px ${FONT}`; g.textBaseline='top'; g.fillText('REFERENCES · WHOLE STORYBOARD',pad,yy+7); yy+=lab;
+    grRows.forEach(row=>{ let xx=pad; row.forEach(([im,w])=>{ g.drawImage(im,xx,yy,w,gh); xx+=w+sub; }); yy+=gh+sub; }); }
   return out; }
 function drawRender(extra){ const E=drawEd; if(!E) return; const L=E.layer.getContext('2d'); L.clearRect(0,0,E.CW,E.CH); drawPaintOps(L,E.ops,extra); drawThumbSoon();
   const g=E.cv.getContext('2d'); g.clearRect(0,0,E.CW,E.CH); g.drawImage(E.layer,0,0); }
@@ -7226,14 +7310,14 @@ async function closeDraw(save){ const E=drawEd; if(!E) return; drawCommitText();
   const it=itemById(E.id);
   if(save&&it){ if(!visible&&!it.p.src){ toast('Draw something first'); return; }
     drawSelClear(); E.region=null; drawRender();
-    { const ims=[]; E.pages.forEach(pg=>{ pg.ops.forEach(o=>{ if(o.t==='img'&&!o.h){ const im=drawImgGet(o.src); if(im) ims.push(im); } }); (pg.refs||[]).forEach(r=>{ if(r.show){ const im=drawImgGet(r.src); if(im) ims.push(im); } }); });
+    { const ims=[]; E.pages.forEach(pg=>{ pg.ops.forEach(o=>{ if(o.t==='img'&&!o.h){ const im=drawImgGet(o.src); if(im) ims.push(im); } }); (pg.refs||[]).forEach(r=>{ if(r.show){ const im=drawImgGet(r.src); if(im) ims.push(im); } }); }); (E.grefs||[]).forEach(r=>{ if(r.show){ const im=drawImgGet(r.src); if(im) ims.push(im); } });
       await Promise.race([Promise.all(ims.map(im=>im.complete?0:im.decode().catch(()=>0))),new Promise(r=>setTimeout(r,4000))]); }
     const out=drawCompose();
     const blob=await new Promise(r=>out.toBlob(r,'image/png')); if(!blob){ toast('Couldn’t save the drawing'); return; }
     checkpoint(); it.p.name=(E.name||'Drawing').trim()||'Drawing';
     const clean=ops=>ops.map(o=>{ const c=Object.assign({},o); delete c.i; return c; });   /* hidden layers stay hidden, and stay editable */
     const pages=E.pages.map(pg=>{ const q={ops:clean(pg.ops), info:pg.info||{}}; if(pg.ref) q.ref={src:pg.ref.src, op:pg.ref.op, out:!!pg.ref.out, hide:!!pg.ref.hide}; if(pg.refs&&pg.refs.length) q.refs=pg.refs.map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})); return q; });
-    it.p.draw={W:E.W,H:E.H,art:!!E.art,artDir:E.artDir,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
+    it.p.draw={W:E.W,H:E.H,G:E.G,grefs:(E.grefs||[]).map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})),art:!!E.art,artDir:E.artDir,showLoc:E.showLoc,showRefs:E.showRefs,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
     fillImage(it,new File([blob],it.p.name+'.png',{type:'image/png'}));
     toast(E.pages.length>1?`Storyboard with ${E.pages.length} panels added to the board · double-click to edit`:(E.fresh?'Drawing added to the board · double-click it to keep drawing':'Drawing updated')); }
   removeEventListener('resize',drawFit); clearInterval(E.antsT); if(E.ro) E.ro.disconnect(); E.el.classList.remove('on'); const el=E.el; drawEd=null; setTimeout(()=>el.remove(),200); }
@@ -7281,7 +7365,7 @@ addEventListener('keydown',e=>{ const E=drawEd; if(!E) return; if(e.target&&e.ta
   addEventListener('dragleave',e=>{ if(!drawEd||!files(e)) return; e.stopPropagation(); dd=Math.max(0,dd-1); if(!dd){ const z=dz(); if(z) z.hidden=true; } },true);
   const zoneAt=e=>{ const z=dz(); if(!z) return null; let hit=null; z.querySelectorAll('[data-dz]').forEach(t=>{ const r=t.getBoundingClientRect(); const on=e.clientX>=r.left-30&&e.clientX<=r.right+30&&e.clientY>=r.top-60&&e.clientY<=r.bottom+60; t.classList.toggle('on',on); if(on) hit=t.dataset.dz; }); return hit; };
   addEventListener('dragover',e=>{ if(!drawEd||!files(e)) return; e.stopPropagation(); e.preventDefault(); e.dataTransfer.dropEffect='copy'; zoneAt(e); },true);
-  addEventListener('drop',e=>{ if(!drawEd||!files(e)) return; e.stopPropagation(); e.preventDefault(); dd=0; const m=zoneAt(e)||(e.target.closest&&e.target.closest('.de-refp')?'panel':null); const z=dz(); if(z) z.hidden=true; if(m) drawSetPhotoMode(m); drawPlaceFiles(e.dataTransfer.files,null,m||drawEd.photoMode); },true);
+  addEventListener('drop',e=>{ if(!drawEd||!files(e)) return; e.stopPropagation(); e.preventDefault(); dd=0; const m=zoneAt(e)||(e.target.closest&&e.target.closest('.de-refp')?(drawEd.refTab==='global'?'gpanel':'panel'):null); const z=dz(); if(z) z.hidden=true; if(m&&m!=='gpanel') drawSetPhotoMode(m); drawPlaceFiles(e.dataTransfer.files,null,m||drawEd.photoMode); },true);
   addEventListener('paste',e=>{ if(!drawEd) return; const a=document.activeElement; if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!=='range'&&a.type!=='checkbox') return; const fs=e.clipboardData?[...e.clipboardData.files].filter(f=>/^image\//.test(f.type)):[]; if(!fs.length) return; e.stopPropagation(); e.preventDefault(); drawPlaceFiles(fs,false); },true); }
 addEventListener('keyup',e=>{ const E=drawEd; if(!E) return; if(e.key===' '&&E.spaceHand){ E.spaceHand=false; drawCursor(); } if(e.key==='Alt'&&E.altDown){ E.altDown=false; drawCursor(); } },true);
 addEventListener('blur',()=>{ const E=drawEd; if(E){ E.spaceHand=false; E.altDown=false; drawCursor(); } });
