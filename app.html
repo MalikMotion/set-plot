@@ -1537,6 +1537,82 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .de-sib.ghost:hover{border-color:#1473e6;background:rgba(20,115,230,.06)}
 #drawEd .de-sib.ghost:hover .dg-in{color:#e6e6e6;transform:scale(1.04)}
 #drawEd .de-sib.ghost:active .dg-in{transform:scale(.97)}
+#drawEd .de-sibs.dragging:not(.gliding) .de-sib.ghost{opacity:.35}
+#drawEd .de-tl{flex:none;display:flex;flex-direction:column;background:#232323;border-top:1px solid #1a1a1a;user-select:none}
+#drawEd .tl-h{display:flex;align-items:center;gap:6px;height:30px;padding:0 8px;color:#a8a8a8;font:400 11.5px var(--font,inherit);font-variant-numeric:tabular-nums}
+#drawEd .tl-h button{display:flex;align-items:center;gap:5px;height:21px;padding:0 8px;border:1px solid #3c3c3c;border-radius:2px;background:#2d2d2d;color:#ddd;font:400 11.5px var(--font,inherit);cursor:pointer;transition:background .15s ease,border-color .15s ease}
+#drawEd .tl-h button:hover{background:#383838}
+#drawEd .tl-h button svg{width:13px;height:13px}
+#drawEd .tl-h .tl-play{background:#1473e6;border-color:#1473e6;color:#fff}
+#drawEd .tl-h .tl-play:hover{background:#0d66d0}
+#drawEd .tl-h .tl-ov.on{background:#1473e6;border-color:#1473e6;color:#fff}
+#drawEd .tl-h .tl-min{padding:0 4px}
+#drawEd .tl-h .tl-min svg{transition:transform .2s ease}
+#drawEd .de-tl.min .tl-min svg{transform:rotate(180deg)}
+#drawEd .tl-sp{flex:1}
+#drawEd .tl-track{height:104px;overflow-x:auto;overflow-y:hidden;padding:20px 12px 8px;scrollbar-width:thin}
+#drawEd .de-tl.min .tl-track{display:none}
+#drawEd .tl-clips{display:flex;gap:3px;height:100%;width:max-content;padding-right:30px}
+#drawEd .tl-clip{position:relative;flex:none;height:100%;background:#151515;border:1px solid #3a3a3a;border-top:3px solid var(--rc,#3a3a3a);border-radius:3px;cursor:pointer;transition:width .16s ease,border-color .15s ease,box-shadow .15s ease}
+#drawEd .tl-clip.sizing{transition:none;border-color:#1473e6}
+#drawEd .tl-clip.fx-in{animation:tlIn .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes tlIn{from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:none}}
+#drawEd .tl-clip:hover{border-color:#5a5a5a}
+#drawEd .tl-clip.cur{border-color:#1473e6;box-shadow:0 0 0 1px #1473e6}
+#drawEd .tl-in{position:absolute;inset:0;overflow:hidden;border-radius:1px}
+#drawEd .tl-in{background-repeat:repeat-x;background-position:left center;opacity:.95}
+#drawEd .tl-clip b{position:absolute;left:3px;top:3px;font:600 10px var(--font,inherit);color:#fff;background:rgba(0,0,0,.62);padding:1px 4px;border-radius:2px;pointer-events:none}
+#drawEd .tl-d{position:absolute;right:7px;bottom:3px;font:500 10px var(--font,inherit);color:#fff;background:rgba(0,0,0,.62);padding:1px 4px;border-radius:2px;pointer-events:none;font-variant-numeric:tabular-nums}
+#drawEd .tl-clip.sizing .tl-d{background:#1473e6}
+#drawEd .tl-row{position:absolute;left:12px;top:-19px;font:600 10px var(--font,inherit);color:var(--rc,#8a8a8a);white-space:nowrap;letter-spacing:.02em;pointer-events:none}
+#drawEd .tl-hd{position:absolute;right:-5px;top:0;bottom:0;width:9px;cursor:ew-resize;z-index:2}
+#drawEd .tl-hd::after{content:'';position:absolute;left:3px;top:20%;bottom:20%;width:3px;border-radius:2px;background:#fff;opacity:0;transition:opacity .15s ease}
+#drawEd .tl-clip:hover .tl-hd::after,#drawEd .tl-clip.sizing .tl-hd::after{opacity:.8}
+#drawEd .tl-tr{position:absolute;right:-10px;top:-17px;z-index:3;min-width:14px;height:14px;padding:0 4px;border:1px solid #4a4a4a;border-radius:7px;background:#2a2a2a;color:#cfcfcf;font:700 8.5px var(--font,inherit);letter-spacing:.04em;cursor:pointer;transform:translateX(50%);right:-1.5px;opacity:.55;transition:opacity .15s ease,background .15s ease}
+#drawEd .tl-tr[data-tr="cut"]{width:9px;min-width:9px;height:9px;top:-14px;padding:0;border-radius:2px;transform:translateX(50%) rotate(45deg)}
+#drawEd .tl-tr:not([data-tr="cut"]){opacity:1;background:#3b2f5c;border-color:#6e56cf;color:#e9e4ff}
+#drawEd .tl-tr:hover{opacity:1;border-color:#1473e6}
+#drawEd .de-player{position:fixed;inset:0;z-index:300;background:#0b0b0b;display:grid;grid-template-rows:1fr auto auto;opacity:0;transition:opacity .22s ease;color:#ddd;font-family:var(--font,inherit)}
+#drawEd .de-player.on{opacity:1}
+#drawEd .pl-stage{position:relative;min-height:0;cursor:pointer}
+#drawEd .pl-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+#drawEd .pl-hint{position:absolute;left:0;right:0;top:14px;text-align:center;font:500 12px var(--font,inherit);color:#8a8a8a;pointer-events:none}
+#drawEd .pl-cap{padding:6px 24px 4px;text-align:center;min-height:44px}
+#drawEd .pl-c1{display:flex;gap:12px;justify-content:center;align-items:baseline;font:500 12px var(--font,inherit);color:#9a9a9a}
+#drawEd .pl-c1 b{color:#fff;font-weight:700}
+#drawEd .pl-c2{margin-top:4px;font:500 15px var(--font,inherit);color:#e6e6e6}
+#drawEd .pl-c3{margin-top:2px;font:italic 500 15px var(--font,inherit);color:#b5b5b5}
+#drawEd .pl-present .pl-c1{font-size:14px}#drawEd .pl-present .pl-c2,#drawEd .pl-present .pl-c3{font-size:20px}
+#drawEd .pl-play .pl-cap{min-height:0}
+#drawEd .pl-bar{display:flex;align-items:center;gap:8px;padding:10px 16px 14px}
+#drawEd .pl-bar button{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:6px;background:transparent;color:#ddd;cursor:pointer;font:400 20px var(--font,inherit)}
+#drawEd .pl-bar button:hover{background:#262626}
+#drawEd .pl-bar button svg{width:16px;height:16px}
+#drawEd .pl-bar .pl-pp{background:#1473e6;color:#fff}#drawEd .pl-bar .pl-pp:hover{background:#0d66d0}
+#drawEd .pl-t{min-width:92px;font:500 12px var(--font,inherit);font-variant-numeric:tabular-nums;color:#9a9a9a}
+#drawEd .pl-scrub{position:relative;flex:1;display:flex;gap:2px;height:18px;align-items:center;cursor:pointer}
+#drawEd .pl-scrub i{height:6px;border-radius:3px;background:#333;transition:background .15s ease,height .15s ease}
+#drawEd .pl-scrub i.on{background:#1473e6;height:8px}
+#drawEd .pl-head{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;border-radius:1px;pointer-events:none}
+#drawEd .pl-tap .pl-scrub,#drawEd .pl-tap [data-pl="prev"],#drawEd .pl-tap [data-pl="next"]{visibility:hidden}
+#drawEd .pl-rev{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(380px,90vw);max-height:80%;display:flex;flex-direction:column;background:#232323;border:1px solid #3a3a3a;border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,.6);cursor:default}
+#drawEd .pl-rh{padding:12px 14px;font:600 13px var(--font,inherit);color:#fff;border-bottom:1px solid #333}
+#drawEd .pl-rl{overflow:auto;padding:6px 14px}
+#drawEd .pl-rl div{display:grid;grid-template-columns:28px 1fr 18px 1fr;align-items:center;padding:4px 0;font:500 12.5px var(--font,inherit);font-variant-numeric:tabular-nums;color:#9a9a9a}
+#drawEd .pl-rl b{color:#fff}#drawEd .pl-rl em{font-style:normal;color:#fff;font-weight:600}#drawEd .pl-rl i{font-style:normal;color:#666}
+#drawEd .pl-ra{display:flex;gap:8px;justify-content:flex-end;padding:12px 14px;border-top:1px solid #333}
+#drawEd .pl-ra button{height:28px;padding:0 12px;border:1px solid #444;border-radius:5px;background:#2d2d2d;color:#ddd;font:500 12.5px var(--font,inherit);cursor:pointer}
+#drawEd .pl-ra button.pri{background:#1473e6;border-color:#1473e6;color:#fff}
+#drawEd .de-rowt{position:absolute;left:50%;top:50%;display:flex;align-items:center;gap:8px;height:34px;pointer-events:auto;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease}
+#drawEd .de-sibs:not(.dragging) .de-rowt{transition:none}
+#drawEd .de-rowt .rt-n{font:600 10px var(--font,inherit);letter-spacing:.08em;text-transform:uppercase;color:#6e6e6e}
+#drawEd .de-rowt input{width:300px;background:transparent;border:1px solid transparent;border-radius:3px;padding:4px 6px;text-align:left;color:#e6e6e6;font:600 15px var(--font,inherit);outline:none;transition:border-color .15s ease,background .15s ease}
+#drawEd .de-rowt input::placeholder{color:#5c5c5c;font-weight:500}
+#drawEd .de-rowt input:hover{border-color:#3d3d3d}
+#drawEd .de-rowt input:focus{border-color:#1473e6;background:#1e1e1e}
+#drawEd .de-rowt:not(.has) input:not(:focus){opacity:.55}
+#drawEd .de-sibs:hover .de-rowt:not(.has) input,#drawEd .de-rowt:not(.has):hover input{opacity:1}
+#drawEd .de-sibs.dragging.newrow .de-sib.ghost-row{opacity:1;border-color:#1473e6;background:rgba(20,115,230,.06)}
 #drawEd.ps .de-status .ds-onion-w{align-self:center}
 #drawEd.ps .de-status .ds-onion-g{border:1px solid #3c3c3c;border-radius:2px}
 #drawEd.ps .de-status .ds-onion-b{display:flex;align-items:center;align-content:normal;gap:5px;width:auto;height:18px;padding:0 7px;font:400 11px var(--font,inherit);color:#a8a8a8;box-shadow:none}
@@ -6701,8 +6777,9 @@ function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
   const W=saved?saved.W:1600, H=saved?saved.H:1200;
   let ops=saved?JSON.parse(JSON.stringify(saved.ops)):[]; { let k=ops.length-1; while(k>=0&&ops[k].t!=='clear') k--; ops=ops.slice(k+1); }   /* older drawings kept a "clear" step */
   let pages=saved&&Array.isArray(saved.pages)&&saved.pages.length?JSON.parse(JSON.stringify(saved.pages)):[{ops, info:{}}];   /* storyboard frames; a plain drawing is one frame */
+  { const rs=[...new Set(pages.map(pg=>pg.row|0))].sort((a,b)=>a-b); pages=pages.map((pg,k)=>[pg,k]).sort((a,b)=>(a[0].row|0)-(b[0].row|0)||a[1]-b[1]).map(([pg])=>{ pg.row=rs.indexOf(pg.row|0); return pg; }); }   /* frames can sit on several rows */
   let nid=0; pages.forEach(pg=>{ pg.ops=pg.ops||[]; pg.info=pg.info||{}; pg.hist=[]; pg.fut=[]; pg.ops.forEach(o=>{ o.i=++nid; }); }); ops=pages[0].ops;
-  drawEd={id:it.id, W, H, bg:saved?saved.bg:'white', pages, pi:0, art:!!(saved&&saved.art), artDir:saved&&saved.artDir||'below', showLoc:!(saved&&saved.showLoc===false), showRefs:!(saved&&saved.showRefs===false), grefs:JSON.parse(JSON.stringify(saved&&saved.grefs||[])), refTab:'local', sibs:true, G0:saved&&saved.G||0, G:0, CW:W, CH:H, guide:Object.assign({ar:'none',thirds:false,safe:false},saved&&saved.guide||{}), onion:true, onionOp:.24, onionNext:false, onionTint:true, roughOff:false, side:'layers', ops, hist:pages[0].hist, fut:pages[0].fut, nid, sel:null, selSet:new Set(), selMode:'pointer', areaMode:'rect', region:null, bgCol:'#ffffff', alpha:1, zoom:1, fit:1, pan:[0,0], gsel:null, spaceHand:false, lastPt:null, tool:'pen', fig:'house', pressure:(()=>{ try{ return localStorage.getItem('setplot-draw-pressure')!=='0'; }catch(e){ return true; } })(), penSeen:false, pid:null, color:saved&&saved.color||'#1b1d22', size:saved&&saved.size||8, fill:false, cur:null, act:null, dirty:false, fresh:!it.p.src, name:it.p.name||'Drawing'};
+  drawEd={id:it.id, W, H, bg:saved?saved.bg:'white', pages, pi:0, art:!!(saved&&saved.art), artDir:saved&&saved.artDir||'below', showLoc:!(saved&&saved.showLoc===false), showRefs:!(saved&&saved.showRefs===false), grefs:JSON.parse(JSON.stringify(saved&&saved.grefs||[])), rowTitles:(saved&&saved.rowTitles||[]).slice(), refTab:'local', sibs:true, G0:saved&&saved.G||0, G:0, CW:W, CH:H, guide:Object.assign({ar:'none',thirds:false,safe:false},saved&&saved.guide||{}), onion:true, onionOp:.24, onionNext:false, onionTint:true, roughOff:false, side:'layers', ops, hist:pages[0].hist, fut:pages[0].fut, nid, sel:null, selSet:new Set(), selMode:'pointer', areaMode:'rect', region:null, bgCol:'#ffffff', alpha:1, zoom:1, fit:1, pan:[0,0], gsel:null, spaceHand:false, lastPt:null, tool:'pen', fig:'house', pressure:(()=>{ try{ return localStorage.getItem('setplot-draw-pressure')!=='0'; }catch(e){ return true; } })(), penSeen:false, pid:null, color:saved&&saved.color||'#1b1d22', size:saved&&saved.size||8, fill:false, cur:null, act:null, dirty:false, fresh:!it.p.src, name:it.p.name||'Drawing'};
   let el=$('#drawEd'); if(el) el.remove(); el=document.createElement('div'); el.id='drawEd'; el.setAttribute('role','dialog'); el.setAttribute('aria-label','Draw an image');
   el.innerHTML=`<div class="de-top">
       <input class="de-name" value="${esc(drawEd.name)}" aria-label="Image name" maxlength="60">
@@ -6968,33 +7045,47 @@ function drawSibRender(i){ const E=drawEd, pg=E.pages[i], c=document.createEleme
   const full=document.createElement('canvas'); full.width=E.CW; full.height=E.CH; const fg=full.getContext('2d');
   fg.fillStyle=E.bg==='dark'?'#1b1d22':E.bg==='none'?'#e9eaec':'#ffffff'; fg.fillRect(0,0,E.W,E.H); if(E.art){ fg.fillStyle='#303030'; fg.fillRect(drawLocX(),drawLocY(),E.W,E.H); }
   drawPaintOps(fg,pg.ops); g.drawImage(full,0,0,c.width,c.height); return c; }
-function drawFrameX(j){ const E=drawEd, st=drawSibStep()*E.scale, F=E.fd; let k=j;
-  if(F&&F.on){ if(j===F.from) return E.pan[0]+(F.from-E.pi)*st+F.dx; if(F.from<F.to&&j>F.from&&j<=F.to) k=j-1; else if(F.to<F.from&&j>=F.to&&j<F.from) k=j+1; }
-  return E.pan[0]+(k-E.pi)*st; }
-function drawFrameGo(j){ const D=drawEd; if(j===D.pi||j<0||j>=D.pages.length) return; const p0=D.pan[0]; D.pan[0]+=(j-D.pi)*drawSibStep()*D.scale; drawGoPage(j); drawFit();   /* start where the frame was, then glide it to the middle */
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ D.pan[0]=p0; drawFit(); return; }
-  const box=D.el.querySelector('.de-sibs'), pp=D.el.querySelector('.de-paper'); requestAnimationFrame(()=>{ if(drawEd!==D) return; box.classList.add('dragging','gliding'); pp.classList.add('fd-anim'); D.pan[0]=p0; drawFit();
+/* rows of frames: pages stay in reading order, each page has a row number */
+function drawRowStep(){ const E=drawEd, h=E.CH*E.scale; return h+Math.max(h*.16,92)+(E.pages.some(p=>p.row>0)||(E.rowTitles||[]).some(Boolean)?44:0); }   /* room for the row title */   /* in screen px */
+function drawGrid(virt,F){ const E=drawEd, G=[]; F=F===undefined?E.fd:F; E.pages.forEach((pg,j)=>{ const r=pg.row|0; (G[r]=G[r]||[]).push(j); }); for(let r=0;r<G.length;r++) G[r]=G[r]||[];
+  if(!G.length) G.push([]);
+  if(virt&&F&&F.on&&F.tr!=null){ G.forEach(row=>{ const k=row.indexOf(F.from); if(k>=0) row.splice(k,1); }); while(G.length<=F.tr) G.push([]); G[F.tr].splice(Math.min(F.tc,G[F.tr].length),0,F.from); }
+  return G; }
+function drawCell(j,virt){ const G=drawGrid(virt); for(let r=0;r<G.length;r++){ const c=G[r].indexOf(j); if(c>=0) return [c,r]; } return [0,0]; }
+function drawRowCompact(){ const E=drawEd, rs=[...new Set(E.pages.map(pg=>pg.row|0))].sort((a,b)=>a-b), T=E.rowTitles||[]; E.rowTitles=rs.map(r=>T[r]||''); E.pages.forEach(pg=>{ pg.row=rs.indexOf(pg.row|0); }); }
+function drawFramePos(j){ const E=drawEd, sx=drawSibStep()*E.scale, sy=drawRowStep(), F=E.fd, home=drawCell(E.pi,false);
+  if(F&&F.on&&j===F.from){ const c=drawCell(j,false); return [E.pan[0]+(c[0]-home[0])*sx+F.dx, E.pan[1]+(c[1]-home[1])*sy+(F.dy||0)]; }
+  const c=drawCell(j,!!(F&&F.on)); return [E.pan[0]+(c[0]-home[0])*sx, E.pan[1]+(c[1]-home[1])*sy]; }
+function drawFrameX(j){ return drawFramePos(j)[0]; }
+function drawFrameGo(j){ const D=drawEd; if(j===D.pi||j<0||j>=D.pages.length) return; const p0=D.pan.slice(), a=drawCell(D.pi,false), b=drawCell(j,false); D.pan[0]+=(b[0]-a[0])*drawSibStep()*D.scale; D.pan[1]+=(b[1]-a[1])*drawRowStep(); drawGoPage(j); drawFit();   /* start where the frame was, then glide it to the middle */
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ D.pan=p0; drawFit(); return; }
+  const box=D.el.querySelector('.de-sibs'), pp=D.el.querySelector('.de-paper'); requestAnimationFrame(()=>{ if(drawEd!==D) return; box.classList.add('dragging','gliding'); pp.classList.add('fd-anim'); D.pan=p0.slice(); drawFit();
     clearTimeout(box._fx); box._fx=setTimeout(()=>{ box.classList.remove('dragging','gliding'); pp.classList.remove('fd-anim'); },320); }); }
 function drawSibs(){ const E=drawEd; if(!E||!E.el) return; const st=E.el.querySelector('.de-stage'); if(!st) return; let box=st.querySelector('.de-sibs');
-  if(!box){ box=document.createElement('div'); box.className='de-sibs'; st.prepend(box);
+  if(!box){ box=document.createElement('div'); box.className='de-sibs'; st.prepend(box); st.addEventListener('scroll',()=>{ st.scrollTop=0; st.scrollLeft=0; });   /* focusing a row title must never scroll the stage */
     box.addEventListener('pointerdown',e=>{ const D=drawEd; if(e.button!==0||D.tool==='hand'||D.spaceHand) return; const bt=e.target.closest('button');
       if(bt){ e.stopPropagation(); return; } if(e.target.closest('[data-ghost]')){ e.preventDefault(); return; }
-      const n=e.target.closest('[data-sp]'); if(!n) return; e.preventDefault(); D.fd={from:+n.dataset.sp,to:+n.dataset.sp,dx:0,x0:e.clientX,on:false,id:e.pointerId}; try{ box.setPointerCapture(e.pointerId); }catch(err){} });
-    box.addEventListener('pointermove',e=>{ const D=drawEd, F=D.fd; if(!F||e.pointerId!==F.id) return; const dx=e.clientX-F.x0; if(!F.on&&Math.abs(dx)<6) return;
+      const n=e.target.closest('[data-sp]'); if(!n) return; e.preventDefault(); const c0=drawCell(+n.dataset.sp,false); D.fd={from:+n.dataset.sp,to:+n.dataset.sp,dx:0,dy:0,x0:e.clientX,y0:e.clientY,c0:c0[0],r0:c0[1],tc:c0[0],tr:c0[1],on:false,id:e.pointerId}; try{ box.setPointerCapture(e.pointerId); }catch(err){} });
+    box.addEventListener('pointermove',e=>{ const D=drawEd, F=D.fd; if(!F||e.pointerId!==F.id) return; const dx=e.clientX-F.x0, dy=e.clientY-F.y0; if(!F.on&&Math.hypot(dx,dy)<6) return;
       if(!F.on){ F.on=true; box.classList.add('dragging'); const pp=D.el.querySelector('.de-paper'); pp.classList.add('fd-anim'); pp.classList.toggle('fd-lift',F.from===D.pi); }
-      F.dx=dx; F.to=Math.max(0,Math.min(D.pages.length-1,Math.round(F.from+dx/(drawSibStep()*D.scale)))); drawFit(); });
+      F.dx=dx; F.dy=dy; const G=drawGrid(false,null), sx=drawSibStep()*D.scale, sy=drawRowStep();
+      let tr=Math.max(0,Math.min(G.length,Math.round(F.r0+dy/sy))); if(tr===G.length&&G[F.r0].length===1&&F.r0===G.length-1) tr=G.length-1;   /* below the last row starts a new row */
+      const len=(G[tr]||[]).filter(k=>k!==F.from).length; F.tr=tr; F.tc=Math.max(0,Math.min(len,Math.round(F.c0+dx/sx))); box.classList.toggle('newrow',tr===G.length); drawFit(); });
     const up=e=>{ const D=drawEd, F=D&&D.fd; if(!F||e.pointerId!==F.id) return; D.fd=null; const pp=D.el.querySelector('.de-paper');
       if(!F.on){ if(e.type==='pointerup') drawFrameGo(F.from); return; }
-      if(F.from!==F.to){ drawPageSync(); const cur=D.pages[D.pi], order=D.pages.map((_,i)=>i); order.splice(F.to,0,order.splice(F.from,1)[0]);
+      box.classList.remove('newrow'); const GV=drawGrid(true,F), keepT=GV.map((r,k)=>r.length?(D.rowTitles||[])[k]||'':null).filter(t=>t!==null), G=GV.filter(r=>r.length), order=[].concat(...G), oldRow=D.pages[F.from].row|0;
+      const changed=order.some((o,k)=>o!==k)||G.some((row,r)=>row.some(j=>(D.pages[j].row|0)!==r));
+      if(changed){ drawPageSync(); const cur=D.pages[D.pi]; D.rowTitles=keepT; G.forEach((row,r)=>row.forEach(j=>{ D.pages[j].row=r; }));
         D.pages=order.map(o=>D.pages[o]); box.querySelectorAll('[data-sp]').forEach(n=>{ n.dataset.sp=order.indexOf(+n.dataset.sp); });   /* elements keep their frame, so nothing jumps */
-        D.pi=D.pages.indexOf(cur);   /* the frame you're on glides back to the middle */ D.dirty=true; drawStrip(); drawUnder(); drawSyncUI(); drawRefPanel(); toast(`Frame moved to position ${F.to+1}`); }
+        D.pi=D.pages.indexOf(cur);   /* the frame you're on glides back to the middle */ D.dirty=true; drawStrip(); drawUnder(); drawSyncUI(); drawRefPanel();
+        drawTimeline(); const ni=order.indexOf(F.from), nr=D.pages[ni].row; toast(G.length>1&&(nr!==oldRow||F.tr!==F.r0)?`Frame moved to row ${nr+1}`:`Frame moved to position ${ni+1}`); }
       drawFit(); clearTimeout(box._fx); pp.classList.remove('fd-lift'); box._fx=setTimeout(()=>{ box.classList.remove('dragging'); pp.classList.remove('fd-anim'); },300); };
     box.addEventListener('pointerup',up); box.addEventListener('pointercancel',up);
-    box.addEventListener('click',e=>{ const D=drawEd, g=e.target.closest('[data-ghost]'); if(g){ drawAddPage(false,D.pages.length); return; }
+    box.addEventListener('click',e=>{ const D=drawEd, g=e.target.closest('[data-ghost]'); if(g){ const v=g.dataset.ghost; if(v==='new') drawAddRow(); else { const G=drawGrid(false), r=+v; drawAddPage(false,G[r][G[r].length-1]+1,r); } return; }
       const b=e.target.closest('button'), n=e.target.closest('[data-sp]'); if(!b||!n) return; const j=+n.dataset.sp;
       if(b.dataset.fdup!=null){ drawFrameGo(j); drawAddPage(true); } else if(b.dataset.pdel!=null) drawDelPage(j); }); }
-  box.hidden=false; box.classList.toggle('art',!!E.art); const s=E.scale, W=Math.round(E.CW*s), H=Math.round(E.CH*s), y=Math.round(E.pan[1]);
-  const place=(n,x)=>{ n.style.width=W+'px'; n.style.height=H+'px'; n.style.transform=`translate(-50%,-50%) translate(${Math.round(x)}px,${y}px)`; };
+  box.hidden=false; box.classList.toggle('art',!!E.art); const s=E.scale, W=Math.round(E.CW*s), H=Math.round(E.CH*s);
+  const place=(n,p)=>{ n.style.width=W+'px'; n.style.height=H+'px'; n.style.transform=`translate(-50%,-50%) translate(${Math.round(p[0])}px,${Math.round(p[1])}px)`; };
   [...box.querySelectorAll('[data-sp]')].forEach(n=>{ if(+n.dataset.sp>=E.pages.length) n.remove(); });
   E.pages.forEach((pg,j)=>{ let n=box.querySelector(`[data-sp="${j}"]`);
     if(!n){ n=document.createElement('div'); n.className='de-sib'; n.dataset.sp=j; n.innerHTML=`<div class="de-fl"><b></b><button type="button" data-fdup title="Duplicate frame">${drawIcon('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>')}</button><button type="button" data-pdel title="Delete frame">×</button></div>`; box.appendChild(n); }
@@ -7002,9 +7093,24 @@ function drawSibs(){ const E=drawEd; if(!E||!E.el) return; const st=E.el.querySe
     if(cur){ const c=n.querySelector('canvas'); if(c) c.remove(); n._sig=''; }
     else { const sig=E.W+'x'+E.H+':'+E.art+E.artDir+E.bg+':'+JSON.stringify(pg.ops).length+':'+pg.ops.length+':'+pg.ops.map(o=>o.t==='img'?imgState(o.src):'').join(''); if(n._sig!==sig){ n._sig=sig; const old=n.querySelector('canvas'); if(old) old.remove(); n.prepend(drawSibRender(j)); } }
     n.querySelector('.de-fl b').textContent=`Frame ${j+1}`; n.title=cur?'':`Frame ${j+1} · click to draw on it · drag to move it`; n.querySelector('.de-fl').title='Drag to reorder';
-    n.querySelector('[data-pdel]').hidden=E.pages.length<2; place(n,drawFrameX(j)); });
-  let g=box.querySelector('[data-ghost]'); if(!g){ g=document.createElement('div'); g.className='de-sib ghost'; g.dataset.ghost='1'; g.title='Add a frame at the end (⇧N adds one after this frame)'; g.innerHTML=`<div class="dg-in">${drawIcon('<path d="M12 5v14M5 12h14"/>')}<span>Frame</span></div>`; box.appendChild(g); }
-  place(g,E.pan[0]+(E.pages.length-E.pi)*drawSibStep()*s); }
+    n.querySelector('[data-pdel]').hidden=E.pages.length<2; place(n,drawFramePos(j)); });
+  /* ghosts match the drawing only (top-left of the workspace), not the location artboard */
+  const G0=drawGrid(false,null), G=drawGrid(true), home=drawCell(E.pi,false), sx=drawSibStep()*s, sy=drawRowStep(), gw=Math.round(E.W*s), gh=Math.round(E.H*s), want=G0.map((_,r)=>String(r)).concat('new');
+  box.querySelectorAll('[data-ghost]').forEach(g=>{ if(!want.includes(g.dataset.ghost)) g.remove(); });
+  { const T=E.rowTitles=E.rowTitles||[], show=G0.length>1||T.some(Boolean); box.querySelectorAll('[data-rt]').forEach(h=>{ if(!show||+h.dataset.rt>=G0.length) h.remove(); });
+    if(show) G0.forEach((_,r)=>{ let h=box.querySelector(`[data-rt="${r}"]`);
+      if(!h){ h=document.createElement('div'); h.className='de-rowt'; h.dataset.rt=r; h.innerHTML=`<span class="rt-n"></span><input type="text" maxlength="60" spellcheck="false" placeholder="Add a title" aria-label="Row title">`; box.appendChild(h);
+        const inp=h.querySelector('input'); inp.addEventListener('pointerdown',e=>e.stopPropagation());
+        inp.addEventListener('input',()=>{ const D=drawEd; (D.rowTitles=D.rowTitles||[])[+h.dataset.rt]=inp.value; D.dirty=true; h.classList.toggle('has',!!inp.value.trim()); });
+        inp.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key==='Escape'){ e.preventDefault(); inp.blur(); } });
+        inp.addEventListener('blur',()=>{ const D=drawEd; if(!D) return; const v=inp.value.trim(); inp.value=v; (D.rowTitles=D.rowTitles||[])[+h.dataset.rt]=v; drawTimeline(); if(v) toast(`Row ${+h.dataset.rt+1} is called “${v}” · it shows on the board too`); }); }
+      const inp=h.querySelector('input'); h.querySelector('.rt-n').textContent=`Row ${r+1}`; if(document.activeElement!==inp) inp.value=T[r]||''; h.classList.toggle('has',!!(T[r]||'').trim());
+      const bw=box.clientWidth, x0=E.pan[0]+(0-home[0])*sx-W/2, hx=Math.max(x0,-bw/2+16), hy=E.pan[1]+(r-home[1])*sy-H/2-(E.art?78:30)-40;   /* above the row, sticks to the left edge when you scroll along a long row */
+      h.style.transform=`translate(${Math.round(hx)}px,${Math.round(hy)}px)`; }); }
+  want.forEach(k=>{ let g=box.querySelector(`[data-ghost="${k}"]`); const nr=k==='new';
+    if(!g){ g=document.createElement('div'); g.className='de-sib ghost'+(nr?' ghost-row':''); g.dataset.ghost=k; g.title=nr?'Start a new row of frames · or drag a frame down here':'Add a frame at the end of this row (⇧N adds one after this frame)'; g.innerHTML=`<div class="dg-in">${drawIcon(nr?'<path d="M4 7h16M4 12h10M4 17h7M17 14v6M14 17h6"/>':'<path d="M12 5v14M5 12h14"/>')}<span>${nr?'Row':'Frame'}</span></div>`; box.appendChild(g); }
+    const c=nr?[0,G0.length]:[G[+k].length,+k], gx=E.pan[0]+(c[0]-home[0])*sx-(W-gw)/2, gy=E.pan[1]+(c[1]-home[1])*sy-(H-gh)/2;
+    g.style.width=gw+'px'; g.style.height=gh+'px'; g.style.transform=`translate(-50%,-50%) translate(${Math.round(gx)}px,${Math.round(gy)}px)`; }); }
 function drawToggleSibs(v){ const E=drawEd; E.sibs=v==null?!E.sibs:!!v; try{ localStorage.setItem('setplot-sibs',E.sibs?'1':'0'); }catch(e){} drawFit(); drawSyncUI(); }
 function drawBoardShow(k,v){ const E=drawEd; E[k]=v==null?!E[k]:!!v; E.dirty=true; drawArtUI(); drawRefPanel(); const on=E[k];
   toast(k==='showLoc'?(on?'Location photos will show on the board':'Location photos hidden on the board · they stay in the editor'):(on?'Selected references will show on the board':'References hidden on the board · your selection is kept')); }
@@ -7072,7 +7178,7 @@ function drawMenus(){ const E=drawEd, el=E.el, q=s=>el.querySelector(s), clk=s=>
       ['Align Left','',()=>drawAlign('l'),!sel],['Align Centers','',()=>drawAlign('c'),!sel],['Align Right','',()=>drawAlign('r'),!sel],['Align Top','',()=>drawAlign('t'),!sel],['Align Middles','',()=>drawAlign('m'),!sel],['Align Bottom','',()=>drawAlign('b'),!sel]],
     Select:[['All','⌘A',drawSelAll],['Deselect','⌘D',drawSelNone,!E.selSet.size],['Inverse','⇧⌘I',drawSelInverse]],
     View:[['Location Artboard','',()=>drawSetArt(!E.art),false,!!E.art],['Location Below Drawing','',()=>drawSetArtDir('below'),!E.art,E.artDir!=='right'],['Location Beside Drawing','',()=>drawSetArtDir('right'),!E.art,E.artDir==='right'],0,['Show Location on Board','',()=>drawBoardShow('showLoc'),false,E.showLoc],['Show References on Board','',()=>drawBoardShow('showRefs'),false,E.showRefs],['Fit Drawing','',()=>drawZoomArt(0)],['Fit Location','',()=>drawZoomArt(1),!E.art],0,['Reference Panel','',()=>{ E.refMin=!E.refMin; drawRefPanel(); },!E.pages.some(q=>q.refs&&q.refs.length),!E.refMin&&E.pages.some(q=>q.refs&&q.refs.length)],0,['Zoom In','⌘+',()=>drawZoomStep(1)],['Zoom Out','⌘−',()=>drawZoomStep(-1)],['Fit on Screen','⌘0',drawZoomFit],['100%','⌘1',()=>drawZoomTo(1)],0,['Frame Guides…','',()=>{ const b=q('.de-guide-b'); setTimeout(()=>b.click(),0); }],['Onion Skin','O',drawToggleOnion,E.pages.length<2,E.onion&&E.pages.length>1],['Onion Skin: Show Next Frame Too','',()=>{ E.onionNext=!E.onionNext; drawOnionSave(); drawUnder(); drawLayers(); },E.pages.length<2,E.onionNext]],
-    Storyboard:[['New Frame','⇧N',()=>drawAddPage(false)],['Duplicate Frame','',()=>drawAddPage(true)],0,['Delete Frame','',()=>{ const b=E.el.querySelector(`.de-sibs [data-pdel="${E.pi}"]`); drawDelPage(E.pi); if(b&&b.dataset.armed==='1') drawDelPage(E.pi); },E.pages.length<2],0,['Previous Frame',',',()=>drawFrameGo(E.pi-1),E.pi<=0],['Next Frame','.',()=>drawFrameGo(E.pi+1),E.pi>=E.pages.length-1]] }; }
+    Storyboard:[['Play Animatic','',()=>drawPlayer('play')],['Present','',()=>drawPlayer('present')],['Tap Timing…','',()=>drawPlayer('tap')],['Overview','',()=>drawOverview(),false,!!E.ovPrev],0,['New Frame','⇧N',()=>drawAddPage(false)],['New Row','',()=>drawAddRow()],['Duplicate Frame','',()=>drawAddPage(true)],0,['Delete Frame','',()=>{ const b=E.el.querySelector(`.de-sibs [data-pdel="${E.pi}"]`); drawDelPage(E.pi); if(b&&b.dataset.armed==='1') drawDelPage(E.pi); },E.pages.length<2],0,['Previous Frame',',',()=>drawFrameGo(E.pi-1),E.pi<=0],['Next Frame','.',()=>drawFrameGo(E.pi+1),E.pi>=E.pages.length-1]] }; }
 function drawMenuOpen(name){ const E=drawEd, el=E.el, m=el.querySelector('.de-menu'); el.querySelectorAll('.de-menus > button').forEach(b=>b.classList.toggle('on',b.dataset.m===name));
   if(!name){ m.hidden=true; E.menuOpen=null; return; } E.menuOpen=name; const items=drawMenus()[name]; m._items=items;
   m.innerHTML=items.map((it,i)=>it?`<button type="button" data-mi="${i}"${it[3]?' disabled':''}><i>${it[4]?'✓':''}</i><span>${esc(it[0])}</span><kbd>${it[1]}</kbd></button>`:'<hr>').join('');
@@ -7123,7 +7229,7 @@ function drawPsLayout(el){ const E=drawEd, q=s=>el.querySelector(s), mk=(tag,cls
     grip.addEventListener('pointerup',()=>{ if(!g0) return; g0=null; try{ localStorage.setItem('setplot-refp-w',String(E.refW)); }catch(err){} }); }
   E.ro=new ResizeObserver(()=>{ if(drawEd===E) drawFit(); }); E.ro.observe(st);
   const sb=mk('div','de-status'); sb.appendChild(q('.de-zoom')); sb.insertAdjacentHTML('beforeend','<span class="dsb-dim"></span><span class="dsb-sel"></span>');
-  sb.insertBefore(q('.ds-onion-w'),sb.querySelector('.dsb-dim')); q('.de-strip').hidden=true;   /* onion skin lives in the status bar now */ win.appendChild(sb);
+  sb.insertBefore(q('.ds-onion-w'),sb.querySelector('.dsb-dim')); q('.de-strip').hidden=true;   /* onion skin lives in the status bar now */ win.appendChild(sb); win.insertBefore(drawTlBuild(),sb);
   /* docked panels */
   q('.de-props').insertAdjacentHTML('afterbegin','<div class="de-ph"><span>Colours</span></div>');
   q('.de-colors').insertAdjacentHTML('afterend','<div class="de-recent" hidden></div><div class="de-kit"></div>');
@@ -7223,8 +7329,9 @@ function drawZoomArt(i){ const E=drawEd, st=E.el.querySelector('.de-stage').getB
 function drawPlaceLoc(d){ const E=drawEd; if(!E.art){ E.art=true; drawWork(); drawZoomFit(); } drawHist(); E.ops=E.ops.filter(o=>!o.loc);
   const o={t:'img', loc:1, src:d.src, iw:d.w, ih:d.h, nm:d.nm||'Location', c:'transparent', w:0, lk:1, pts:drawLocRect(d.w,d.h), clip:[drawLocX(),drawLocY(),E.W,E.H]}; o.i=++E.nid; E.ops.unshift(o); return o; }
 function drawFit(){ const E=drawEd; if(!E) return; const st=E.el.querySelector('.de-stage'), pp=E.el.querySelector('.de-paper'); const r=st.getBoundingClientRect(); E.fit=Math.max(.02,Math.min((r.width-32)/(E.CW*(E.pages.length>1?1.7:1.45)),(r.height-(E.art?64:32))/E.CH,1)); const s=E.fit*(E.zoom||1); E.scale=s;
-  const mx=Math.max(0,(E.CW*s+r.width)/2-60), my=Math.max(0,(E.CH*s+r.height)/2-60), sp=E.CW*(1+DRAW_SIB_GAP)*s; E.pan=[Math.max(-mx-sp*(E.pages.length-E.pi),Math.min(mx+sp*E.pi,E.pan[0])),Math.max(-my,Math.min(my,E.pan[1]))];
-  pp.style.width=Math.round(E.CW*s)+'px'; pp.style.height=Math.round(E.CH*s)+'px'; pp.style.transform=`translate(-50%,-50%) translate(${Math.round(drawFrameX(E.pi))}px,${Math.round(E.pan[1])}px)`; drawSibs();
+  const mx=Math.max(0,(E.CW*s+r.width)/2-60), my=Math.max(0,(E.CH*s+r.height)/2-60), sp=E.CW*(1+DRAW_SIB_GAP)*s, G0=drawGrid(false,null), hc=drawCell(E.pi,false), mc=Math.max(...G0.map(r=>r.length)), sy=drawRowStep();
+  E.pan=[Math.max(-mx-sp*(mc-hc[0]),Math.min(mx+sp*hc[0],E.pan[0])),Math.max(-my-sy*(G0.length-hc[1]),Math.min(my+sy*hc[1],E.pan[1]))];
+  const P0=drawFramePos(E.pi); pp.style.width=Math.round(E.CW*s)+'px'; pp.style.height=Math.round(E.CH*s)+'px'; pp.style.transform=`translate(-50%,-50%) translate(${Math.round(P0[0])}px,${Math.round(P0[1])}px)`; drawSibs();
   const zb=E.el.querySelector('.de-zoom'); if(zb){ zb.textContent=Math.round(s*100)+'%'; zb.classList.toggle('on',Math.abs(E.zoom-1)>.001); }
   const dz=E.el.querySelector('.dd-z'); if(dz) dz.textContent=`@ ${Math.round(s*100)}% (RGB/8)${E.dirty?' *':''}`;
   if(E.el.querySelector('.de-text')&&!E.el.querySelector('.de-text').hidden){ const ta=E.el.querySelector('.de-text'); ta.style.left=(E.textAt[0]*s)+'px'; ta.style.top=(E.textAt[1]*s)+'px'; drawRestyleText(); }
@@ -7521,20 +7628,158 @@ function drawRefMenu(){ const E=drawEd, pg=E.pages[E.pi]; let m=E.el.querySelect
   m.addEventListener('change',e=>{ const c=e.target.closest('[data-r]'); if(!c) return; pg.ref[c.dataset.r]=c.checked; E.dirty=true; drawUnder(); });
   m.addEventListener('click',e=>{ const b=e.target.closest('button[data-r]'); if(!b) return; if(b.dataset.r==='del'){ delete pg.ref; E.dirty=true; drawUnder(); drawSyncUI(); m.remove(); } else { m.remove(); E.el.querySelector('input[type=file]').click(); } });
   setTimeout(()=>{ const off=ev=>{ if(!m.isConnected){ removeEventListener('pointerdown',off,true); return; } if(!m.contains(ev.target)&&!ev.target.closest('.de-ref-b')){ m.remove(); removeEventListener('pointerdown',off,true); } }; addEventListener('pointerdown',off,true); },0); }
+/* ---------- timeline · animatic · present · tap timing ---------- */
+const DRAW_TR=[['cut','Cut','CUT'],['dissolve','Dissolve','DISSOLVE'],['fade','Fade through black','FADE'],['wipe','Wipe','WIPE']];
+const DRAW_TL_IC={play:'<path d="M8 5.5v13l10-6.5z" fill="currentColor" stroke="none"/>',pause:'<rect x="7" y="5.5" width="3.5" height="13" rx=".6" fill="currentColor" stroke="none"/><rect x="13.5" y="5.5" width="3.5" height="13" rx=".6" fill="currentColor" stroke="none"/>',
+  tap:'<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M10 2.5h4"/>',present:'<rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M12 16.5V20M8.5 20h7M10.5 8.5v4.5l4-2.25z"/>',
+  grid:'<rect x="3.5" y="4.5" width="7" height="6" rx="1"/><rect x="13.5" y="4.5" width="7" height="6" rx="1"/><rect x="3.5" y="13.5" width="7" height="6" rx="1"/><rect x="13.5" y="13.5" width="7" height="6" rx="1"/>',
+  prev:'<path d="M6 5.5v13M18 5.5 9 12l9 6.5z" fill="currentColor"/>',next:'<path d="M18 5.5v13M6 5.5 15 12l-9 6.5z" fill="currentColor"/>',fs:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',chev:'<path d="m7 10 5 5 5-5"/>'};
+let drawTlSeq=0;
+function drawDur(pg){ const v=parseFloat(String((pg.info||{}).dur||'').replace(',','.')); return v>0?v:2; }
+function drawSetDur(pg,d){ pg.info=pg.info||{}; pg.info.dur=(Math.round(Math.max(.2,Math.min(120,d))*10)/10)+'s'; if(drawEd) drawEd.dirty=true; }
+function drawFmtT(t){ t=Math.max(0,t); const m=Math.floor(t/60), x=t-m*60; return m+':'+(x<10?'0':'')+x.toFixed(1); }
+function drawTrLen(k,durs,pages){ const t=k>0?pages[k-1].tr||'cut':'cut'; return t==='cut'?0:t==='fade'?Math.min(.4,durs[k]*.4):Math.min(.6,durs[k]*.5); }
+function drawShotPanelSync(){ const E=drawEd; if(!E||!E.el) return; const f=E.el.querySelector('.de-shot [data-i="dur"]'); if(f&&document.activeElement!==f) f.value=(E.pages[E.pi].info||{}).dur||''; }
+/* the drawing alone (no location), cropped to the frame guide: what the camera sees */
+function drawPanelImg(pg,ops){ const E=drawEd, c=document.createElement('canvas'); c.width=E.W; c.height=E.H; const g=c.getContext('2d'); g.fillStyle=E.bg==='dark'?'#1b1d22':'#ffffff'; g.fillRect(0,0,E.W,E.H);
+  if(pg.ref&&pg.ref.out&&pg.ref.img) drawRefInto(g,pg,pg.ref.op);
+  const l=document.createElement('canvas'); l.width=E.W; l.height=E.H; drawPaintOps(l.getContext('2d'),ops||pg.ops); g.drawImage(l,0,0);
+  const F=drawFrameRect(); if(E.guide&&E.guide.ar!=='none'){ const o=document.createElement('canvas'); o.width=Math.round(F.w); o.height=Math.round(F.h); o.getContext('2d').drawImage(c,F.x,F.y,F.w,F.h,0,0,o.width,o.height); return o; } return c; }
+function drawTlBuild(){ const E=drawEd, tl=document.createElement('div'); let mn=false; try{ mn=localStorage.getItem('setplot-tl-min')==='1'; }catch(e){} tl.className='de-tl'+(mn?' min':'');
+  const I=DRAW_TL_IC;
+  tl.innerHTML=`<div class="tl-h"><button type="button" class="tl-play" data-tl="play" title="Play the animatic">${drawIcon(I.play)}<span>Play</span></button><span class="tl-time"></span><span class="tl-sp"></span>
+    <button type="button" data-tl="tap" title="Tap timing: the frames play one by one, tap Space on each beat to set how long each one lasts">${drawIcon(I.tap)}<span>Tap timing</span></button>
+    <button type="button" data-tl="present" title="Present the storyboard full screen · arrow keys to step">${drawIcon(I.present)}<span>Present</span></button>
+    <button type="button" data-tl="overview" class="tl-ov" title="See every frame and row at once">${drawIcon(I.grid)}<span>Overview</span></button>
+    <button type="button" data-tl="min" class="tl-min" title="Hide or show the timeline">${drawIcon(I.chev)}</button></div>
+    <div class="tl-track"><div class="tl-clips"></div></div>`;
+  const box=tl.querySelector('.tl-clips');
+  tl.querySelector('.tl-h').addEventListener('click',e=>{ const b=e.target.closest('[data-tl]'); if(!b) return; const k=b.dataset.tl;
+    if(k==='min'){ tl.classList.toggle('min'); try{ localStorage.setItem('setplot-tl-min',tl.classList.contains('min')?'1':'0'); }catch(err){} setTimeout(()=>{ drawFit(); drawTimeline(); },0); }
+    else if(k==='overview') drawOverview(); else drawPlayer(k); });
+  box.addEventListener('pointerdown',e=>{ const D=drawEd, h=e.target.closest('.tl-hd'); if(!h) return; e.preventDefault(); e.stopPropagation(); const n=h.closest('.tl-clip'), i=+n.dataset.i;
+    D.tlDrag={i,x0:e.clientX,d0:drawDur(D.pages[i]),pps:D.tlPPS,moved:false}; n.classList.add('sizing'); try{ h.setPointerCapture(e.pointerId); }catch(err){} });
+  box.addEventListener('pointermove',e=>{ const D=drawEd, T=D&&D.tlDrag; if(!T) return; const dx=e.clientX-T.x0; if(Math.abs(dx)>2) T.moved=true; const step=e.shiftKey?.5:.1, d=Math.max(.2,Math.round((T.d0+dx/T.pps)/step)*step); drawSetDur(D.pages[T.i],d); drawTimeline(); });
+  const up=()=>{ const D=drawEd, T=D&&D.tlDrag; if(!T) return; D.tlDrag=null; box.querySelectorAll('.sizing').forEach(n=>n.classList.remove('sizing')); D.tlNoClick=T.moved; setTimeout(()=>{ if(drawEd) drawEd.tlNoClick=false; },0); drawTimeline(); drawShotPanelSync(); };
+  box.addEventListener('pointerup',up); box.addEventListener('pointercancel',up);
+  box.addEventListener('click',e=>{ const D=drawEd; if(D.tlNoClick) return; const t=e.target.closest('.tl-tr'); if(t){ const i=+t.dataset.tri, pg=D.pages[i], ks=DRAW_TR.map(x=>x[0]), nx=ks[(ks.indexOf(pg.tr||'cut')+1)%ks.length];
+      if(nx==='cut') delete pg.tr; else pg.tr=nx; D.dirty=true; drawTimeline(); toast(`Frame ${i+1} → ${i+2}: ${DRAW_TR.find(x=>x[0]===nx)[1]}`); return; }
+    if(e.target.closest('.tl-hd')) return; const n=e.target.closest('.tl-clip'); if(n) drawFrameGo(+n.dataset.i); });
+  const ro=new ResizeObserver(()=>{ if(drawEd===E) drawTimeline(); }); ro.observe(tl); E.tlRO=ro;
+  setTimeout(()=>{ if(drawEd===E) drawTimeline(); },0); return tl; }
+function drawTimeline(){ const E=drawEd; if(!E||!E.el) return; const tl=E.el.querySelector('.de-tl'); if(!tl) return; const box=tl.querySelector('.tl-clips'), track=tl.querySelector('.tl-track');
+  const durs=E.pages.map(drawDur), T=durs.reduce((a,b)=>a+b,0), timed=E.pages.some(pg=>(pg.info||{}).dur);
+  tl.querySelector('.tl-time').textContent=`${E.pages.length} frame${E.pages.length>1?'s':''} · ${drawFmtT(T)}${timed?'':' · 2s each until you time them'}`;
+  if(tl.classList.contains('min')) return;
+  const avail=Math.max(240,track.clientWidth-60-3*E.pages.length), pps=E.tlDrag?E.tlDrag.pps:Math.max(26,Math.min(180,avail/Math.max(T,1))); E.tlPPS=pps;
+  const ch=Math.max(30,track.clientHeight-30), tw=Math.round(ch*E.W/E.H), multi=E.pages.some(pg=>pg.row>0), RC=['#1473e6','#e5484d','#2f9e5a','#f5a524','#8e4ec6','#12a594'];
+  E.pages.forEach(pg=>{ pg._tk=pg._tk||('t'+(++drawTlSeq)); }); const keys=new Set(E.pages.map(pg=>pg._tk));
+  box.querySelectorAll('.tl-clip').forEach(n=>{ if(!keys.has(n.dataset.tk)) n.remove(); });
+  E.pages.forEach((pg,i)=>{ let n=box.querySelector(`.tl-clip[data-tk="${pg._tk}"]`);
+    if(!n){ n=document.createElement('div'); n.className='tl-clip'; n.dataset.tk=pg._tk; n.innerHTML=`<div class="tl-in"></div><b></b><span class="tl-d"></span><span class="tl-row"></span><i class="tl-hd" title="Drag to change how long this frame lasts · Shift snaps to ½ s"></i><button type="button" class="tl-tr"></button>`; n.classList.add('fx-in'); setTimeout(()=>n.classList.remove('fx-in'),400); }
+    box.appendChild(n);   /* keeps the clips in frame order */
+    n.dataset.i=i; n.style.width=Math.max(16,Math.round(durs[i]*pps)-3)+'px'; n.classList.toggle('cur',i===E.pi); n.title=`Frame ${i+1} · ${durs[i].toFixed(1)} s · click to draw on it`;
+    n.querySelector('b').textContent=i+1; n.querySelector('.tl-d').textContent=durs[i].toFixed(1)+'s';
+    const r=pg.row|0, first=i===0||(E.pages[i-1].row|0)!==r, rl=n.querySelector('.tl-row'), rt=((E.rowTitles||[])[r]||'').trim();
+    n.style.setProperty('--rc',multi?RC[r%RC.length]:'transparent'); rl.hidden=!(multi&&first); rl.textContent=`Row ${r+1}${rt?' · '+rt:''}`;
+    const tb=n.querySelector('.tl-tr'), tr=pg.tr||'cut', last=i===E.pages.length-1; tb.hidden=last; tb.dataset.tri=i; tb.dataset.tr=tr; tb.textContent=tr==='cut'?'':DRAW_TR.find(x=>x[0]===tr)[2]; tb.title=`Transition to frame ${i+2}: ${DRAW_TR.find(x=>x[0]===tr)[1]} · click to change`;
+    const ops=i===E.pi?E.ops:pg.ops, sig=tw+':'+E.W+'x'+E.H+E.bg+':'+ops.length+':'+JSON.stringify(ops).length+':'+ops.map(o=>o.t==='img'?imgState(o.src):'').join('');
+    if(n._sig!==sig){ n._sig=sig; const c=document.createElement('canvas'); c.width=tw*2; c.height=ch*2; const g=c.getContext('2d'); g.fillStyle=E.bg==='dark'?'#1b1d22':'#fff'; g.fillRect(0,0,c.width,c.height);
+      const t=document.createElement('canvas'); t.width=E.W; t.height=E.H; drawPaintOps(t.getContext('2d'),ops); g.drawImage(t,0,0,c.width,c.height); g.fillStyle='rgba(0,0,0,.35)'; g.fillRect(c.width-2,0,2,c.height);
+      const im=n.querySelector('.tl-in'); im.style.backgroundImage=`url(${c.toDataURL('image/jpeg',.8)})`; im.style.backgroundSize=`${tw}px ${ch}px`; } });   /* the frame repeats along the clip, like a video track */
+  const cur=box.querySelector('.tl-clip.cur'); if(cur&&!E.tlDrag){ const a=cur.offsetLeft, b=a+cur.offsetWidth; if(a<track.scrollLeft||b>track.scrollLeft+track.clientWidth) track.scrollTo({left:Math.max(0,a-40),behavior:'smooth'}); } }
+/* overview: every row and frame fits on screen; click again to go back */
+function drawOverview(){ const E=drawEd; drawCommitText(); const ob=E.el.querySelector('.tl-ov');
+  if(E.ovPrev){ const p=E.ovPrev; E.ovPrev=null; E.zoom=p.zoom; E.pan=p.pan; drawFit(); if(ob) ob.classList.remove('on'); return; }
+  const st=E.el.querySelector('.de-stage').getBoundingClientRect(); E.ovPrev={zoom:E.zoom,pan:E.pan.slice()}; drawFit();
+  const G=drawGrid(false,null), mc=Math.max(...G.map(r=>r.length))+1, nr=G.length+1; let lo=.002, hi=Math.max(E.fit*2,.05);
+  for(let it=0;it<32;it++){ const sc=(lo+hi)/2; E.scale=sc; const w=mc*drawSibStep()*sc, h=nr*drawRowStep(); if(w<=st.width-80&&h<=st.height-40) lo=sc; else hi=sc; }
+  E.scale=lo; E.zoom=lo/E.fit; const hc=drawCell(E.pi,false), sx=drawSibStep()*lo, sy=drawRowStep(); E.pan=[(hc[0]-(mc-1)/2)*sx,(hc[1]-(nr-1)/2)*sy+20];
+  const box=E.el.querySelector('.de-sibs'), pp=E.el.querySelector('.de-paper'); box.classList.add('dragging','gliding'); pp.classList.add('fd-anim'); drawFit(); clearTimeout(box._fx); box._fx=setTimeout(()=>{ box.classList.remove('dragging','gliding'); pp.classList.remove('fd-anim'); },340);
+  if(ob) ob.classList.add('on'); toast('Overview · drag frames between rows, click one to draw on it · Overview again goes back'); }
+/* player: animatic (plays with timing + transitions), present (step through, captions), tap (set timing by tapping) */
+function drawPlayer(mode){ const E=drawEd; if(!E||E.player) return; drawCommitText(); drawPageSync();
+  const durs=E.pages.map(drawDur), starts=[]; let acc=0; durs.forEach(d=>{ starts.push(acc); acc+=d; });
+  const I=DRAW_TL_IC, ov=document.createElement('div'); ov.className='de-player pl-'+mode;
+  ov.innerHTML=`<div class="pl-stage"><canvas></canvas><div class="pl-hint"></div><div class="pl-rev" hidden></div></div><div class="pl-cap"></div>
+    <div class="pl-bar"><button type="button" data-pl="prev" title="Previous frame (←)">${drawIcon(I.prev)}</button><button type="button" data-pl="play" class="pl-pp" title="Play / pause (Space)"></button><button type="button" data-pl="next" title="Next frame (→)">${drawIcon(I.next)}</button>
+    <span class="pl-t"></span><div class="pl-scrub">${durs.map((d,i)=>`<i style="flex:${d} 1 0"></i>`).join('')}<b class="pl-head"></b></div>
+    <button type="button" data-pl="fs" title="Full screen (F)">${drawIcon(I.fs)}</button><button type="button" data-pl="close" class="pl-x" title="Close (Esc)">×</button></div>`;
+  E.el.appendChild(ov); const cv=ov.querySelector('canvas');
+  const P=E.player={mode,ov,cv,g:cv.getContext('2d'),imgs:E.pages.map(pg=>drawPanelImg(pg)),durs,starts,T:acc,t:0,playing:mode==='play',stopAt:null,raf:0,last:0,k:0,taps:[],tap0:performance.now(),done:false,capK:-1};
+  P.ro=new ResizeObserver(()=>{ const r=cv.parentNode.getBoundingClientRect(), d=devicePixelRatio||1; cv.width=Math.max(1,Math.round(r.width*d)); cv.height=Math.max(1,Math.round(r.height*d)); drawPlayerPaint(); }); P.ro.observe(cv.parentNode);
+  ov.addEventListener('click',e=>{ const b=e.target.closest('[data-pl]'); if(b){ drawPlayerCmd(b.dataset.pl); return; } if(e.target.closest('.pl-rev')) return;
+    if(e.target.closest('.pl-stage')) drawPlayerCmd(P.mode==='present'?'next':P.mode==='tap'?'tap':'play'); });
+  const sc=ov.querySelector('.pl-scrub'); let scr=false; const seek=e=>{ const r=sc.getBoundingClientRect(); P.t=Math.max(0,Math.min(P.T-.001,(e.clientX-r.left)/r.width*P.T)); P.stopAt=null; drawPlayerPaint(); };
+  sc.addEventListener('pointerdown',e=>{ if(P.mode==='tap') return; scr=true; P.wasPlaying=P.playing; P.playing=false; sc.setPointerCapture(e.pointerId); seek(e); });
+  sc.addEventListener('pointermove',e=>{ if(scr) seek(e); }); sc.addEventListener('pointerup',()=>{ if(!scr) return; scr=false; if(P.wasPlaying){ P.playing=true; drawPlayerRun(); } });
+  if(mode==='present'){ try{ const fp=ov.requestFullscreen&&ov.requestFullscreen(); if(fp&&fp.catch) fp.catch(()=>{}); }catch(e){} }
+  if(mode==='tap') drawTapTick();
+  requestAnimationFrame(()=>ov.classList.add('on')); if(P.playing) drawPlayerRun(); drawPlayerPaint(); }
+function drawPlayerRun(){ const P=drawEd&&drawEd.player; if(!P) return; cancelAnimationFrame(P.raf); P.last=performance.now();
+  const step=now=>{ const Q=drawEd&&drawEd.player; if(Q!==P||!P.playing) return; P.t+=(now-P.last)/1000; P.last=now;
+    if(P.stopAt!=null&&P.t>=P.stopAt){ P.t=P.stopAt; P.stopAt=null; P.playing=false; } if(P.t>=P.T){ P.t=P.T; P.playing=false; } drawPlayerPaint(); if(P.playing) P.raf=requestAnimationFrame(step); };
+  P.raf=requestAnimationFrame(step); }
+function drawPlayerAt(P){ if(P.mode==='tap') return Math.min(P.k,P.imgs.length-1); for(let i=0;i<P.starts.length;i++) if(P.t<P.starts[i]+P.durs[i]-1e-6) return i; return P.starts.length-1; }
+function drawPlayerPaint(){ const E=drawEd, P=E&&E.player; if(!P) return; const g=P.g, W=P.cv.width, H=P.cv.height, pages=E.pages; g.fillStyle='#0b0b0b'; g.fillRect(0,0,W,H);
+  const fit=im=>{ const sc=Math.min(W*.94/im.width,H*.94/im.height), w=im.width*sc, h=im.height*sc; return [(W-w)/2,(H-h)/2,w,h]; };
+  const draw=(im,a)=>{ if(!im||a<=0) return; g.globalAlpha=Math.min(1,a); g.drawImage(im,...fit(im)); g.globalAlpha=1; };
+  const k=drawPlayerAt(P), u=P.mode==='tap'?99:P.t-P.starts[k], d=P.durs[k], tin=k>0?pages[k-1].tr||'cut':'cut', tout=pages[k].tr||'cut', D=Math.min(.6,d*.5), Df=Math.min(.4,d*.4);
+  if(tin==='dissolve'&&u<D){ draw(P.imgs[k-1],1); draw(P.imgs[k],u/D); }
+  else if(tin==='wipe'&&u<D){ draw(P.imgs[k-1],1); const r=fit(P.imgs[k]), x=r[2]*(u/D); g.save(); g.beginPath(); g.rect(r[0],r[1],x,r[3]); g.clip(); g.drawImage(P.imgs[k],...r); g.restore(); g.fillStyle='rgba(255,255,255,.7)'; g.fillRect(r[0]+x-1,r[1],2,r[3]); }
+  else draw(P.imgs[k],1);
+  if(P.mode!=='tap'){ let blk=0; if(tin==='fade'&&u<Df) blk=1-u/Df; if(tout==='fade'&&k<P.imgs.length-1&&u>d-Df) blk=Math.max(blk,(u-(d-Df))/Df); if(blk>0){ g.fillStyle=`rgba(0,0,0,${Math.min(1,blk)})`; g.fillRect(0,0,W,H); } }
+  P.k2=k; const ov=P.ov;
+  if(P.capK!==k){ P.capK=k; const pg=pages[k], inf=pg.info||{}, multi=pages.some(q=>q.row>0), rt=((E.rowTitles||[])[pg.row|0]||'').trim();
+    const spec=[inf.shot&&inf.shot.split(' ·')[0],inf.cam,inf.lens,inf.move].filter(Boolean).join(' · ');
+    ov.querySelector('.pl-cap').innerHTML=`<div class="pl-c1"><b>${k+1}</b>${multi?`<span>Row ${(pg.row|0)+1}${rt?' · '+esc(rt):''}</span>`:''}${spec?`<span>${esc(spec)}</span>`:''}</div>${inf.action?`<div class="pl-c2">${esc(inf.action)}</div>`:''}${inf.dlg?`<div class="pl-c3">“${esc(inf.dlg)}”</div>`:''}`;
+    ov.querySelectorAll('.pl-scrub i').forEach((s2,i)=>s2.classList.toggle('on',i===k)); }
+  ov.querySelector('.pl-head').style.left=(P.mode==='tap'?0:P.t/P.T*100)+'%';
+  ov.querySelector('.pl-pp').innerHTML=drawIcon(P.playing?DRAW_TL_IC.pause:DRAW_TL_IC.play);
+  if(P.mode!=='tap') ov.querySelector('.pl-t').textContent=P.mode==='present'?`Frame ${k+1} of ${pages.length}`:`${drawFmtT(P.t)} / ${drawFmtT(P.T)}`; }
+function drawTapTick(){ const P=drawEd&&drawEd.player; if(!P||P.mode!=='tap'||P.done) return; const el=(performance.now()-P.tap0)/1000;
+  P.ov.querySelector('.pl-t').textContent=`Frame ${P.k+1} of ${P.imgs.length} · ${el.toFixed(1)} s`;
+  P.ov.querySelector('.pl-hint').textContent='Tap Space (or click) on each beat · Esc to stop'; requestAnimationFrame(drawTapTick); }
+function drawTapFinish(stopped){ const E=drawEd, P=E&&E.player; if(!P) return; if(stopped&&P.k<P.imgs.length){ const el=(performance.now()-P.tap0)/1000; if(el>.15) P.taps.push(el); }
+  if(!P.taps.length){ drawPlayerCmd('close'); return; } P.done=true; const rv=P.ov.querySelector('.pl-rev'), tot=P.taps.reduce((a,b)=>a+b,0);
+  rv.innerHTML=`<div class="pl-rh">New timing · ${P.taps.length} frame${P.taps.length>1?'s':''} · ${drawFmtT(tot)}</div><div class="pl-rl">${P.taps.map((d,i)=>`<div><b>${i+1}</b><span>${drawDur(E.pages[i]).toFixed(1)} s</span><i>→</i><em>${(Math.round(d*10)/10).toFixed(1)} s</em></div>`).join('')}</div>
+    <div class="pl-ra"><button type="button" data-pl="discard">Discard</button><button type="button" data-pl="again">Try again</button><button type="button" data-pl="apply" class="pri">Use this timing</button></div>`;
+  rv.hidden=false; P.ov.querySelector('.pl-hint').textContent=''; P.ov.querySelector('.pl-t').textContent='Enter to use it'; }
+function drawPlayerCmd(c){ const E=drawEd, P=E&&E.player; if(!P) return;
+  if(c==='close'||c==='discard'){ cancelAnimationFrame(P.raf); P.ro.disconnect(); try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }catch(e){} P.ov.classList.remove('on'); setTimeout(()=>P.ov.remove(),200); E.player=null;
+    if(P.mode!=='tap'&&P.k2!=null&&P.k2!==E.pi) drawFrameGo(P.k2); return; }
+  if(c==='fs'){ try{ if(document.fullscreenElement) document.exitFullscreen(); else P.ov.requestFullscreen(); }catch(e){} return; }
+  if(P.mode==='tap'){ if(c==='tap'||c==='next'){ if(P.done) return; const now=performance.now(); P.taps.push((now-P.tap0)/1000); P.tap0=now; P.k++; if(P.k>=P.imgs.length) drawTapFinish(false); else drawPlayerPaint(); }
+    else if(c==='apply'){ const n=P.taps.length, tot=P.taps.reduce((a,b)=>a+b,0); P.taps.forEach((d,i)=>drawSetDur(E.pages[i],d)); drawPlayerCmd('close'); drawTimeline(); drawShotPanelSync(); toast(`Timing set for ${n} frame${n>1?'s':''} · ${drawFmtT(tot)} in total`); }
+    else if(c==='again'){ P.taps=[]; P.k=0; P.done=false; P.ov.querySelector('.pl-rev').hidden=true; P.tap0=performance.now(); drawPlayerPaint(); drawTapTick(); }
+    else if(c==='play'&&!P.done){ drawTapFinish(true); } return; }
+  if(c==='play'){ if(P.playing){ P.playing=false; drawPlayerPaint(); return; } if(P.t>=P.T-.01) P.t=0; P.stopAt=null; P.playing=true; drawPlayerRun(); drawPlayerPaint(); return; }
+  if(c==='next'||c==='prev'){ const k=drawPlayerAt(P), j=Math.max(0,Math.min(P.starts.length-1,k+(c==='next'?1:-1))); if(j===k) return;
+    if(P.mode==='present'&&c==='next'){ const L=drawTrLen(j,P.durs,E.pages); P.t=P.starts[j]; if(L>0){ P.stopAt=P.starts[j]+L; P.playing=true; drawPlayerRun(); } else { P.playing=false; drawPlayerPaint(); } return; }
+    P.t=P.starts[j]+(P.mode==='present'?drawTrLen(j,P.durs,E.pages):0); if(P.mode==='present') P.playing=false; drawPlayerPaint(); } }
+function drawPlayerKey(e){ const P=drawEd.player; e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); if(e.metaKey||e.ctrlKey) return; e.preventDefault(); const k=e.key, l=k.toLowerCase();
+  if(k==='Escape'){ if(P.mode==='tap'&&!P.done){ drawTapFinish(true); return; } drawPlayerCmd('close'); return; }
+  if(P.mode==='tap'){ if(P.done){ if(k==='Enter') drawPlayerCmd('apply'); return; } if(k===' '||k==='Enter'||k==='ArrowRight'||l==='t') drawPlayerCmd('tap'); return; }
+  if(k===' ') drawPlayerCmd(P.mode==='present'?'next':'play'); else if(k==='ArrowRight'||k==='PageDown'||k==='.') drawPlayerCmd('next'); else if(k==='ArrowLeft'||k==='PageUp'||k===',') drawPlayerCmd('prev');
+  else if(k==='Home'){ P.t=0; P.stopAt=null; drawPlayerPaint(); } else if(l==='f') drawPlayerCmd('fs'); else if(l==='k'||l==='p') drawPlayerCmd('play'); }
 /* frames */
 function drawPageSync(){ const E=drawEd, pg=E.pages[E.pi]; pg.ops=E.ops; pg.hist=E.hist; pg.fut=E.fut; }
 function drawGoPage(i){ const E=drawEd; if(i<0||i>=E.pages.length||i===E.pi&&E.ops===E.pages[i].ops) { return; } drawCommitText(); if(E.pi>=0&&E.pages[E.pi]) drawPageSync(); E.pi=i; const pg=E.pages[i]; E.ops=pg.ops; E.hist=pg.hist; E.fut=pg.fut; drawSelClear(); E.region=null;
-  drawRender(); drawUnder(); drawSyncUI(); drawStrip(); drawRefPanel(); drawSibs(); }
-function drawAddPage(dup,at){ const E=drawEd; drawCommitText(); drawPageSync(); const cur0=E.pages[E.pi]; const at2=at==null?E.pi+1:at;
+  drawRender(); drawUnder(); drawSyncUI(); drawStrip(); drawRefPanel(); drawSibs(); drawTimeline(); }
+function drawAddRow(){ const E=drawEd, G=drawGrid(false); E.rowAdd=true; drawAddPage(false,E.pages.length,G.length); E.rowAdd=false; if(!E.quietPage) toast(`Row ${G.length+1} started · drag frames into it`); }
+function drawAddPage(dup,at,row){ const E=drawEd; drawCommitText(); drawPageSync(); const cur0=E.pages[E.pi]; const at2=at==null?E.pi+1:at, row2=row==null?(cur0.row|0):row, oc=drawCell(E.pi,false);
   const pg=dup?{ops:JSON.parse(JSON.stringify(cur0.ops)).map(o=>(o.i=++E.nid,o)), info:Object.assign({},cur0.info), ref:cur0.ref?{src:cur0.ref.src,op:cur0.ref.op,out:cur0.ref.out,hide:cur0.ref.hide}:undefined, refs:(cur0.refs||[]).map(r=>Object.assign({},r)), hist:[], fut:[]}:{ops:[], info:{cam:cur0.info.cam||'', lens:cur0.info.lens||''}, hist:[], fut:[]};
-  E.pages.splice(at2,0,pg); E.dirty=true; drawLoadRef(pg); if(at2!==E.pi+1) E.pan[0]+=(at2-E.pi)*drawSibStep()*E.scale; drawGoPage(at2); drawFit(); drawNewFrameFx(dup); if(!E.quietPage) toast(dup?`Frame ${E.pi+1} duplicated`:`Frame ${E.pi+1} added`); }
+  pg.row=row2; const same=at2===E.pi+1&&row2===(cur0.row|0); E.pages.splice(at2,0,pg); E.dirty=true; drawLoadRef(pg);
+  if(!same){ const nc=drawCell(at2,false); E.pan[0]+=(nc[0]-oc[0])*drawSibStep()*E.scale; E.pan[1]+=(nc[1]-oc[1])*drawRowStep(); }
+  drawGoPage(at2); drawFit(); drawNewFrameFx(dup); if(!E.quietPage&&!E.rowAdd) toast(dup?`Frame ${E.pi+1} duplicated`:`Frame ${E.pi+1} added`); }
 function drawNewFrameFx(dup){ const E=drawEd; if(!E||!E.el||matchMedia('(prefers-reduced-motion: reduce)').matches) return; const el=E.el, pp=el.querySelector('.de-paper'), th=el.querySelector(`.ds-th[data-pi="${E.pi}"]`), sb=el.querySelector('.de-sibs');   /* the new frame slides in from the right, its thumbnail pops into the strip */
   [pp,th,sb].forEach(n=>{ if(!n) return; n.classList.remove('fx-new','fx-dup'); void n.offsetWidth; n.classList.add(dup?'fx-dup':'fx-new'); clearTimeout(n._fx); n._fx=setTimeout(()=>n.classList.remove('fx-new','fx-dup'),520); }); if(th) th.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'}); }
 function drawDelPage(i){ const E=drawEd; if(E.pages.length<2){ toast('A drawing needs at least one frame'); return; } drawCommitText(); drawPageSync(); const pg=E.pages[i];
   const b=E.el.querySelector(`.de-sibs [data-pdel="${i}"]`); if(pg.ops.length&&b&&b.dataset.armed!=='1'){ b.dataset.armed='1'; b.classList.add('armed'); b.textContent='Delete?'; setTimeout(()=>{ if(b.isConnected){ b.dataset.armed=''; b.classList.remove('armed'); b.textContent='×'; } },2400); return; }
-  const wasCur=i===E.pi; E.pages.splice(i,1); E.dirty=true; const ni=Math.min(E.pages.length-1, i<=E.pi?Math.max(0,E.pi-1):E.pi); if(i<E.pi) E.pan[0]-=drawSibStep()*E.scale; E.pi=-1; drawGoPage(ni); drawFit(); if(wasCur) drawNewFrameFx(true); toast('Frame deleted'); }
+  const wasCur=i===E.pi, oc=drawCell(E.pi,false); E.pages.splice(i,1); E.dirty=true; const ni=Math.min(E.pages.length-1, i<=E.pi?Math.max(0,E.pi-1):E.pi); drawRowCompact(); E.pi=ni;
+  if(!wasCur){ const nc=drawCell(ni,false); E.pan[0]+=(nc[0]-oc[0])*drawSibStep()*E.scale; E.pan[1]+=(nc[1]-oc[1])*drawRowStep(); } E.pi=-1; drawGoPage(ni); drawFit(); if(wasCur) drawNewFrameFx(true); toast('Frame deleted'); }
 let drawThumbT=0;
-function drawThumbSoon(){ clearTimeout(drawThumbT); drawThumbT=setTimeout(()=>{ if(drawEd) drawThumb(drawEd.pi); },160); }
+function drawThumbSoon(){ clearTimeout(drawThumbT); drawThumbT=setTimeout(()=>{ if(drawEd){ drawThumb(drawEd.pi); drawTimeline(); } },160); }
 function drawThumb(i){ const E=drawEd, c=E.el.querySelector(`.ds-th[data-pi="${i}"] canvas`); if(!c) return; const g=c.getContext('2d'), pg=E.pages[i], ops=i===E.pi?E.ops:pg.ops;
   g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,c.width,c.height); g.fillStyle=E.bg==='dark'?'#1b1d22':'#fff'; g.fillRect(0,0,c.width,c.height); if(pg.ref&&pg.ref.img){ g.save(); g.scale(c.width/E.W,c.height/E.H); drawRefInto(g,pg,pg.ref.op*.8); g.restore(); }
   const t=document.createElement('canvas'); t.width=E.W; t.height=E.H; const tg=t.getContext('2d'); drawPaintOps(tg,ops); g.drawImage(t,0,0,c.width,c.height); }
@@ -7553,7 +7798,7 @@ function drawShotPanel(){ const E=drawEd, box=E.el.querySelector('.de-shot'), in
     <label>Movement<select data-i="move">${opt(SB_MOVES,inf.move||'')}</select></label>
     <label>Action<textarea data-i="action" rows="2" placeholder="What happens">${esc(inf.action||'')}</textarea></label>
     <label>Dialogue<textarea data-i="dlg" rows="2" placeholder="What's said">${esc(inf.dlg||'')}</textarea></label>`;
-  const set=(k,v)=>{ inf[k]=v; E.dirty=true; if(k==='shot') drawStrip(); };
+  const set=(k,v)=>{ inf[k]=v; E.dirty=true; if(k==='shot') drawStrip(); if(k==='dur') drawTimeline(); };
   box.querySelectorAll('[data-i]').forEach(f=>{ f.addEventListener(f.tagName==='SELECT'?'change':'input',()=>{ const k=f.dataset.i; set(k,f.value);
       if(k==='cam'){ const c=cams.find(q=>(q.label||'Camera')===f.value); if(c&&c.p&&c.p.lens){ inf.lens=c.p.lens+'mm'; box.querySelector('[data-i="lens"]').value=inf.lens; } } });   /* picking a plot camera fills in its lens */
     f.addEventListener('keydown',e=>e.stopPropagation()); }); }
@@ -7571,20 +7816,27 @@ function drawCompose(){ const E=drawEd; drawPageSync();
   const GR=!E.showRefs?[]:(E.grefs||[]).filter(r=>r.show).map(r=>drawImgGet(r.src)).filter(im=>im&&im.complete&&im.naturalWidth);
   const extras=GR.length||E.pages.some(pg=>renderLoc(pg)||refImgs(pg).length);
   if(E.pages.length===1&&!extras) return renderPanel(E.pages[0]);
-  const P=E.pages.map(renderPanel), pw=640, ph=Math.round(pw*P[0].height/P[0].width), cols=E.pages.length===1?1:E.pages.length===2||E.pages.length===4?2:3, rows=Math.ceil(P.length/cols), cap=96, gap=28, pad=40, head=64, lab=26, sub=14;
+  const P=E.pages.map(renderPanel), pw=640, ph=Math.round(pw*P[0].height/P[0].width), multiRow=E.pages.some(pg=>pg.row>0), RG=[]; E.pages.forEach((pg,i)=>{ const r=multiRow?pg.row|0:0; (RG[r]=RG[r]||[]).push(i); });
+  const cols=multiRow?Math.max(...RG.filter(Boolean).map(r=>r.length)):E.pages.length===1?1:E.pages.length===2||E.pages.length===4?2:3, PC=[], PR=[];
+  if(multiRow) RG.filter(Boolean).forEach((row,r)=>row.forEach((i,c)=>{ PC[i]=c; PR[i]=r; })); else E.pages.forEach((_,i)=>{ PC[i]=i%cols; PR[i]=Math.floor(i/cols); });
+  const rows=Math.max(...PR)+1, cap=96, gap=28, pad=40, head=64, lab=26, sub=14;
   /* each frame is a column: drawing + notes, then the location photo, then the references */
   const LOC=E.pages.map(renderLoc), REF=E.pages.map(refImgs), lh=Math.round(pw*E.H/E.W);
   const refRows=imgs=>{ const out=[]; for(let i=0;i<imgs.length;i+=2){ const pair=imgs.slice(i,i+2), w=pair.length>1?(pw-sub)/2:pw; out.push({pair,w,h:Math.min(Math.round(pw*.75),Math.max(...pair.map(im=>Math.round(w*im.naturalHeight/im.naturalWidth))))}); } return out; };
   const RR=REF.map(refRows), colH=E.pages.map((_,i)=>ph+cap+(LOC[i]?lab+lh+sub:0)+(RR[i].length?lab+RR[i].reduce((a,r)=>a+r.h+sub,0):0));
-  const rowH=[]; for(let r=0;r<rows;r++) rowH.push(Math.max(...colH.slice(r*cols,r*cols+cols)));
+  const RT=r=>multiRow&&((E.rowTitles||[])[r]||'').trim()?(r?44:58):0;   /* titled rows get a heading line */
+  const rowH=[]; for(let r=0;r<rows;r++) rowH.push(RT(r)+Math.max(0,...colH.filter((_,i)=>PR[i]===r)));
   const OW=pad*2+cols*pw+(cols-1)*gap, gh=Math.round(Math.min(360,Math.max(220,pw*.5))), GRW=OW-pad*2;
   const grRows=[]; { let row=[], w=0; GR.forEach(im=>{ const iw=Math.round(gh*im.naturalWidth/im.naturalHeight); if(row.length&&w+iw>GRW){ grRows.push(row); row=[]; w=0; } row.push([im,Math.min(iw,GRW)]); w+=Math.min(iw,GRW)+sub; }); if(row.length) grRows.push(row); }
   const grH=grRows.length?gap+lab+18+grRows.length*(gh+sub):0;
   const out=document.createElement('canvas'); out.width=OW; out.height=pad+head+rowH.reduce((a,h)=>a+h,0)+(rows-1)*gap+grH+pad; const g=out.getContext('2d');
   g.fillStyle='#ffffff'; g.fillRect(0,0,out.width,out.height); g.fillStyle='#1b1d22'; g.font=`700 28px ${FONT}`; g.textBaseline='top'; { const tn=(E.name||'Storyboard').trim()||'Storyboard'; g.fillText(tn,pad,pad); out._title={x:pad,y:pad,w:Math.round(g.measureText(tn).width),h:34,W:OW}; }
-  g.fillStyle='#8a9099'; g.font=`600 16px ${FONT}`; g.fillText(P.length>1?`${P.length} frames`:'Storyboard',pad,pad+36);
+  g.fillStyle='#8a9099'; g.font=`600 16px ${FONT}`; { const timed=E.pages.some(pg=>(pg.info||{}).dur), tot=E.pages.reduce((a,pg)=>a+drawDur(pg),0); g.fillText(P.length>1?`${P.length} frames${timed?' · '+drawFmtT(tot).replace(/\.0$/,'')+' running time':''}`:'Storyboard',pad,pad+36); }
   const label=(t,x,y)=>{ g.fillStyle='#8a9099'; g.font=`700 12px ${FONT}`; g.textBaseline='top'; g.fillText(t.toUpperCase(),x,y+7); };
-  P.forEach((c,i)=>{ const col=i%cols, row=Math.floor(i/cols), x=pad+col*(pw+gap), y0=pad+head+rowH.slice(0,row).reduce((a,h)=>a+h+gap,0); let yy=y0+ph+cap;
+  if(multiRow) for(let r=0;r<rows;r++){ const t=((E.rowTitles||[])[r]||'').trim(); if(!t) continue; const yT=pad+head+rowH.slice(0,r).reduce((a,h)=>a+h+gap,0)+(r?0:14);
+    g.fillStyle='#8a9099'; g.font=`700 12px ${FONT}`; g.textBaseline='top'; const tag=`ROW ${r+1}`; g.fillText(tag,pad,yT+7); const tw=g.measureText(tag).width;
+    g.fillStyle='#1b1d22'; g.font=`700 20px ${FONT}`; g.fillText(t,pad+tw+12,yT+2); g.fillStyle='#e3e5e8'; g.fillRect(pad,yT+32,OW-pad*2,1.5); }
+  P.forEach((c,i)=>{ const col=PC[i], row=PR[i], x=pad+col*(pw+gap), y0=pad+head+rowH.slice(0,row).reduce((a,h)=>a+h+gap,0)+RT(row); let yy=y0+ph+cap;
     if(LOC[i]){ label('Location / blocking',x,yy); yy+=lab; g.drawImage(LOC[i],x,yy,pw,lh); g.strokeStyle='#d6d9de'; g.lineWidth=1.5; g.strokeRect(x+.75,yy+.75,pw-1.5,lh-1.5); yy+=lh+sub; }
     if(RR[i].length){ label('References',x,yy); yy+=lab; RR[i].forEach(r=>{ r.pair.forEach((im,k)=>{ const ix=x+k*(r.w+sub), s2=Math.min(r.w/im.naturalWidth,r.h/im.naturalHeight), dw=im.naturalWidth*s2, dh=im.naturalHeight*s2; g.fillStyle='#f1f2f4'; g.fillRect(ix,yy,r.w,r.h); g.drawImage(im,ix+(r.w-dw)/2,yy+(r.h-dh)/2,dw,dh); }); yy+=r.h+sub; }); }
     const y=y0, inf=E.pages[i].info||{};
@@ -7592,6 +7844,7 @@ function drawCompose(){ const E=drawEd; drawPageSync();
     g.fillStyle='#1b1d22'; g.beginPath(); g.arc(x+18,y+18,14,0,Math.PI*2); g.fill(); g.fillStyle='#fff'; g.font=`700 15px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.fillText(String(i+1),x+18,y+18.5); g.textAlign='left'; g.textBaseline='top';
     const meta=[inf.shot&&inf.shot.split(' ·')[0], inf.cam, inf.lens, inf.move, inf.dur].filter(Boolean).join(' · ');
     g.fillStyle='#1b1d22'; g.font=`700 16px ${FONT}`; g.fillText(meta||`Frame ${i+1}`,x,y+ph+10);
+    { const tr=E.pages[i].tr; if(tr&&tr!=='cut'&&i<E.pages.length-1){ const lb=DRAW_TR.find(t=>t[0]===tr)[2]+' →'; g.font=`700 12px ${FONT}`; g.fillStyle='#8a9099'; g.textAlign='right'; g.fillText(lb,x+pw,y+ph+12); g.textAlign='left'; } }
     const fit=(t,max)=>{ if(g.measureText(t).width<=max) return t; while(t.length&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; };
     g.fillStyle='#4a4f57'; g.font=`500 15px ${FONT}`; if(inf.action) g.fillText(fit(inf.action,pw),x,y+ph+34);
     if(inf.dlg){ g.fillStyle='#6b7280'; g.font=`italic 500 15px ${FONT}`; g.fillText(fit('“'+inf.dlg+'”',pw),x,y+ph+(inf.action?56:34)); } });
@@ -7618,14 +7871,14 @@ async function closeDraw(save){ const E=drawEd; if(!E) return; drawCommitText();
     const blob=await new Promise(r=>out.toBlob(r,'image/png')); if(!blob){ toast('Couldn’t save the drawing'); return; }
     checkpoint(); it.p.name=(E.name||'Drawing').trim()||'Drawing';
     const clean=ops=>ops.map(o=>{ const c=Object.assign({},o); delete c.i; return c; });   /* hidden layers stay hidden, and stay editable */
-    const pages=E.pages.map(pg=>{ const q={ops:clean(pg.ops), info:pg.info||{}}; if(pg.ref) q.ref={src:pg.ref.src, op:pg.ref.op, out:!!pg.ref.out, hide:!!pg.ref.hide}; if(pg.refs&&pg.refs.length) q.refs=pg.refs.map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})); return q; });
-    it.p.draw={W:E.W,H:E.H,G:E.G,grefs:(E.grefs||[]).map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})),art:!!E.art,artDir:E.artDir,showLoc:E.showLoc,showRefs:E.showRefs,title:out._title||null,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
+    const pages=E.pages.map(pg=>{ const q={ops:clean(pg.ops), info:pg.info||{}}; if(pg.row) q.row=pg.row; if(pg.tr) q.tr=pg.tr; if(pg.ref) q.ref={src:pg.ref.src, op:pg.ref.op, out:!!pg.ref.out, hide:!!pg.ref.hide}; if(pg.refs&&pg.refs.length) q.refs=pg.refs.map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})); return q; });
+    it.p.draw={W:E.W,H:E.H,G:E.G,rowTitles:(E.rowTitles||[]).slice(0,drawGrid(false,null).length).map(t=>(t||'').trim()),grefs:(E.grefs||[]).map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})),art:!!E.art,artDir:E.artDir,showLoc:E.showLoc,showRefs:E.showRefs,title:out._title||null,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
     fillImage(it,new File([blob],it.p.name+'.png',{type:'image/png'}));
     toast(E.pages.length>1?`Storyboard with ${E.pages.length} frames added to the board · double-click to edit`:(E.fresh?'Drawing added to the board · double-click it to keep drawing':'Drawing updated')); }
   removeEventListener('resize',drawFit); clearInterval(E.antsT); if(E.ro) E.ro.disconnect(); E.el.classList.remove('on'); const el=E.el; drawEd=null; setTimeout(()=>el.remove(),200); }
 /* the editor owns the keyboard while it's open */
 let drawNudgeT=0;
-addEventListener('keydown',e=>{ const E=drawEd; if(!E) return; if(e.target&&e.target.classList&&e.target.classList.contains('de-name')){ if(e.key==='Escape'||e.key==='Enter'){ e.target.blur(); } e.stopPropagation(); return; }
+addEventListener('keydown',e=>{ const E=drawEd; if(!E) return; if(E.player){ drawPlayerKey(e); return; } if(e.target&&e.target.classList&&e.target.classList.contains('de-name')){ if(e.key==='Escape'||e.key==='Enter'){ e.target.blur(); } e.stopPropagation(); return; }
   if(e.target&&e.target.classList&&e.target.classList.contains('de-text')) return;
   { const t=e.target; if(t&&E.el.contains(t)&&((t.tagName==='INPUT'&&!/^(range|checkbox|radio|color|button)$/.test(t.type))||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable)) return; }   /* typing in a field (brand kit, shot notes…) never triggers tool shortcuts */
   e.stopPropagation(); if(e.key==='Alt'&&!E.altDown){ E.altDown=true; drawCursor(); } const k=e.key.toLowerCase(), mod=e.metaKey||e.ctrlKey, so=E.tool==='select'&&E.sel&&drawById(E.sel), SL=drawSelOps(), R=E.region;
