@@ -100,6 +100,18 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .extopts button{border:0;background:var(--field);border-radius:10px;width:74px;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer}
 .extopts button:hover{background:var(--hover);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .extopts svg{width:46px;height:30px;display:block}
+.share-btn{position:relative}.share-btn.on{color:var(--accent)}.share-btn .sh-n{position:absolute;right:1px;top:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--accent);color:#fff;font:700 10px/15px var(--sans);text-align:center}
+.sh-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font:600 11px/1.3 var(--sans);vertical-align:2px;white-space:nowrap}
+.acct.share{width:min(540px,calc(100vw - 48px));gap:8px}.sh-list{display:grid;gap:2px;max-height:min(44vh,360px);overflow:auto;margin:4px 0 10px}
+.sh-row{display:flex;align-items:center;gap:10px;padding:7px 4px;border-radius:10px;min-width:0}.sh-row:hover{background:var(--hover)}.sh-row.pend{opacity:.8}
+.sh-av{flex:none}.sh-who{flex:1;min-width:0}.sh-who b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sh-who em{font-style:normal;font-weight:500;color:var(--muted)}.sh-who small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-tag{flex:none;font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap}.share .sh-sel{flex:none;width:auto;min-width:0;height:34px;padding:0 8px;font-size:13px}
+.sh-chk{flex:none;display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}.sh-x{flex:none;width:28px;height:28px}
+.sh-add{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--line)}.share .sh-add input[type=email]{flex:1;min-width:160px;width:auto}
+.sh-msg{min-height:1.3em;margin:8px 0 0;font-size:13px}.sh-msg:empty{display:none}.sh-msg.bad{color:#e5484d}
+.sh-help{margin:8px 0 12px;font-size:13px;color:var(--muted)}.sh-help summary{cursor:pointer;font-weight:600}.sh-help ul{margin:8px 0;padding-left:18px;display:grid;gap:4px}.sh-help b{color:var(--ink)}.sh-help p{margin:0}
+.btn.danger{color:#e5484d}
+@media (max-width:520px){ .sh-row{flex-wrap:wrap} .sh-who{flex-basis:calc(100% - 44px)} .sh-row .sh-sel{margin-left:38px} }
 .acct-btn{padding:0;overflow:hidden}.acct-btn img{width:24px;height:24px;border-radius:50%;display:block}.acct-i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:700;font-size:12px}
 .acct{display:flex;flex-direction:column;gap:12px;width:min(380px,calc(100vw - 48px))}.acct-h{display:flex;align-items:center;justify-content:space-between}.acct-h h3{margin:0;font-size:17px}.acct p{margin:0}
 .acct-prov{display:flex;flex-direction:column;gap:8px}.acct-p{justify-content:center;gap:10px;height:40px}.acct-p svg{width:18px;height:18px}
@@ -1634,6 +1646,31 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .aiv-pv{flex:none;width:24px;height:24px;display:grid;place-items:center;border:0;border-radius:50%;background:#333;color:#ddd;cursor:pointer;padding:0}
 #drawEd .aiv-pv svg{width:11px;height:11px}
 #drawEd .aiv-pv:hover{background:#1473e6;color:#fff}
+#drawEd .aiv-vo.playing .aiv-pv{background:#1473e6;color:#fff;animation:aivPulse 1.1s ease-in-out infinite}
+#drawEd .aiv-vo.busy .aiv-pv{background:transparent;border:2px solid #555;border-top-color:#1473e6;animation:aivSpin .8s linear infinite}
+#drawEd .aiv-vo.busy .aiv-pv svg{opacity:0}
+@keyframes aivPulse{50%{box-shadow:0 0 0 4px rgba(20,115,230,.25)}}
+@keyframes aivSpin{to{transform:rotate(360deg)}}
+#drawEd .aiv-hint{font-style:normal;color:#6f6f6f;font-weight:400}
+#drawEd .aiv-tags{display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;align-items:start;margin-top:4px}
+#drawEd .aiv-tags .aiv-l2{padding-top:3px}
+#drawEd .aiv-chips{display:flex;flex-wrap:wrap;gap:4px}
+#drawEd .aiv-chips button{height:22px;padding:0 7px;border:1px solid #3e3557;border-radius:11px;background:#2a2438;color:#d9cffb;font:500 11.5px var(--font,inherit);cursor:pointer;transition:background .15s ease,transform .15s ease}
+#drawEd .aiv-chips button:hover{background:#3b2f5c;border-color:#6e56cf}
+#drawEd .aiv-chips button.pop{transform:scale(1.08)}
+#drawEd .aiv-chips .aiv-more{background:transparent;border-color:#3a3a3a;color:#aaa}
+#drawEd .aiv-tagmore{display:grid;gap:8px;padding:10px;border:1px solid #333;border-radius:8px;background:#1c1c1c}
+#drawEd .aiv-tg{display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px;align-items:start}
+#drawEd .aiv-tg > span{color:#8a8a8a;font-size:11.5px;padding-top:3px}
+#drawEd .aiv-tips{color:#aaa;font-size:12px}
+#drawEd .aiv-tips summary{cursor:pointer;color:#b89cff;font-weight:500;list-style:none}
+#drawEd .aiv-tips summary::-webkit-details-marker{display:none}
+#drawEd .aiv-tips summary::before{content:'▸ ';color:#777}
+#drawEd .aiv-tips[open] summary::before{content:'▾ '}
+#drawEd .aiv-tips ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px;line-height:1.45}
+#drawEd .aiv-tips code{font:11.5px ui-monospace,Menlo,monospace;color:#e2dafc;background:#2a2438;border-radius:3px;padding:0 3px}
+#drawEd .aiv-tips b{color:#ddd}
+@media (max-width:520px){ #drawEd .aiv-tags,#drawEd .aiv-tg{grid-template-columns:1fr;gap:4px} }
 #drawEd .aiv-empty{grid-column:1/-1;padding:16px;text-align:center;color:#8a8a8a}
 #drawEd .aiv-row{display:grid;grid-template-columns:70px minmax(0,1fr) 72px;align-items:center;gap:10px}
 #drawEd .aiv-row .aiv-seg{justify-self:start;grid-column:2/4}
@@ -1809,6 +1846,7 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
       <button class="ib" id="redoBtn" aria-label="Redo" title="Redo  Ctrl+Shift+Z" disabled></button>
       <span class="vsep hide-s"></span>
       <button class="ib hide-s" id="detailsBtn" aria-pressed="false" aria-label="Setup details and gear list" title="Setup details &amp; gear"></button>
+      <button class="ib share-btn" id="shareBtn" aria-label="Share this shoot" title="Share this shoot with your crew" hidden></button>
       <button class="ib acct-btn" id="acctBtn" aria-label="Account"></button>
       <button class="ib" id="presentBtn" aria-label="Focus mode" title="Focus mode: hide the toolbars  Shift+F"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/></svg></button>
       <div class="rel">
@@ -2792,7 +2830,7 @@ const CAT_DESC = {Lights:'Drag onto the plot or tap to drop in the middle.',Grip
 
 try{ Object.assign(opts, JSON.parse(localStorage.getItem('setplot-opts')||'{}')); }catch(e){}
 function saveOpts(){ try{ localStorage.setItem('setplot-opts',JSON.stringify(opts)); }catch(e){} }
-function meta(d){ return {title:d.title||'Setup', shoot:d.shoot||'', client:d.client||'', date:d.date||'', location:d.location||'', crew:d.crew||'', notes:d.notes||'', layers:d.layers||null, layerAuto:d.layerAuto!==false, power:d.power||null, parent:d.parent||null, archived:d.archived||null, brand:d.brand||null}; }
+function meta(d){ return {title:d.title||'Setup', shoot:d.shoot||'', client:d.client||'', date:d.date||'', location:d.location||'', crew:d.crew||'', notes:d.notes||'', layers:d.layers||null, layerAuto:d.layerAuto!==false, power:d.power||null, parent:d.parent||null, archived:d.archived||null, brand:d.brand||null, pid:d.pid||null, own:d.own||null}; }
 function body(d){ return Object.assign(meta(d), {items:d.items||[], createdAt:d.createdAt||Date.now(), updatedAt:d.updatedAt||Date.now()}); }
 
 /* ================= render ================= */
@@ -4116,7 +4154,7 @@ async function flush(){
   saving=true; dirty=false;
   const id=cur.id, data=JSON.parse(JSON.stringify(body(cur),(k,v)=>typeof v==='number'&&!isFinite(v)?0:v)); data.rev=lastRev=uid();
   try{
-    if(dbApi) await dbApi.collection('diagrams').doc(id).set(data); else localWrite();
+    if(dbApi) await dbApi.collection('diagrams').doc(id).set(data); else { localWrite(); cloudPush(id); }
     setStatus(mode==='local'?'Saved in this browser':'Saved');
   }catch(e){
     dirty=true;
@@ -4164,7 +4202,7 @@ function openDiagram(id,keepView){ activeLayer=null; isoSet=null; isoAmt=0; setT
   if(cur && dirty) flush();
   const d=all[id]; if(!d) return;
   cur=Object.assign({id},JSON.parse(JSON.stringify(d)));
-  cur.items=normItems(cur.items||[]).filter(it=>TYPES[it.type]); ensureLayers(cur);
+  cur.items=normItems(cur.items||[]).filter(it=>TYPES[it.type]); ensureLayers(cur); syncProjectRO();
   if(pruneOrphanSetups()) setTimeout(()=>{ if(!$('#drawer').hidden) renderDrawer(); },0);
   sel.clear(); hist=[]; fut=[]; updUndo();
   try{ localStorage.setItem('setplot-last',id); }catch(e){}
@@ -4172,12 +4210,13 @@ function openDiagram(id,keepView){ activeLayer=null; isoSet=null; isoAmt=0; setT
   if(!keepView) requestAnimationFrame(fit); else draw();
 }
 function createDiagram(tplKey, base){ track('setup_create',{t:String(tplKey||'blank').slice(0,24)});
-  if(readOnly) return;
+  if(readOnly){ if(!roProj) return; if(base&&base.pid&&!projCan(base.pid,'write')){ toast('You can view this project, but not add to it'); return; } setReadOnly(false); roProj=false; }
   const t=tplOf(tplKey), now=Date.now(), id=uid();
   const inShoot = base ? Object.values(all).filter(d=>(d.shoot||'')===(base.shoot||'')).length : 0;
   const d=Object.assign({title:'Setup '+(inShoot+1),shoot:'',client:'',date:new Date().toISOString().slice(0,10),location:'',crew:'',notes:''},
     base?{shoot:base.shoot,client:base.client,date:base.date,location:base.location,crew:base.crew}:{},{items:t.items(),createdAt:now,updatedAt:now});
   if(!base){ d.shoot='New shoot'; if(tplKey!=='blank') d.title=t.label; }
+  if(base&&base.pid&&projCan(base.pid,'write')) d.pid=base.pid;
   all[id]=d; closeDrawer(); openDiagram(id); dirty=true; flush();
   if(!base) setTimeout(askSetupDetails,60);   // a new shoot asks for its details in a box in the middle
 }
@@ -4243,9 +4282,9 @@ function renderDrawer(){
     byC.filter(r=>!r[1].parent||!ids.has(r[1].parent)).forEach(walk); byC.forEach(walk);
     const d0=rows[rows.length-1][1];
     const metaTxt=[d0.client,d0.date,d0.location].filter(Boolean).map(esc).join(' · ');
-    h+=`<div class="shoot"><h3>${esc(g)}</h3><div class="meta">${metaTxt?metaTxt+' · ':''}${rows.length} setup${rows.length===1?'':'s'}</div><div class="cards">`+
+    h+=`<div class="shoot"><h3>${esc(g)}${shareBadge(groups[g])}</h3><div class="meta">${metaTxt?metaTxt+' · ':''}${rows.length} setup${rows.length===1?'':'s'}</div><div class="cards">`+
       rows.map(([id,d],i)=>{ const c=counts(d.items); return `<button class="sc${cur&&cur.id===id?' on':''}" data-open="${id}"><span class="th">${thumbSVG(d.items||[],'t'+i+id.slice(0,4),d.layers)}</span><span class="tx"><b>${d.parent&&all[d.parent]?`<span class="nestin">${esc(all[d.parent].title||'Setup')} /</span> `:''}${esc(d.title||'Setup')}</b><small>${c.l} light${c.l===1?'':'s'} · ${c.c} cam${c.c===1?'':'s'}</small></span></button>`; }).join('')+
-      (readOnly?'':`<button class="sc add" data-addto="${esc(g)}">${ic('plus')}New setup</button>`)+`</div></div>`;
+      ((readOnly&&!roProj)||grpRO(groups[g])?'':`<button class="sc add" data-addto="${esc(g)}">${ic('plus')}New setup</button>`)+`</div></div>`;
   });
   $('#dbody').innerHTML=h+archiveHTML();
 }
@@ -4258,7 +4297,7 @@ function drawerTreeHTML(order,groups){
     const rows=groups[g].slice().sort((a,b)=>(a[1].createdAt||0)-(b[1].createdAt||0)), ids=new Set(rows.map(r=>r[0])), seen=new Set();
     const kids=pid=>rows.filter(r=>pid==null ? (!r[1].parent||!ids.has(r[1].parent)) : r[1].parent===pid);
     const d0=rows.slice().sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0))[0][1], metaTxt=[d0.client,d0.date,d0.location].filter(Boolean).map(esc).join(' · ');
-    h+=`<div class="dt-proj"><div class="dt-phead"><span class="dt-pic">${ic('folder')}</span><div class="dt-pt"><b>${esc(g)}</b><small>${metaTxt?metaTxt+' · ':''}${rows.length} setup${rows.length===1?'':'s'}</small></div>${readOnly?'':`<button class="dt-add" data-addto="${esc(g)}">${ic('plus','style="width:14px;height:14px"')}New setup</button>`}</div>`;
+    h+=`<div class="dt-proj"><div class="dt-phead"><span class="dt-pic">${ic('folder')}</span><div class="dt-pt"><b>${esc(g)}${shareBadge(groups[g])}</b><small>${metaTxt?metaTxt+' · ':''}${rows.length} setup${rows.length===1?'':'s'}</small></div>${(readOnly&&!roProj)||grpRO(groups[g])?'':`<button class="dt-add" data-addto="${esc(g)}">${ic('plus','style="width:14px;height:14px"')}New setup</button>`}</div>`;
     const walk=(pid,guides)=>{ const list=kids(pid).filter(r=>!seen.has(r[0])); list.forEach((r,ix)=>{ seen.add(r[0]); const [id,d]=r, last=ix===list.length-1, c=counts(d.items), nc=(d.items||[]).filter(isCard).length;
       h+=`<button class="dt-row${cur&&cur.id===id?' on':''}" data-open="${id}">${guides.map(v=>`<i class="tg${v?' v':''}"></i>`).join('')}<i class="tg ${last?'l':'t'}"></i><span class="dt-th">${thumbSVG(d.items||[],'dt'+gi+id.slice(0,5),d.layers)}</span><span class="dt-tx"><b>${esc(d.title||'Setup')}</b><small>${c.l} light${c.l===1?'':'s'} · ${c.c} cam${c.c===1?'':'s'}${nc?` · ${nc} card${nc===1?'':'s'}`:''}</small></span>${cur&&cur.id===id?'<em>open</em>':''}</button>`;
       walk(id,guides.concat(!last)); }); };
@@ -6138,7 +6177,7 @@ function stopPresent(){ if(!pres) return; pres=null; if(isoSet) toggleIso();
   draw(); }
 $('#focusExit').onclick=()=>stopPresent();
 $('#presentBtn').onclick=()=>startPresent();
-$('#acctBtn').onclick=()=>openAccount();
+$('#acctBtn').onclick=()=>openAccount(); $('#shareBtn').onclick=()=>openShare();
 addEventListener('keydown',e=>{
   if(!pres) return; const t=(e.target.tagName||'').toLowerCase(); if(t==='input'||t==='textarea'||e.target.isContentEditable) return;
   if(e.key==='Escape' && $('#modMenu') && !$('#modMenu').hidden){ e.preventDefault(); closeModMenu(); return; }
@@ -7837,7 +7876,7 @@ function drawPlayerPaint(){ const E=drawEd, P=E&&E.player; if(!P) return; const 
   P.k2=k; const ov=P.ov;
   if(P.capK!==k){ P.capK=k; const pg=pages[k], inf=pg.info||{}, multi=pages.some(q=>q.row>0), rt=((E.rowTitles||[])[pg.row|0]||'').trim();
     const spec=[inf.shot&&inf.shot.split(' ·')[0],inf.cam,inf.lens,inf.move].filter(Boolean).join(' · ');
-    ov.querySelector('.pl-cap').innerHTML=`<div class="pl-c1"><b>${k+1}</b>${multi?`<span>Row ${(pg.row|0)+1}${rt?' · '+esc(rt):''}</span>`:''}${spec?`<span>${esc(spec)}</span>`:''}</div>${inf.action?`<div class="pl-c2">${esc(inf.action)}</div>`:''}${inf.dlg?`<div class="pl-c3">“${esc(inf.dlg)}”</div>`:''}`;
+    ov.querySelector('.pl-cap').innerHTML=`<div class="pl-c1"><b>${k+1}</b>${multi?`<span>Row ${(pg.row|0)+1}${rt?' · '+esc(rt):''}</span>`:''}${spec?`<span>${esc(spec)}</span>`:''}</div>${inf.action?`<div class="pl-c2">${esc(inf.action)}</div>`:''}${aivStrip(inf.dlg)?`<div class="pl-c3">“${esc(aivStrip(inf.dlg))}”</div>`:''}`;
     ov.querySelectorAll('.pl-scrub i').forEach((s2,i)=>s2.classList.toggle('on',i===k)); }
   ov.querySelector('.pl-head').style.left=(P.mode==='tap'?0:P.t/P.T*100)+'%';
   ov.querySelector('.pl-pp').innerHTML=drawIcon(P.playing?DRAW_TL_IC.pause:DRAW_TL_IC.play);
@@ -7946,7 +7985,16 @@ async function drawRecDone(P){ const E=drawEd, keep=P.keepOnStop!==false, blob=n
   const src=await storeAudio(blob); if(!drawEd) return; const D=drawEd, n=(D.audio=D.audio||[]).filter(a=>a.kind==='voice').length+1, clip={id:uid(),src,nm:`Voice ${n}`,kind:'voice',at:Math.round(P.recAt*10)/10,len:info.dur||secs,full:info.dur||secs,off:0,vol:1,pk:info.pk};
   D.audio.push(clip); D.audSel=clip.id; track('voice_record',{s:Math.round(clip.len)}); D.dirty=true; if(D.player===P) drawPlayerCmd('close'); drawTimeline(); toast(`Voice-over recorded · ${clip.len.toFixed(1)} s from frame ${P.start+1} · drag it on the timeline to move it`); }
 /* ---------- AI voice-over (ElevenLabs, through the account's "tts" server function: the key never reaches the page) ---------- */
-let aivVoices=null;
+/* Eleven v4 audio tags, from ElevenLabs' prompting guide and audio tag list */
+const AIV_QUICK=['laughs','whispers','sighs','excited','sarcastic','shouts','long pause','clears throat'];
+const AIV_TAGS=[['Emotion',['excited','curious','thoughtful','nervous','sad','angry','annoyed','surprised','tired','scared','proud','playful','mischievously','sarcastic']],
+  ['Delivery',['whispers','softly','quietly','shouts','hushed','low, threatening','booming','disbelief']],
+  ['Pacing',['slowly','rushed','short pause','long pause','drawn out','snappy']],
+  ['Reactions',['laughs','chuckles','starts laughing','sighs','exhales','inhales deeply','gasps','clears throat','gulps','crying','snorts']],
+  ['Accent & character',['British accent','French accent','Irish accent','Australian accent','pirate voice']],
+  ['Sound effects',['footsteps','door creaking','applause','clapping','thunder rumbling','dog barking']]];
+const aivStrip=t=>String(t||'').replace(/\[[^\]\n]{1,60}\]\s*/g,'').replace(/\s{2,}/g,' ').trim();   /* captions and the board show the line without its cues */
+let aivVoices=null; const aivSamples={};   /* voice id + model → sample blob URL, so a voice is only sampled once per session */
 function aivStarts(){ const E=drawEd, st=[]; let a=0; E.pages.forEach(pg=>{ st.push(a); a+=drawDur(pg); }); return st; }
 async function aivCall(payload){ const c=sbConf(); if(!sb||!c) throw {code:'offline',message:'AI voice works on plot.malikmotion.com when you are signed in'};
   const {data}=await sb.auth.getSession(); const tok=data&&data.session&&data.session.access_token; if(!tok) throw {code:'auth',message:'Sign in to use AI voice'};
@@ -7957,16 +8005,24 @@ async function aivCall(payload){ const c=sbConf(); if(!sb||!c) throw {code:'offl
 function aivPrefs(){ try{ return JSON.parse(localStorage.getItem('setplot-aiv')||'{}')||{}; }catch(e){ return {}; } }
 function aivSavePrefs(p){ try{ localStorage.setItem('setplot-aiv',JSON.stringify(p)); }catch(e){} }
 function drawAiVoice(scope){ const E=drawEd; if(!E) return; drawCommitText(); drawPageSync(); const old=E.el.querySelector('.de-aiv'); if(old) old.remove();
-  const P=Object.assign({model:'eleven_multilingual_v2',speed:1,expr:.35,fit:true},aivPrefs()), pg=E.pages[E.pi], inf=pg.info||{};
+  const P=Object.assign({model:'eleven_v4',speed:1,expr:.35,fit:true},aivPrefs()), pg=E.pages[E.pi], inf=pg.info||{}; if(!/^eleven_v4/.test(P.model)) P.model='eleven_v4';
   const ov=document.createElement('div'); ov.className='de-aiv'; ov.innerHTML=`<div class="aiv-card" role="dialog" aria-label="AI voice-over">
     <div class="aiv-h"><b>${drawIcon('<path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>')}AI voice-over</b><div class="aiv-seg" role="group"><button type="button" data-sc="one">Frame ${E.pi+1}</button><button type="button" data-sc="all">All frames with dialogue</button></div><button type="button" class="aiv-x" aria-label="Close">×</button></div>
     <div class="aiv-body">
-      <div class="aiv-one"><label class="aiv-l">Line for frame ${E.pi+1}<textarea rows="3" maxlength="800" placeholder="Type what should be said…"></textarea></label><div class="aiv-cnt"></div></div>
+      <div class="aiv-one"><label class="aiv-l">Line for frame ${E.pi+1}<textarea rows="3" maxlength="800" placeholder="Type what should be said… Add cues in brackets, like [whispers] or [laughs]"></textarea></label><div class="aiv-cnt"></div>
+        <div class="aiv-tags"><span class="aiv-l2">Add a cue</span><div class="aiv-chips">${AIV_QUICK.map(t=>`<button type="button" data-tag="${t}">[${t}]</button>`).join('')}<button type="button" class="aiv-more" aria-expanded="false">More…</button></div></div>
+        <div class="aiv-tagmore" hidden>${AIV_TAGS.map(([g,ts])=>`<div class="aiv-tg"><span>${g}</span><div class="aiv-chips">${ts.map(t=>`<button type="button" data-tag="${t}">[${t}]</button>`).join('')}</div></div>`).join('')}</div>
+        <details class="aiv-tips"><summary>How to direct the read</summary><ul>
+          <li>Put a cue <b>before</b> the words it shapes: <code>[nervous] We're losing the light.</code> It carries on until the next cue, so add a new one where the mood changes.</li>
+          <li>Combine qualities in one cue, or describe what you want in plain words: <code>[nervous, trying to sound confident]</code>.</li>
+          <li>Pause with <b>…</b> (SSML break tags don't work in v4), stress a word in <b>CAPITALS</b>, cut a line off with a dash —</li>
+          <li>Pick cues that suit the voice. A calm narrator won't giggle convincingly, so test on the voice you've chosen.</li>
+          <li>Cues are left out of the captions on the board and in Present.</li></ul></details></div>
       <div class="aiv-all" hidden></div>
-      <div class="aiv-l">Voice <input class="aiv-q" type="search" placeholder="Search voices" aria-label="Search voices"></div>
+      <div class="aiv-l"><span>Voice <em class="aiv-hint">· click a voice to hear it</em></span><input class="aiv-q" type="search" placeholder="Search voices" aria-label="Search voices"></div>
       <div class="aiv-voices"><div class="aiv-empty">Loading voices…</div></div>
-      <div class="aiv-row"><span class="aiv-l2">Quality</span><div class="aiv-seg aiv-model" role="group"><button type="button" data-m="eleven_multilingual_v2" title="Best quality, many languages including Danish">Best</button><button type="button" data-m="eleven_flash_v2_5" title="Faster and cheaper, a little less natural">Fast</button></div></div>
-      <div class="aiv-row"><span class="aiv-l2">Speed</span><input type="range" class="aiv-speed" min="0.7" max="1.2" step="0.05"><span class="aiv-v aiv-speedv"></span></div>
+      <div class="aiv-row"><span class="aiv-l2">Model</span><div class="aiv-seg aiv-model" role="group"><button type="button" data-m="eleven_v4" title="Eleven v4: highest quality, most emotive">Eleven v4</button><button type="button" data-m="eleven_v4_turbo" title="Eleven v4 Turbo: faster, for quick drafts">v4 Turbo</button></div></div>
+      <div class="aiv-row aiv-speedrow" hidden><span class="aiv-l2">Speed</span><input type="range" class="aiv-speed" min="0.7" max="1.2" step="0.05"><span class="aiv-v aiv-speedv"></span></div>
       <div class="aiv-row"><span class="aiv-l2">Delivery</span><input type="range" class="aiv-expr" min="0" max="1" step="0.05"><span class="aiv-v aiv-exprv"></span></div>
       <label class="aiv-chk"><input type="checkbox" class="aiv-fit"> Make a frame longer when its line needs more time</label>
       <div class="aiv-out" hidden><audio controls preload="auto"></audio></div>
@@ -7977,19 +8033,24 @@ function drawAiVoice(scope){ const E=drawEd; if(!E) return; drawCommitText(); dr
   const q=s=>ov.querySelector(s), ta=q('textarea'), msg=(t,bad)=>{ const m=q('.aiv-msg'); m.textContent=t||''; m.classList.toggle('bad',!!bad); };
   let sc=scope==='all'?'all':'one', voice=P.voice||'', last=null, busy=false, used=0, limit=0, maxT=800, playing=null;
   ta.value=(inf.dlg||inf.action||'').trim();
+  /* cue chips put "[tag] " at the cursor */
+  ov.querySelectorAll('[data-tag]').forEach(b=>b.onclick=()=>{ const tag='['+b.dataset.tag+'] ', a=ta.selectionStart??ta.value.length, z=ta.selectionEnd??a, pre=a>0&&!/\s$/.test(ta.value.slice(0,a))?' ':'';
+    ta.setRangeText(pre+tag,a,z,'end'); ta.focus(); cnt(); b.classList.add('pop'); setTimeout(()=>b.classList.remove('pop'),250); });
+  q('.aiv-more').onclick=()=>{ const m=q('.aiv-tagmore'), open=m.hidden; m.hidden=!open; q('.aiv-more').setAttribute('aria-expanded',open); q('.aiv-more').textContent=open?'Fewer':'More…'; };
   const cnt=()=>{ q('.aiv-cnt').textContent=`${ta.value.trim().length} / ${maxT} characters`; };
   const quota=()=>{ q('.aiv-quota').textContent=limit?`${Math.max(0,limit-used).toLocaleString('en-GB')} characters left today`:''; };
   const voiced=(i,t)=>(E.audio||[]).some(a=>a.ai&&a.ai.text===t.slice(0,200)&&a.ai.voice===voice&&/ · F(\d+)$/.test(a.nm)&&+a.nm.match(/ · F(\d+)$/)[1]===i+1);
   const lines=()=>E.pages.map((p,i)=>({i,t:((p.info||{}).dlg||'').trim()})).filter(x=>x.t);
   const setSc=v=>{ sc=v; ov.querySelectorAll('[data-sc]').forEach(b=>b.classList.toggle('on',b.dataset.sc===v)); q('.aiv-one').hidden=v!=='one'; const al=q('.aiv-all'); al.hidden=v!=='all';
-    if(v==='all'){ const L=lines(); al.innerHTML=''; const h=document.createElement('div'); h.className='aiv-l'; h.textContent=L.length?`${L.length} frame${L.length>1?'s have':' has'} dialogue. Each gets its own clip, placed where the frame starts:`:'No frames have dialogue yet. Write it in the Shot panel (Dialogue), or switch to one frame.'; al.append(h);
+    if(v==='all'){ const L=lines(); al.innerHTML=''; const h=document.createElement('div'); h.className='aiv-l'; h.textContent=L.length?`${L.length} frame${L.length>1?'s have':' has'} dialogue. Each gets its own clip, placed where the frame starts. Cues like [whispers] in the Dialogue field are read as directions:`:'No frames have dialogue yet. Write it in the Shot panel (Dialogue), or switch to one frame.'; al.append(h);
       L.forEach(x=>{ const r=document.createElement('div'); r.className='aiv-li'; const b=document.createElement('b'); b.textContent=x.i+1; const t=document.createElement('span'); t.textContent='“'+x.t+'”'+(voiced(x.i,x.t)?'  · already voiced with this voice, skipped':''); r.append(b,t); al.append(r); }); }
     q('.aiv-out').hidden=true; q('.aiv-add').hidden=true; q('.aiv-gen').hidden=false; q('.aiv-gen').textContent=v==='all'?'Generate all':'Generate'; msg(''); };
-  const setModel=m=>{ P.model=m; ov.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===m)); };
+  const setModel=m=>{ P.model=m; ov.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===m)); q('.aiv-speedrow').hidden=/^eleven_v4/.test(m); const ex2=ov.querySelector('.aiv-expr'); ex2.step=/^eleven_v4/.test(m)?'0.5':'0.05'; if(/^eleven_v4/.test(m)) ex2.value=Math.round(+ex2.value*2)/2; };   /* Eleven v4 has no speed setting */
   const sp=q('.aiv-speed'), ex=q('.aiv-expr'); sp.value=P.speed; ex.value=P.expr; q('.aiv-fit').checked=!!P.fit;
   const lbl=()=>{ q('.aiv-speedv').textContent=(+sp.value).toFixed(2)+'×'; q('.aiv-exprv').textContent=+ex.value<.25?'Steady':+ex.value<.6?'Natural':'Expressive'; };
+  ex.step=/^eleven_v4/.test(P.model)?'0.5':'0.05';
   sp.oninput=ex.oninput=lbl; lbl(); setModel(P.model); setSc(sc); cnt(); ta.oninput=cnt;
-  const close=()=>{ if(playing) playing.pause(); const a=q('audio'); a.pause(); ov.classList.remove('on'); setTimeout(()=>ov.remove(),180); P.speed=+sp.value; P.expr=+ex.value; P.fit=q('.aiv-fit').checked; if(voice) P.voice=voice; aivSavePrefs(P); };
+  const close=()=>{ stopSample(); const a=q('audio'); a.pause(); ov.classList.remove('on'); setTimeout(()=>ov.remove(),180); P.speed=+sp.value; P.expr=+ex.value; P.fit=q('.aiv-fit').checked; if(voice) P.voice=voice; aivSavePrefs(P); };
   ov.addEventListener('pointerdown',e=>{ if(e.target===ov) close(); });
   ov.addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Escape'){ e.preventDefault(); close(); } if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); q('.aiv-gen').click(); } });
   q('.aiv-x').onclick=close;
@@ -8000,16 +8061,22 @@ function drawAiVoice(scope){ const E=drawEd; if(!E) return; drawCommitText(); dr
     if(!voice||!aivVoices.some(v=>v.id===voice)) voice=V[0].id;
     V.forEach(v=>{ const it=document.createElement('div'); it.className='aiv-vo'+(v.id===voice?' on':''); it.tabIndex=0; it.setAttribute('role','option'); it.setAttribute('aria-selected',v.id===voice);
       const nm=document.createElement('b'); nm.textContent=v.name; const mt=document.createElement('small'); mt.textContent=[v.labels.gender,v.labels.age,v.labels.accent,v.labels.style].filter(Boolean).join(' · ')||v.category||'';
-      const pb=document.createElement('button'); pb.type='button'; pb.className='aiv-pv'; pb.title='Listen to a sample'; pb.innerHTML=drawIcon(DRAW_TL_IC.play); pb.hidden=!v.preview;
-      pb.onclick=e=>{ e.stopPropagation(); if(playing&&playing._id===v.id&&!playing.paused){ playing.pause(); return; } if(playing) playing.pause(); playing=new Audio(v.preview); playing._id=v.id; playing.play().catch(()=>{}); };
+      const pb=document.createElement('button'); pb.type='button'; pb.className='aiv-pv'; pb.title='Hear a sample'; pb.innerHTML=drawIcon(DRAW_TL_IC.play);
+      pb.onclick=e=>{ e.stopPropagation(); pick(); sample(v,it,true); };
       const tx=document.createElement('div'); tx.append(nm,mt); it.append(pb,tx);
-      const pick=()=>{ voice=v.id; box.querySelectorAll('.aiv-vo').forEach(x=>{ x.classList.toggle('on',x===it); x.setAttribute('aria-selected',x===it); }); };
+      const pick=()=>{ const was=voice===v.id; voice=v.id; box.querySelectorAll('.aiv-vo').forEach(x=>{ x.classList.toggle('on',x===it); x.setAttribute('aria-selected',x===it); }); if(!was) sample(v,it,false); else sample(v,it,true); };
       it.onclick=pick; it.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } }; box.append(it); });
     const on=box.querySelector('.aiv-vo.on'); if(on) on.scrollIntoView({block:'nearest'}); };
   q('.aiv-q').oninput=renderVoices;
+  /* hear a voice before generating: ElevenLabs' own preview when the voice has one, otherwise a short line in that voice (counts a few characters) */
+  const stopSample=()=>{ if(playing){ playing.pause(); playing=null; } ov.querySelectorAll('.aiv-vo.playing,.aiv-vo.busy').forEach(x=>x.classList.remove('playing','busy')); };
+  const sample=async(v,it,toggle)=>{ if(toggle&&playing&&playing._id===v.id&&!playing.paused){ stopSample(); return; } stopSample(); q('audio').pause();
+    let url=v.preview; const key=v.id+':'+P.model;
+    if(!url){ url=aivSamples[key]; if(!url){ it.classList.add('busy'); try{ const r=await aivCall({text:`Hi, I'm ${v.name}. This is how I'd read your line.`,voice:v.id,model:P.model,sample:true,settings:{stability:1-(+ex.value)*.7}}); url=aivSamples[key]=URL.createObjectURL(r.blob); used=r.used||used; limit=r.limit||limit; quota(); }catch(e){ it.classList.remove('busy'); fail(e); return; } it.classList.remove('busy'); if(voice!==v.id) return; } }
+    const a=new Audio(url); a._id=v.id; playing=a; it.classList.add('playing'); a.onended=a.onpause=()=>{ it.classList.remove('playing'); }; a.play().catch(()=>it.classList.remove('playing')); };
   const fail=e=>{ msg((e&&e.message)||'Something went wrong',true); if(e&&e.code==='auth'){ const b=document.createElement('button'); b.type='button'; b.className='aiv-b'; b.textContent='Sign in'; b.onclick=()=>{ close(); openAccount(); }; q('.aiv-msg').append(' ',b); } };
-  (async()=>{ try{ if(!aivVoices){ const d=await aivCall({action:'voices'}); aivVoices=d.voices||[]; used=d.used||0; limit=d.limit||0; maxT=d.maxText||800; } else { const d=await aivCall({action:'voices'}); used=d.used||0; limit=d.limit||0; }
-      renderVoices(); quota(); cnt(); }catch(e){ q('.aiv-voices').innerHTML=''; const d=document.createElement('div'); d.className='aiv-empty'; d.textContent=e.message||'Couldn’t load voices'; q('.aiv-voices').append(d); fail(e); q('.aiv-gen').disabled=true; } })();
+  (async()=>{ try{ const d=await aivCall({action:'voices'}); aivVoices=d.voices||[]; used=d.used||0; limit=d.limit||0; maxT=d.maxText||800;
+      renderVoices(); quota(); cnt(); if(d.warning) msg(d.warning); }catch(e){ q('.aiv-voices').innerHTML=''; const d=document.createElement('div'); d.className='aiv-empty'; d.textContent=e.message||'Couldn’t load voices'; q('.aiv-voices').append(d); fail(e); q('.aiv-gen').disabled=true; } })();
   const vName=()=>((aivVoices||[]).find(v=>v.id===voice)||{}).name||'Voice';
   const place=async(blob,i,text)=>{ let info={dur:0,pk:[]}; try{ info=await audAnalyse(blob); }catch(e){} const src=await storeAudio(blob), D=drawEd; if(!D) return null;
     const p=D.pages[i]; if(q('.aiv-fit').checked&&info.dur+.3>drawDur(p)) drawSetDur(p,Math.ceil((info.dur+.3)*10)/10);
@@ -8118,7 +8185,7 @@ function drawCompose(){ const E=drawEd; drawPageSync();
     { const tr=E.pages[i].tr; if(tr&&tr!=='cut'&&i<E.pages.length-1){ const lb=DRAW_TR.find(t=>t[0]===tr)[2]+' →'; g.font=`700 12px ${FONT}`; g.fillStyle='#8a9099'; g.textAlign='right'; g.fillText(lb,x+pw,y+ph+12); g.textAlign='left'; } }
     const fit=(t,max)=>{ if(g.measureText(t).width<=max) return t; while(t.length&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; };
     g.fillStyle='#4a4f57'; g.font=`500 15px ${FONT}`; if(inf.action) g.fillText(fit(inf.action,pw),x,y+ph+34);
-    if(inf.dlg){ g.fillStyle='#6b7280'; g.font=`italic 500 15px ${FONT}`; g.fillText(fit('“'+inf.dlg+'”',pw),x,y+ph+(inf.action?56:34)); } });
+    if(aivStrip(inf.dlg)){ g.fillStyle='#6b7280'; g.font=`italic 500 15px ${FONT}`; g.fillText(fit('“'+aivStrip(inf.dlg)+'”',pw),x,y+ph+(inf.action?56:34)); } });
   if(grRows.length){ let yy=pad+head+rowH.reduce((a,h)=>a+h,0)+(rows-1)*gap+gap; g.fillStyle='#e3e5e8'; g.fillRect(pad,yy,GRW,1.5); yy+=18; g.fillStyle='#8a9099'; g.font=`700 12px ${FONT}`; g.textBaseline='top'; g.fillText('REFERENCES · WHOLE STORYBOARD',pad,yy+7); yy+=lab;
     grRows.forEach(row=>{ let xx=pad; row.forEach(([im,w])=>{ g.drawImage(im,xx,yy,w,gh); xx+=w+sub; }); yy+=gh+sub; }); }
   return out; }
@@ -8371,7 +8438,7 @@ var bdDepth=0, saveDocT={};
 function saveDoc(id){ const d=all[id]; if(!d) return; clearTimeout(saveDocT[id]); if(!dbApi) cloudPush(id);
   saveDocT[id]=setTimeout(async()=>{ const data=JSON.parse(JSON.stringify(d)); try{ if(dbApi) await dbApi.collection('diagrams').doc(id).set(data); else localWrite(); }catch(e){ setStatus('Retrying save','warn'); setTimeout(()=>saveDoc(id),2000); } },400); }
 function createChildSetup(){ track('setup_create',{t:'child'}); const now=Date.now(), id=uid(), n=Object.values(all).filter(d=>d.parent===cur.id).length;
-  all[id]={title:'Setup '+String.fromCharCode(65+Math.min(25,n)),shoot:cur.shoot||'',client:cur.client||'',date:cur.date||'',location:cur.location||'',crew:cur.crew||'',notes:'',parent:cur.id,items:[],createdAt:now,updatedAt:now};
+  all[id]={title:'Setup '+String.fromCharCode(65+Math.min(25,n)),shoot:cur.shoot||'',client:cur.client||'',date:cur.date||'',location:cur.location||'',crew:cur.crew||'',notes:'',parent:cur.id,pid:cur.pid||null,items:[],createdAt:now,updatedAt:now};
   saveDoc(id); return id; }
 function openBoardCard(it){ const d=it&&it.p.target&&all[it.p.target]; if(!d){ toast('That setup no longer exists'); return; } if(dirty) flush(); openDiagram(it.p.target); }
 // after undo/redo: a setup card on this board means its setup lives here again (and not in the board it was moved to)
@@ -9303,8 +9370,8 @@ async function sbInit(){ const c=sbConf(); renderAccount(); if(!c||mode!=='local
   try{ await sbLoad(); sb=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}}); }
   catch(e){ sb=null; renderAccount(); return; }
   sb.auth.onAuthStateChange((ev,session)=>{ const was=sbUser&&sbUser.id; sbUser=session&&session.user||null; renderAccount(); if(sbUser) trackOpen(); if(ev==='SIGNED_IN'&&sbUser&&sbUser.id!==was) track('sign_in');
-    if(sbUser&&sbUser.id!==was) cloudSync(true); if(!sbUser&&was) setStatus('Saved in this browser'); });
-  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); if(sbUser){ cloudSync(true); trackOpen(); }
+    if(sbUser&&sbUser.id!==was) cloudSync(true); if(!sbUser&&was){ setStatus('Saved in this browser'); sbProj={}; syncProjectRO(); } renderShareBtn(); });
+  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); if(sbUser){ cloudSync(true); trackOpen(); }
   if(/[?&]signin\b/.test(location.search)){ if(!sbUser) setTimeout(openAccount,300); try{ history.replaceState(null,'',location.pathname+location.search.replace(/[?&]signin\b=?[^&]*/,'').replace(/^&/,'?')+location.hash); }catch(e){} }   /* "Sign in" on the landing page opens the dialog */
   addEventListener('focus',()=>{ if(sbUser&&Date.now()-sbLastSync>15000) cloudSync(false); }); }
 const sbName=u=>u&&((u.user_metadata&&(u.user_metadata.full_name||u.user_metadata.name))||u.email||'Account');
@@ -9313,21 +9380,59 @@ function renderAccount(){ const b=$('#acctBtn'); if(!b) return; const u=sbUser;
     :`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 19.5c1.2-3.4 4-5 7-5s5.8 1.6 7 5"/></svg>`;
   b.title=u?`Signed in as ${sbName(u)}`:'Sign in to keep your plots in the cloud'; b.classList.toggle('on',!!u); }
 /* sync: newest wins per setup; everything in this browser goes up the first time you sign in */
-async function cloudSync(first){ if(!sb||!sbUser||sbBusy) return; sbBusy=true; setStatus('Syncing','busy');
-  try{ const {data,error}=await sb.from('plots').select('id,doc,updated_at'); if(error) throw error;
-    const remote=new Map((data||[]).map(r=>[r.id,r])); let pulled=0, curChanged=false; const push=[];
-    remote.forEach((r,id)=>{ const l=all[id], ru=(r.doc&&r.doc.updatedAt)||Date.parse(r.updated_at)||0;
-      if(!l||((l.updatedAt||0)<ru)){ if(cur&&id===cur.id){ if(dirty) return; curChanged=true; } all[id]=r.doc; pulled++; } });
-    Object.keys(all).forEach(id=>{ const r=remote.get(id), lu=all[id].updatedAt||0, ru=r?((r.doc&&r.doc.updatedAt)||Date.parse(r.updated_at)||0):-1; if(lu>ru) push.push(id); });
-    if(push.length){ const rows=push.map(id=>({owner:sbUser.id,id,doc:all[id],updated_at:new Date(all[id].updatedAt||Date.now()).toISOString()}));
-      for(let i=0;i<rows.length;i+=50){ const {error:e2}=await sb.from('plots').upsert(rows.slice(i,i+50),{onConflict:'owner,id'}); if(e2) throw e2; }
+/* ---------- shared projects: a shoot several people work in. Rights live in the database; this is the client side ---------- */
+var sbProj={}, sbProjOK=false, sbRow={}, sbChan=null, sbRtT=0, roProj=false;
+try{ sbProj=JSON.parse(localStorage.getItem('setplot-sb-proj')||'{}')||{}; }catch(e){ sbProj={}; }
+function projCan(pid,what){ const p=pid&&sbProj[pid]; return !!p&&(p.is_admin||(what==='write'?p.can_write:what==='invite'?p.can_invite:true)); }
+const docMine=d=>!d||!d.own||!sbUser||d.own===sbUser.id;
+const docCanWrite=d=>!d||!d.pid||projCan(d.pid,'write');
+const docTime=r=>(r.doc&&r.doc.updatedAt)||Date.parse(r.updated_at)||0;
+const grpRO=rows=>!!sbUser&&(rows||[]).some(r=>r[1].pid&&!projCan(r[1].pid,'write'));
+const shareBadge=rows=>{ const d=(rows||[]).map(r=>r[1]).find(x=>x.pid); if(!d) return ''; const p=sbProj[d.pid]; return ` <span class="sh-badge" title="Shared project">${p&&p.members>1?p.members+' people':'Shared'}${p&&!p.is_admin&&!p.can_write?' · view only':''}</span>`; };
+async function projLoad(){ sbProjOK=false; if(!sb||!sbUser||!sb.rpc) return false;
+  try{ const c=await sb.rpc('project_claim'); if(c&&c.data>0) toast(`You’ve been added to ${c.data} shared project${c.data>1?'s':''} · find ${c.data>1?'them':'it'} under Shoots`);
+    const {data,error}=await sb.rpc('project_list'); if(error) return false; sbProj={}; (data||[]).forEach(p=>{ sbProj[p.id]=p; }); sbProjOK=true; try{ localStorage.setItem('setplot-sb-proj',JSON.stringify(sbProj)); }catch(e){} return true; }
+  catch(e){ return false; } }
+/* a setup in a project you can only view opens read-only */
+function syncProjectRO(){ if(mode!=='local') return; const ro=!!(cur&&cur.pid&&sbUser&&!projCan(cur.pid,'write')); roProj=ro; if(ro!==readOnly) setReadOnly(ro); renderShareBtn(); }
+function renderShareBtn(){ const b=$('#shareBtn'); if(!b) return; b.hidden=mode!=='local'||!sb||!cur; const p=cur&&cur.pid&&sbProj[cur.pid], n=p&&p.members>1?p.members:0;
+  b.innerHTML=`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19c.9-3 3.2-4.6 6-4.6s5.1 1.6 6 4.6"/><path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.8c1.8.6 3 2 3.6 4.2"/></svg>${n?`<span class="sh-n">${n}</span>`:''}`;
+  b.classList.toggle('on',!!(cur&&cur.pid)); b.title=cur&&cur.pid?(roProj?'Shared project · you can view it':'Shared project · see who’s in it'):'Share this shoot with your crew'; }
+const sbRowOf=(d,id)=>({owner:sbUser.id,id,doc:JSON.parse(JSON.stringify(d)),updated_at:new Date(d.updatedAt||Date.now()).toISOString(),project_id:d.pid||null});
+/* one write: my own rows are upserted; someone else's row in a shared project is updated in place */
+async function sbWrite(id){ const d=all[id]; if(!d) return; if(docMine(d)){ const {error}=await sb.from('plots').upsert(sbRowOf(d,id),{onConflict:'owner,id'}); if(error) throw error; }
+  else { const {error}=await sb.from('plots').update({doc:JSON.parse(JSON.stringify(d)),updated_at:new Date(d.updatedAt||Date.now()).toISOString()}).eq('owner',d.own).eq('id',id); if(error) throw error; }
+  sbRow[id]={own:d.own||sbUser.id,pid:d.pid||null}; }
+async function sbAllPlots(){ const out=[]; for(let a=0;;a+=1000){ let q=sb.from('plots').select('owner,id,doc,updated_at,project_id'); const paged=typeof q.order==='function'; if(paged) q=q.order('id').range(a,a+999);
+  const {data,error}=await q; if(error) throw error; out.push(...(data||[])); if(!paged||(data||[]).length<1000) break; } return out; }
+/* sync: newest wins per setup. Setups that were in the cloud and are gone (deleted elsewhere, or you were removed from the project) go away here too */
+async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=true; if(!quiet) setStatus('Syncing','busy');
+  try{ const pOK=await projLoad(), me=sbUser.id, data=await sbAllPlots();
+    const remote=new Map(data.map(r=>[r.id,r])); let pulled=0, curChanged=false, removed=0; const push=[];
+    const seenK='setplot-sb-seen:'+me; let seen; try{ seen=new Set(JSON.parse(localStorage.getItem(seenK)||'[]')); }catch(e){ seen=new Set(); }
+    remote.forEach((r,id)=>{ sbRow[id]={own:r.owner,pid:r.project_id||null}; const l=all[id], ru=docTime(r), isCur=cur&&id===cur.id;
+      if(!l||((l.updatedAt||0)<ru)){ if(isCur&&(dirty||drawEd)) return; if(isCur) curChanged=true; all[id]=r.doc; pulled++; }
+      const d=all[id]; d.own=r.owner; if((d.updatedAt||0)<=ru){ if((d.pid||null)!==(r.project_id||null)&&isCur) curChanged=true; d.pid=r.project_id||null; } });
+    Object.keys(all).forEach(id=>{ if(remote.has(id)||!seen.has(id)) return; const d=all[id]; if(cur&&cur.id===id){ if((dirty||drawEd)&&docMine(d)&&!d.pid) return; cur=null; dirty=false; } delete all[id]; delete sbRow[id]; removed++; });
+    Object.keys(all).forEach(id=>{ const d=all[id], r=remote.get(id), lu=d.updatedAt||0, ru=r?docTime(r):-1; if(pOK&&d.pid&&!sbProj[d.pid]&&!r){ d.pid=null; }
+      if(lu<=ru) return; if(docCanWrite(d)&&(docMine(d)||r)&&(!d.pid||sbProj[d.pid])) push.push(id);
+      else if(r&&!(cur&&cur.id===id&&(dirty||drawEd))){ all[id]=r.doc; all[id].own=r.owner; all[id].pid=r.project_id||null; if(cur&&cur.id===id) curChanged=true; } });   /* edits you weren't allowed to make are dropped */
+    if(push.length){ const mine=push.filter(id=>docMine(all[id])).map(id=>sbRowOf(all[id],id));
+      for(let i=0;i<mine.length;i+=50){ const {error:e2}=await sb.from('plots').upsert(mine.slice(i,i+50),{onConflict:'owner,id'}); if(e2) throw e2; }
+      for(const id of push){ if(!docMine(all[id])) await sbWrite(id); else sbRow[id]={own:me,pid:all[id].pid||null}; all[id].own=all[id].own||me; }
       (async()=>{ for(const id of push) await sbMediaUp(all[id]); })(); }
+    try{ localStorage.setItem(seenK,JSON.stringify([...new Set([...remote.keys(),...push])])); }catch(e){}
     localWrite(); sbLastSync=Date.now(); if(pulled) Object.keys(IMG).forEach(k=>{ if(IMG[k]&&IMG[k].state==='missing'&&k.startsWith('idb:')) delete IMG[k]; });
-    if(curChanged&&cur) openDiagram(cur.id); else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); }
+    if(curChanged&&cur&&all[cur.id]) openDiagram(cur.id,true); else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); else { renderHeader(); renderInspector(); draw(); } } else syncProjectRO();
     if(!$('#drawer').hidden) renderDrawer();
-    setStatus('Synced to your account'); if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`); }
-  catch(e){ setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); track('sync_error',{m:String(e&&e.message||e).slice(0,120)}); }
+    if(!quiet||pulled||removed) setStatus('Synced to your account'); if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`);
+    else if(quiet&&curChanged) toast('Updated with changes from your crew'); }
+  catch(e){ if(!quiet) setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); track('sync_error',{m:String(e&&e.message||e).slice(0,120)}); }
   sbBusy=false; }
+/* live: when someone else saves a setup you can see, pull it in */
+function sbRealtime(){ if(!sb||!sb.channel||sbChan) return; try{ sbChan=sb.channel('plots-live').on('postgres_changes',{event:'*',schema:'public',table:'plots'},p=>{ const r=p&&p.new;
+    if(r&&r.id&&all[r.id]&&Date.parse(r.updated_at)===(all[r.id].updatedAt||0)&&(r.project_id||null)===(all[r.id].pid||null)) return;   /* my own save coming back */
+    clearTimeout(sbRtT); sbRtT=setTimeout(()=>cloudSync(false,true),900); }).subscribe(); }catch(e){ sbChan=null; } }
 /* usage events: which features get used. Only when signed in, name + time + account, never any content. Sent in small batches */
 var sbQ=[], sbQT=0;
 function track(name,meta){ try{ if(!sb||!sbUser) return; sbQ.push({name,meta:meta||null}); if(sbQ.length>60) sbQ.splice(0,sbQ.length-60); clearTimeout(sbQT); sbQT=setTimeout(trackFlush,8000); }catch(e){} }
@@ -9339,15 +9444,70 @@ addEventListener('unhandledrejection',e=>{ const m=String(e&&e.reason&&(e.reason
 /* photos and audio live in this browser (IndexedDB); signed in, they also go to the account's private "media" bucket so a plot opens complete on any device */
 const SB_BUCKET='media';
 function sbUpDone(){ try{ return new Set(JSON.parse(localStorage.getItem('setplot-sb-up')||'[]')); }catch(e){ return new Set(); } }
-async function sbMediaUp(doc){ if(!sb||!sbUser||!doc) return; const keys=[...new Set((JSON.stringify(doc).match(/idb:[A-Za-z0-9]+/g)||[]).map(x=>x.slice(4)))], done=sbUpDone(), uid0=sbUser.id; let n=0;
+async function sbMediaUp(doc){ if(!sb||!sbUser||!doc) return; const keys=[...new Set((JSON.stringify(doc).match(/idb:[A-Za-z0-9]+/g)||[]).map(x=>x.slice(4)))], done=sbUpDone(), uid0=doc.pid?'p/'+doc.pid:sbUser.id; let n=0;   /* shared setups keep their files in the project's folder, so everyone in it can open them */
   for(const k of keys){ const tag=uid0+'/'+k; if(done.has(tag)) continue; const b=await IDB.get(k).catch(()=>null); if(!b) continue;
     try{ const {error}=await sb.storage.from(SB_BUCKET).upload(tag,b,{upsert:true,contentType:b.type||'application/octet-stream',cacheControl:'31536000'}); if(!error||/exists|duplicate/i.test(error.message||'')){ done.add(tag); n++; } }catch(e){} }
   if(n) try{ localStorage.setItem('setplot-sb-up',JSON.stringify([...done].slice(-8000))); }catch(e){} }
-async function sbMediaGet(k){ if(!sb||!sbUser) return null; try{ const {data,error}=await sb.storage.from(SB_BUCKET).download(sbUser.id+'/'+k); if(error||!data) return null; IDB.put(k,data).catch(()=>{}); return data; }catch(e){ return null; } }
-function cloudPush(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sbPushT[id]=setTimeout(async()=>{ const d=all[id]; if(!d) return;
-  try{ const {error}=await sb.from('plots').upsert({owner:sbUser.id,id,doc:JSON.parse(JSON.stringify(d)),updated_at:new Date(d.updatedAt||Date.now()).toISOString()},{onConflict:'owner,id'}); if(error) throw error; setStatus('Synced to your account'); sbMediaUp(d); }
+async function sbMediaGet(k){ if(!sb||!sbUser) return null; for(const dir of [sbUser.id,...Object.keys(sbProj).map(p=>'p/'+p)]){ try{ const {data,error}=await sb.storage.from(SB_BUCKET).download(dir+'/'+k); if(!error&&data){ IDB.put(k,data).catch(()=>{}); return data; } }catch(e){} } return null; }
+function cloudPush(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sbPushT[id]=setTimeout(async()=>{ const d=all[id]; if(!d||!docCanWrite(d)) return;
+  try{ await sbWrite(id); if(!d.own) d.own=sbUser.id; setStatus('Synced to your account'); sbMediaUp(d); }
   catch(e){ setStatus('Offline · will sync later','warn'); if(navigator.onLine!==false) track('sync_error',{m:String(e&&e.message||e).slice(0,120),push:1}); } },900); }
-function cloudDelete(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sb.from('plots').delete().eq('owner',sbUser.id).eq('id',id).then(()=>{},()=>{}); }
+function cloudDelete(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); const own=(sbRow[id]&&sbRow[id].own)||sbUser.id; delete sbRow[id]; sb.from('plots').delete().eq('owner',own).eq('id',id).then(()=>{},()=>{}); }
+/* ---------- the Share dialog: who is in the project, and what each person may do ---------- */
+let shareS=null;
+const SH_ROLE={view:'Can view',edit:'Can edit',admin:'Admin'}, shRole=m=>m.is_admin?'admin':m.can_write?'edit':'view';
+function openShare(){ if(!cur) return; if(dirty) flush();
+  if(!sbUser){ showModal(`<div class="acct share"><div class="acct-h"><h3>Share this shoot</h3><button class="ib" data-close aria-label="Close">${ic('close')}</button></div><p class="muted">Sign in to work on “${esc(cur.shoot||'Untitled shoot')}” together with your crew.</p><div class="acct-row"><button class="btn primary" data-sh="signin">Sign in</button></div></div>`); return; }
+  shareS={pid:cur.pid||null,people:null,err:'',busy:false,note:''}; renderShare(); if(shareS.pid) shareLoad(); }
+async function shareLoad(){ const S=shareS; if(!S||!S.pid) return; const {data,error}=await sb.rpc('project_people',{pid:S.pid}); await projLoad(); if(shareS!==S) return;
+  if(error){ S.err=/member/i.test(error.message)?'You’re no longer in this project.':error.message; S.people=null; } else { S.people=data; S.err=''; } renderShare(); syncProjectRO(); if(!$('#drawer').hidden) renderDrawer(); }
+function renderShare(){ const S=shareS; if(!S) return; const name=cur?(cur.shoot||'Untitled shoot'):'', P=S.pid&&sbProj[S.pid], admin=!!(P&&P.is_admin), canInv=!S.pid||!!(P&&(P.is_admin||P.can_invite)), canW=!S.pid||!!(P&&(P.is_admin||P.can_write));
+  const close=`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`, av=t=>`<span class="acct-i">${esc((t||'?').trim()[0].toUpperCase())}</span>`;
+  const rights=m=>[SH_ROLE[shRole(m)],m.can_invite&&!m.is_admin?'can invite':''].filter(Boolean).join(' · ');
+  let rows='';
+  if(S.people){ rows=S.people.members.map(m=>{ const nm=m.name||m.email||'Someone', edit=admin&&!m.is_owner&&!m.is_me;
+      return `<div class="sh-row"><span class="sh-av">${av(nm)}</span><div class="sh-who"><b>${esc(nm)}${m.is_me?' <em>(you)</em>':''}</b>${m.name&&m.email?`<small>${esc(m.email)}</small>`:''}</div>`+
+        (m.is_owner?`<span class="sh-tag" title="Created the project. Always an admin">Owner · Admin</span>`
+        :edit?`<select class="fi sh-sel" data-shr="role" data-uid="${m.user_id}" aria-label="Rights for ${esc(nm)}">${Object.keys(SH_ROLE).map(k=>`<option value="${k}"${shRole(m)===k?' selected':''}>${SH_ROLE[k]}</option>`).join('')}</select><label class="sh-chk" title="May add people to the project, with at most the same rights"><input type="checkbox" data-shr="inv" data-uid="${m.user_id}"${m.can_invite?' checked':''}${m.is_admin?' disabled':''}>Invite</label><button class="ib sh-x" data-sh="remove" data-uid="${m.user_id}" title="Remove from the project" aria-label="Remove ${esc(nm)}">${ic('close')}</button>`
+        :`<span class="sh-tag">${rights(m)}</span>`)+`</div>`; }).join('')+
+      S.people.invites.map(i=>`<div class="sh-row pend"><span class="sh-av">${av(i.email)}</span><div class="sh-who"><b>${esc(i.email)}</b><small>Invited · gets access when they sign in with this email</small></div><span class="sh-tag">${rights(i)}</span>${admin||i.mine?`<button class="ib sh-x" data-sh="uninvite" data-email="${esc(i.email)}" title="Cancel the invitation" aria-label="Cancel the invitation">${ic('close')}</button>`:''}</div>`).join(''); }
+  else if(S.pid&&!S.err) rows=`<p class="muted">Loading…</p>`;
+  else if(!S.pid) rows=`<div class="sh-row"><span class="sh-av">${av(sbName(sbUser))}</span><div class="sh-who"><b>${esc(sbName(sbUser))} <em>(you)</em></b></div><span class="sh-tag">Owner · Admin</span></div>`;
+  const add=canInv?`<div class="sh-add"><input class="fi" type="email" data-sh-email placeholder="name@example.com" autocomplete="off" aria-label="Email of the person to add"><select class="fi sh-sel" data-sh-role aria-label="Rights"><option value="view">Can view</option>${canW?'<option value="edit" selected>Can edit</option>':''}${admin||!S.pid?'<option value="admin">Admin</option>':''}</select><label class="sh-chk" title="May add people to the project, with at most the same rights"><input type="checkbox" data-sh-inv>Invite</label><button class="btn primary" data-sh="add"${S.busy?' disabled':''}>Add</button></div>`:'';
+  showModal(`<div class="acct share"><div class="acct-h"><h3>Share “${esc(name)}”</h3>${close}</div>
+    <p class="muted">${S.pid?'Everyone here sees every setup in this shoot, with its photos, storyboards and audio.':'Add people by email to work on this shoot together. You become the project’s owner and admin.'}</p>
+    <div class="sh-list">${rows}</div>${add}
+    <p class="muted sh-msg${S.err?' bad':''}" role="status">${esc(S.err||S.note||'')}</p>
+    <details class="sh-help"><summary>What the rights mean</summary><ul><li><b>Can view</b>: open and look at everything, export, present.</li><li><b>Can edit</b>: change plots, storyboards and notes, add and delete setups.</li><li><b>Invite</b>: add more people, with at most their own rights.</li><li><b>Admin</b>: all of that, plus change other people’s rights and remove them. The owner always stays admin.</li></ul><p>People get access the next time they open Set Plot with that email. Set Plot doesn’t send the invitation for you, so send them the link. If two people edit the same setup at the same moment, the last save wins.</p></details>
+    <div class="acct-row sh-foot"><button class="btn" data-sh="copylink">Copy link to send</button><span style="flex:1"></span>${S.pid&&P?(P.is_owner?`<button class="btn ghost danger" data-sh="stop">Stop sharing</button>`:`<button class="btn ghost danger" data-sh="leave">Leave project</button>`):''}</div></div>`);
+  const em=$('#modal [data-sh-email]'); if(em&&S.focus){ em.focus(); S.focus=false; } }
+/* turning a shoot into a shared project: every setup of mine in it joins the project */
+async function shareEnsureProject(){ const S=shareS; if(S.pid) return S.pid; const name=cur.shoot||'Untitled shoot'; const {data:pid,error}=await sb.rpc('project_create',{p_name:name}); if(error) throw error;
+  await projLoad(); const now=Date.now(), ids=Object.keys(all).filter(id=>(all[id].shoot||'Untitled shoot')===name&&!all[id].pid&&docMine(all[id]));
+  ids.forEach(id=>{ all[id].pid=pid; all[id].own=sbUser.id; all[id].updatedAt=now; }); cur.pid=pid; cur.own=sbUser.id; cur.updatedAt=now; localWrite();
+  const rows=ids.map(id=>sbRowOf(all[id],id)); for(let i=0;i<rows.length;i+=50){ const {error:e2}=await sb.from('plots').upsert(rows.slice(i,i+50),{onConflict:'owner,id'}); if(e2) throw e2; }
+  ids.forEach(id=>{ sbRow[id]={own:sbUser.id,pid}; }); (async()=>{ for(const id of ids) await sbMediaUp(all[id]); })(); S.pid=pid; track('project_share',{setups:ids.length}); return pid; }
+async function shareAct(fn){ const S=shareS; if(!S||S.busy) return; S.busy=true; S.err=''; S.note='';
+  try{ await fn(S); }catch(e){ S.err=String(e&&e.message||e).replace(/^.*?: /,'')||'That didn’t work. Try again.'; }
+  S.busy=false; if(shareS===S){ if(S.pid) await shareLoad(); else renderShare(); } }
+$('#modal').addEventListener('click',e=>{ const b=e.target.closest('[data-sh]'); if(!b||!shareS&&b.dataset.sh!=='signin') return; const a=b.dataset.sh, S=shareS;
+  if(a==='signin'){ openAccount(); return; }
+  if(a==='copylink'){ const url=location.origin+location.pathname+'?signin'; (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast('Link copied · send it to the people you added'),()=>prompt('Copy this link',url)); return; }
+  if(a==='add'){ const em=($('#modal [data-sh-email]').value||'').trim(), role=$('#modal [data-sh-role]').value, inv=$('#modal [data-sh-inv]').checked;
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ S.err='Type the person’s email address'; S.focus=true; renderShare(); return; }
+    if(sbUser.email&&em.toLowerCase()===sbUser.email.toLowerCase()){ S.err='That’s you. You’re already in the project.'; renderShare(); return; }
+    shareAct(async S=>{ const pid=await shareEnsureProject(); const {data,error}=await sb.rpc('project_add',{pid,p_email:em,p_write:role!=='view',p_invite:inv||role==='admin',p_admin:role==='admin'}); if(error) throw error;
+      S.note=data==='added'?`${em} can open the shoot now.`:data==='invited'?`${em} doesn’t have an account yet. They get access when they sign up with that email.`:data==='updated'?`Rights updated for ${em}.`:`${em} is already in the project.`; S.focus=true; track('project_add',{r:role}); }); return; }
+  if(a==='remove'){ shareAct(async S=>{ const {error}=await sb.rpc('project_remove',{pid:S.pid,target:b.dataset.uid}); if(error) throw error; S.note='Removed from the project.'; }); return; }
+  if(a==='uninvite'){ shareAct(async S=>{ const {error}=await sb.rpc('project_invite_remove',{pid:S.pid,p_email:b.dataset.email}); if(error) throw error; S.note='Invitation cancelled.'; }); return; }
+  if(a==='leave'||a==='stop'){ if(b.dataset.armed!=='1'){ b.dataset.armed='1'; b.textContent=a==='leave'?'Leave for sure?':'Stop sharing for sure?'; setTimeout(()=>{ if(b.isConnected){ b.dataset.armed=''; b.textContent=a==='leave'?'Leave project':'Stop sharing'; } },3000); return; }
+    const pid=S.pid; shareS=null; $('#modal').hidden=true;
+    (async()=>{ const r=a==='leave'?await sb.rpc('project_remove',{pid,target:sbUser.id}):await sb.rpc('project_delete',{pid}); if(r.error){ toast(r.error.message); return; }
+      if(a==='stop'){ Object.values(all).forEach(d=>{ if(d.pid===pid&&docMine(d)){ d.pid=null; } }); if(cur&&cur.pid===pid) cur.pid=null; localWrite(); }
+      toast(a==='leave'?'You left the project':'Sharing stopped · every setup went back to the person who made it'); await cloudSync(false,true); renderShareBtn(); })(); } });
+$('#modal').addEventListener('change',e=>{ const f=e.target.closest('[data-shr]'); if(!f||!shareS) return; const uidT=f.dataset.uid, role=$(`#modal [data-shr="role"][data-uid="${uidT}"]`).value, inv=$(`#modal [data-shr="inv"][data-uid="${uidT}"]`).checked;
+  shareAct(async S=>{ const {error}=await sb.rpc('project_set_rights',{pid:S.pid,target:uidT,p_write:role!=='view',p_invite:inv||role==='admin',p_admin:role==='admin'}); if(error) throw error; S.note='Rights updated.'; track('project_rights',{r:role}); }); });
+$('#modal').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.matches&&e.target.matches('[data-sh-email]')){ e.preventDefault(); const b=$('#modal [data-sh="add"]'); if(b) b.click(); } });
 /* the sign-in dialog */
 const PROV=[['google','Google','<path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" fill="#4285F4"/><path d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z" fill="#34A853"/><path d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z" fill="#FBBC05"/><path d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z" fill="#EA4335"/>'],
   ['azure','Microsoft','<path d="M3 3h8.5v8.5H3z" fill="#F25022"/><path d="M12.5 3H21v8.5h-8.5z" fill="#7FBA00"/><path d="M3 12.5h8.5V21H3z" fill="#00A4EF"/><path d="M12.5 12.5H21V21h-8.5z" fill="#FFB900"/>'],
