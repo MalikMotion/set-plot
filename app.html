@@ -1603,6 +1603,59 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .pl-rec [data-pl="prev"],#drawEd .pl-rec [data-pl="next"]{visibility:hidden}
 #drawEd .pl-recb i{display:inline-block;width:8px;height:8px;margin-right:7px;border-radius:50%;background:#ff5a5f;vertical-align:1px}
 #drawEd .pl-err{margin:0 0 10px;padding:8px 10px;border-radius:6px;background:rgba(229,72,77,.14);color:#ffb4b4;font-size:12px}
+#drawEd .tl-h .tl-aiv svg{color:#b89cff}
+#drawEd .ds-aiv{display:flex;align-items:center;gap:6px;width:100%;margin-top:6px;height:28px;padding:0 10px;border:1px solid #3c3c3c;border-radius:4px;background:#2d2d2d;color:#ddd;font:500 12px var(--font,inherit);cursor:pointer}
+#drawEd .ds-aiv:hover{border-color:#6e56cf}
+#drawEd .ds-aiv svg{width:14px;height:14px;color:#b89cff}
+#drawEd .de-aiv{position:fixed;inset:0;z-index:250;display:grid;place-items:center;padding:16px;background:rgba(0,0,0,.45);opacity:0;transition:opacity .18s ease}
+#drawEd .de-aiv.on{opacity:1}
+#drawEd .aiv-card{width:min(520px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:#232323;border:1px solid #3a3a3a;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.55);color:#ddd;font:400 13px var(--font,inherit);transform:translateY(8px) scale(.985);transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+#drawEd .de-aiv.on .aiv-card{transform:none}
+#drawEd .aiv-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid #333}
+#drawEd .aiv-h b{display:flex;align-items:center;gap:7px;color:#fff;font-weight:600;font-size:13.5px}
+#drawEd .aiv-h b svg{width:16px;height:16px;color:#b89cff}
+#drawEd .aiv-x{margin-left:auto;width:26px;height:26px;border:0;border-radius:6px;background:transparent;color:#bbb;font-size:18px;cursor:pointer}
+#drawEd .aiv-x:hover{background:#333}
+#drawEd .aiv-seg{display:inline-flex;gap:2px;padding:2px;border:1px solid #3a3a3a;border-radius:6px;background:#1a1a1a}
+#drawEd .aiv-seg button{height:24px;padding:0 10px;border:0;border-radius:4px;background:transparent;color:#bbb;font:500 12px var(--font,inherit);cursor:pointer;white-space:nowrap}
+#drawEd .aiv-seg button.on{background:#1473e6;color:#fff}
+#drawEd .aiv-body{padding:12px 14px;overflow:auto;display:grid;gap:10px}
+#drawEd .aiv-l{display:grid;gap:5px;color:#9a9a9a;font-weight:500;font-size:12px}
+#drawEd .aiv-l textarea,#drawEd .aiv-q{width:100%;border:1px solid #3a3a3a;border-radius:6px;background:#1a1a1a;color:#eee;font:400 13px var(--font,inherit);padding:7px 9px;resize:vertical;outline:none}
+#drawEd .aiv-l textarea:focus,#drawEd .aiv-q:focus{border-color:#1473e6}
+#drawEd .aiv-cnt{margin-top:-4px;text-align:right;color:#777;font-size:11px;font-variant-numeric:tabular-nums}
+#drawEd .aiv-voices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;max-height:196px;overflow:auto;padding:1px}
+#drawEd .aiv-vo{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #333;border-radius:6px;background:#1c1c1c;cursor:pointer;min-width:0}
+#drawEd .aiv-vo:hover{border-color:#555}
+#drawEd .aiv-vo.on{border-color:#1473e6;background:#1b2a40}
+#drawEd .aiv-vo div{min-width:0}
+#drawEd .aiv-vo b{display:block;color:#eee;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#drawEd .aiv-vo small{display:block;color:#8a8a8a;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#drawEd .aiv-pv{flex:none;width:24px;height:24px;display:grid;place-items:center;border:0;border-radius:50%;background:#333;color:#ddd;cursor:pointer;padding:0}
+#drawEd .aiv-pv svg{width:11px;height:11px}
+#drawEd .aiv-pv:hover{background:#1473e6;color:#fff}
+#drawEd .aiv-empty{grid-column:1/-1;padding:16px;text-align:center;color:#8a8a8a}
+#drawEd .aiv-row{display:grid;grid-template-columns:70px minmax(0,1fr) 72px;align-items:center;gap:10px}
+#drawEd .aiv-row .aiv-seg{justify-self:start;grid-column:2/4}
+#drawEd .aiv-l2{color:#9a9a9a;font-size:12px}
+#drawEd .aiv-v{color:#ccc;font-size:12px;font-variant-numeric:tabular-nums}
+#drawEd .aiv-row input[type=range]{width:100%;accent-color:#1473e6}
+#drawEd .aiv-chk{display:flex;align-items:center;gap:8px;color:#bbb;font-size:12px;cursor:pointer}
+#drawEd .aiv-chk input{accent-color:#1473e6}
+#drawEd .aiv-out audio{width:100%;height:34px;color-scheme:dark}
+#drawEd .aiv-msg{margin:0;color:#aaa;font-size:12px;min-height:1em}
+#drawEd .aiv-msg:empty{display:none}
+#drawEd .aiv-msg.bad{color:#ff8a8a}
+#drawEd .aiv-li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px;color:#ccc;font-size:12px;padding:3px 0}
+#drawEd .aiv-li b{color:#fff}
+#drawEd .aiv-li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
+#drawEd .aiv-f{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid #333}
+#drawEd .aiv-quota{color:#8a8a8a;font-size:11.5px}
+#drawEd .aiv-sp{flex:1}
+#drawEd .aiv-b{height:30px;padding:0 14px;border:1px solid #444;border-radius:6px;background:#2d2d2d;color:#ddd;font:500 12.5px var(--font,inherit);cursor:pointer;white-space:nowrap}
+#drawEd .aiv-b.pri{background:#1473e6;border-color:#1473e6;color:#fff}
+#drawEd .aiv-b:disabled{opacity:.6;cursor:default}
+@media (max-width:520px){ #drawEd .aiv-voices{grid-template-columns:1fr} }
 #drawEd .de-player{position:fixed;inset:0;z-index:300;background:#0b0b0b;display:grid;grid-template-rows:1fr auto auto;opacity:0;transition:opacity .22s ease;color:#ddd;font-family:var(--font,inherit)}
 #drawEd .de-player.on{opacity:1}
 #drawEd .pl-stage{position:relative;min-height:0;cursor:pointer}
@@ -7216,7 +7269,7 @@ function drawMenus(){ const E=drawEd, el=E.el, q=s=>el.querySelector(s), clk=s=>
       ['Align Left','',()=>drawAlign('l'),!sel],['Align Centers','',()=>drawAlign('c'),!sel],['Align Right','',()=>drawAlign('r'),!sel],['Align Top','',()=>drawAlign('t'),!sel],['Align Middles','',()=>drawAlign('m'),!sel],['Align Bottom','',()=>drawAlign('b'),!sel]],
     Select:[['All','⌘A',drawSelAll],['Deselect','⌘D',drawSelNone,!E.selSet.size],['Inverse','⇧⌘I',drawSelInverse]],
     View:[['Location Artboard','',()=>drawSetArt(!E.art),false,!!E.art],['Location Below Drawing','',()=>drawSetArtDir('below'),!E.art,E.artDir!=='right'],['Location Beside Drawing','',()=>drawSetArtDir('right'),!E.art,E.artDir==='right'],0,['Show Location on Board','',()=>drawBoardShow('showLoc'),false,E.showLoc],['Show References on Board','',()=>drawBoardShow('showRefs'),false,E.showRefs],['Fit Drawing','',()=>drawZoomArt(0)],['Fit Location','',()=>drawZoomArt(1),!E.art],0,['Reference Panel','',()=>{ E.refMin=!E.refMin; drawRefPanel(); },!E.pages.some(q=>q.refs&&q.refs.length),!E.refMin&&E.pages.some(q=>q.refs&&q.refs.length)],0,['Zoom In','⌘+',()=>drawZoomStep(1)],['Zoom Out','⌘−',()=>drawZoomStep(-1)],['Fit on Screen','⌘0',drawZoomFit],['100%','⌘1',()=>drawZoomTo(1)],0,['Frame Guides…','',()=>{ const b=q('.de-guide-b'); setTimeout(()=>b.click(),0); }],['Onion Skin','O',drawToggleOnion,E.pages.length<2,E.onion&&E.pages.length>1],['Onion Skin: Show Next Frame Too','',()=>{ E.onionNext=!E.onionNext; drawOnionSave(); drawUnder(); drawLayers(); },E.pages.length<2,E.onionNext]],
-    Storyboard:[['Play Animatic','',()=>drawPlayer('play')],['Present','',()=>drawPlayer('present')],['Tap Timing…','',()=>drawPlayer('tap')],['Record Voice-over…','',()=>drawPlayer('rec')],['Add Music or Sound…','',()=>drawAudPick()],['Overview','',()=>drawOverview(),false,!!E.ovPrev],0,['New Frame','⇧N',()=>drawAddPage(false)],['New Row','',()=>drawAddRow()],['Duplicate Frame','',()=>drawAddPage(true)],0,['Delete Frame','',()=>{ const b=E.el.querySelector(`.de-sibs [data-pdel="${E.pi}"]`); drawDelPage(E.pi); if(b&&b.dataset.armed==='1') drawDelPage(E.pi); },E.pages.length<2],0,['Previous Frame',',',()=>drawFrameGo(E.pi-1),E.pi<=0],['Next Frame','.',()=>drawFrameGo(E.pi+1),E.pi>=E.pages.length-1]] }; }
+    Storyboard:[['Play Animatic','',()=>drawPlayer('play')],['Present','',()=>drawPlayer('present')],['Tap Timing…','',()=>drawPlayer('tap')],['Record Voice-over…','',()=>drawPlayer('rec')],['AI Voice-over…','',()=>drawAiVoice('one')],['Add Music or Sound…','',()=>drawAudPick()],['Overview','',()=>drawOverview(),false,!!E.ovPrev],0,['New Frame','⇧N',()=>drawAddPage(false)],['New Row','',()=>drawAddRow()],['Duplicate Frame','',()=>drawAddPage(true)],0,['Delete Frame','',()=>{ const b=E.el.querySelector(`.de-sibs [data-pdel="${E.pi}"]`); drawDelPage(E.pi); if(b&&b.dataset.armed==='1') drawDelPage(E.pi); },E.pages.length<2],0,['Previous Frame',',',()=>drawFrameGo(E.pi-1),E.pi<=0],['Next Frame','.',()=>drawFrameGo(E.pi+1),E.pi>=E.pages.length-1]] }; }
 function drawMenuOpen(name){ const E=drawEd, el=E.el, m=el.querySelector('.de-menu'); el.querySelectorAll('.de-menus > button').forEach(b=>b.classList.toggle('on',b.dataset.m===name));
   if(!name){ m.hidden=true; E.menuOpen=null; return; } E.menuOpen=name; const items=drawMenus()[name]; m._items=items;
   m.innerHTML=items.map((it,i)=>it?`<button type="button" data-mi="${i}"${it[3]?' disabled':''}><i>${it[4]?'✓':''}</i><span>${esc(it[0])}</span><kbd>${it[1]}</kbd></button>`:'<hr>').join('');
@@ -7687,7 +7740,8 @@ function drawTlBuild(){ const E=drawEd, tl=document.createElement('div'); let mn
   const I=DRAW_TL_IC;
   tl.innerHTML=`<div class="tl-h"><button type="button" class="tl-play" data-tl="play" title="Play the animatic">${drawIcon(I.play)}<span>Play</span></button><span class="tl-time"></span><span class="tl-sp"></span>
     <button type="button" data-tl="rec" class="tl-rec" title="Record voice-over with the microphone while the animatic plays">${drawIcon('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>')}<span>Record voice</span></button>
-    <button type="button" data-tl="aud" title="Add music or sound effects (MP3, WAV, M4A…)">${drawIcon('<path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>')}<span>Add audio</span></button>
+    <button type="button" data-tl="aiv" class="tl-aiv" title="Generate voice-over for the frames with AI (ElevenLabs)">${drawIcon('<path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>')}<span>AI voice</span></button>
+    <button type="button" data-tl="aud" title=""Add music or sound effects (MP3, WAV, M4A…)">${drawIcon('<path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>')}<span>Add audio</span></button>
     <button type="button" data-tl="tap" title="Tap timing: the frames play one by one, tap Space on each beat to set how long each one lasts">${drawIcon(I.tap)}<span>Tap timing</span></button>
     <button type="button" data-tl="present" title="Present the storyboard full screen · arrow keys to step">${drawIcon(I.present)}<span>Present</span></button>
     <button type="button" data-tl="overview" class="tl-ov" title="See every frame and row at once">${drawIcon(I.grid)}<span>Overview</span></button>
@@ -7696,7 +7750,7 @@ function drawTlBuild(){ const E=drawEd, tl=document.createElement('div'); let mn
   const box=tl.querySelector('.tl-clips');
   tl.querySelector('.tl-h').addEventListener('click',e=>{ const b=e.target.closest('[data-tl]'); if(!b) return; const k=b.dataset.tl;
     if(k==='min'){ tl.classList.toggle('min'); try{ localStorage.setItem('setplot-tl-min',tl.classList.contains('min')?'1':'0'); }catch(err){} setTimeout(()=>{ drawFit(); drawTimeline(); },0); }
-    else if(k==='overview') drawOverview(); else if(k==='aud') drawAudPick(); else drawPlayer(k); });
+    else if(k==='overview') drawOverview(); else if(k==='aud') drawAudPick(); else if(k==='aiv') drawAiVoice('one'); else drawPlayer(k); });
   box.addEventListener('pointerdown',e=>{ const D=drawEd, h=e.target.closest('.tl-hd'); if(!h) return; e.preventDefault(); e.stopPropagation(); const n=h.closest('.tl-clip'), i=+n.dataset.i;
     D.tlDrag={i,x0:e.clientX,d0:drawDur(D.pages[i]),pps:D.tlPPS,moved:false}; n.classList.add('sizing'); try{ h.setPointerCapture(e.pointerId); }catch(err){} });
   box.addEventListener('pointermove',e=>{ const D=drawEd, T=D&&D.tlDrag; if(!T) return; const dx=e.clientX-T.x0; if(Math.abs(dx)>2) T.moved=true; const step=e.shiftKey?.5:.1, d=Math.max(.2,Math.round((T.d0+dx/T.pps)/step)*step); drawSetDur(D.pages[T.i],d); drawTimeline(); });
@@ -7891,6 +7945,92 @@ async function drawRecDone(P){ const E=drawEd, keep=P.keepOnStop!==false, blob=n
   P.ov.querySelector('.pl-hint').textContent='Saving the recording…'; let info={dur:secs,pk:[]}; try{ info=await audAnalyse(blob); }catch(e){}
   const src=await storeAudio(blob); if(!drawEd) return; const D=drawEd, n=(D.audio=D.audio||[]).filter(a=>a.kind==='voice').length+1, clip={id:uid(),src,nm:`Voice ${n}`,kind:'voice',at:Math.round(P.recAt*10)/10,len:info.dur||secs,full:info.dur||secs,off:0,vol:1,pk:info.pk};
   D.audio.push(clip); D.audSel=clip.id; track('voice_record',{s:Math.round(clip.len)}); D.dirty=true; if(D.player===P) drawPlayerCmd('close'); drawTimeline(); toast(`Voice-over recorded · ${clip.len.toFixed(1)} s from frame ${P.start+1} · drag it on the timeline to move it`); }
+/* ---------- AI voice-over (ElevenLabs, through the account's "tts" server function: the key never reaches the page) ---------- */
+let aivVoices=null;
+function aivStarts(){ const E=drawEd, st=[]; let a=0; E.pages.forEach(pg=>{ st.push(a); a+=drawDur(pg); }); return st; }
+async function aivCall(payload){ const c=sbConf(); if(!sb||!c) throw {code:'offline',message:'AI voice works on plot.malikmotion.com when you are signed in'};
+  const {data}=await sb.auth.getSession(); const tok=data&&data.session&&data.session.access_token; if(!tok) throw {code:'auth',message:'Sign in to use AI voice'};
+  let r; try{ r=await fetch(c.url+'/functions/v1/tts',{method:'POST',headers:{Authorization:'Bearer '+tok,apikey:c.key,'Content-Type':'application/json'},body:JSON.stringify(payload)}); }catch(e){ throw {code:'net',message:'Couldn’t reach the voice service. Check the connection.'}; }
+  if(!r.ok){ let e={}; try{ e=await r.json(); }catch(x){} throw {code:e.error||r.status,message:e.message||('The voice service answered with error '+r.status)}; }
+  if((r.headers.get('content-type')||'').includes('application/json')) return r.json();
+  return {blob:await r.blob(),used:+r.headers.get('x-used')||0,limit:+r.headers.get('x-limit')||0}; }
+function aivPrefs(){ try{ return JSON.parse(localStorage.getItem('setplot-aiv')||'{}')||{}; }catch(e){ return {}; } }
+function aivSavePrefs(p){ try{ localStorage.setItem('setplot-aiv',JSON.stringify(p)); }catch(e){} }
+function drawAiVoice(scope){ const E=drawEd; if(!E) return; drawCommitText(); drawPageSync(); const old=E.el.querySelector('.de-aiv'); if(old) old.remove();
+  const P=Object.assign({model:'eleven_multilingual_v2',speed:1,expr:.35,fit:true},aivPrefs()), pg=E.pages[E.pi], inf=pg.info||{};
+  const ov=document.createElement('div'); ov.className='de-aiv'; ov.innerHTML=`<div class="aiv-card" role="dialog" aria-label="AI voice-over">
+    <div class="aiv-h"><b>${drawIcon('<path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>')}AI voice-over</b><div class="aiv-seg" role="group"><button type="button" data-sc="one">Frame ${E.pi+1}</button><button type="button" data-sc="all">All frames with dialogue</button></div><button type="button" class="aiv-x" aria-label="Close">×</button></div>
+    <div class="aiv-body">
+      <div class="aiv-one"><label class="aiv-l">Line for frame ${E.pi+1}<textarea rows="3" maxlength="800" placeholder="Type what should be said…"></textarea></label><div class="aiv-cnt"></div></div>
+      <div class="aiv-all" hidden></div>
+      <div class="aiv-l">Voice <input class="aiv-q" type="search" placeholder="Search voices" aria-label="Search voices"></div>
+      <div class="aiv-voices"><div class="aiv-empty">Loading voices…</div></div>
+      <div class="aiv-row"><span class="aiv-l2">Quality</span><div class="aiv-seg aiv-model" role="group"><button type="button" data-m="eleven_multilingual_v2" title="Best quality, many languages including Danish">Best</button><button type="button" data-m="eleven_flash_v2_5" title="Faster and cheaper, a little less natural">Fast</button></div></div>
+      <div class="aiv-row"><span class="aiv-l2">Speed</span><input type="range" class="aiv-speed" min="0.7" max="1.2" step="0.05"><span class="aiv-v aiv-speedv"></span></div>
+      <div class="aiv-row"><span class="aiv-l2">Delivery</span><input type="range" class="aiv-expr" min="0" max="1" step="0.05"><span class="aiv-v aiv-exprv"></span></div>
+      <label class="aiv-chk"><input type="checkbox" class="aiv-fit"> Make a frame longer when its line needs more time</label>
+      <div class="aiv-out" hidden><audio controls preload="auto"></audio></div>
+      <p class="aiv-msg" role="status"></p>
+    </div>
+    <div class="aiv-f"><span class="aiv-quota"></span><span class="aiv-sp"></span><button type="button" class="aiv-b aiv-gen pri">Generate</button><button type="button" class="aiv-b aiv-add pri" hidden>Add to timeline</button></div></div>`;
+  E.el.appendChild(ov); requestAnimationFrame(()=>ov.classList.add('on'));
+  const q=s=>ov.querySelector(s), ta=q('textarea'), msg=(t,bad)=>{ const m=q('.aiv-msg'); m.textContent=t||''; m.classList.toggle('bad',!!bad); };
+  let sc=scope==='all'?'all':'one', voice=P.voice||'', last=null, busy=false, used=0, limit=0, maxT=800, playing=null;
+  ta.value=(inf.dlg||inf.action||'').trim();
+  const cnt=()=>{ q('.aiv-cnt').textContent=`${ta.value.trim().length} / ${maxT} characters`; };
+  const quota=()=>{ q('.aiv-quota').textContent=limit?`${Math.max(0,limit-used).toLocaleString('en-GB')} characters left today`:''; };
+  const voiced=(i,t)=>(E.audio||[]).some(a=>a.ai&&a.ai.text===t.slice(0,200)&&a.ai.voice===voice&&/ · F(\d+)$/.test(a.nm)&&+a.nm.match(/ · F(\d+)$/)[1]===i+1);
+  const lines=()=>E.pages.map((p,i)=>({i,t:((p.info||{}).dlg||'').trim()})).filter(x=>x.t);
+  const setSc=v=>{ sc=v; ov.querySelectorAll('[data-sc]').forEach(b=>b.classList.toggle('on',b.dataset.sc===v)); q('.aiv-one').hidden=v!=='one'; const al=q('.aiv-all'); al.hidden=v!=='all';
+    if(v==='all'){ const L=lines(); al.innerHTML=''; const h=document.createElement('div'); h.className='aiv-l'; h.textContent=L.length?`${L.length} frame${L.length>1?'s have':' has'} dialogue. Each gets its own clip, placed where the frame starts:`:'No frames have dialogue yet. Write it in the Shot panel (Dialogue), or switch to one frame.'; al.append(h);
+      L.forEach(x=>{ const r=document.createElement('div'); r.className='aiv-li'; const b=document.createElement('b'); b.textContent=x.i+1; const t=document.createElement('span'); t.textContent='“'+x.t+'”'+(voiced(x.i,x.t)?'  · already voiced with this voice, skipped':''); r.append(b,t); al.append(r); }); }
+    q('.aiv-out').hidden=true; q('.aiv-add').hidden=true; q('.aiv-gen').hidden=false; q('.aiv-gen').textContent=v==='all'?'Generate all':'Generate'; msg(''); };
+  const setModel=m=>{ P.model=m; ov.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',b.dataset.m===m)); };
+  const sp=q('.aiv-speed'), ex=q('.aiv-expr'); sp.value=P.speed; ex.value=P.expr; q('.aiv-fit').checked=!!P.fit;
+  const lbl=()=>{ q('.aiv-speedv').textContent=(+sp.value).toFixed(2)+'×'; q('.aiv-exprv').textContent=+ex.value<.25?'Steady':+ex.value<.6?'Natural':'Expressive'; };
+  sp.oninput=ex.oninput=lbl; lbl(); setModel(P.model); setSc(sc); cnt(); ta.oninput=cnt;
+  const close=()=>{ if(playing) playing.pause(); const a=q('audio'); a.pause(); ov.classList.remove('on'); setTimeout(()=>ov.remove(),180); P.speed=+sp.value; P.expr=+ex.value; P.fit=q('.aiv-fit').checked; if(voice) P.voice=voice; aivSavePrefs(P); };
+  ov.addEventListener('pointerdown',e=>{ if(e.target===ov) close(); });
+  ov.addEventListener('keydown',e=>{ e.stopPropagation(); if(e.key==='Escape'){ e.preventDefault(); close(); } if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); q('.aiv-gen').click(); } });
+  q('.aiv-x').onclick=close;
+  ov.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>setSc(b.dataset.sc)); ov.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>setModel(b.dataset.m));
+  const renderVoices=()=>{ const box=q('.aiv-voices'), f=q('.aiv-q').value.trim().toLowerCase(); box.innerHTML='';
+    const V=(aivVoices||[]).filter(v=>!f||(v.name+' '+Object.values(v.labels||{}).join(' ')).toLowerCase().includes(f));
+    if(!V.length){ const d=document.createElement('div'); d.className='aiv-empty'; d.textContent=aivVoices?'No voices match':'Loading voices…'; box.append(d); return; }
+    if(!voice||!aivVoices.some(v=>v.id===voice)) voice=V[0].id;
+    V.forEach(v=>{ const it=document.createElement('div'); it.className='aiv-vo'+(v.id===voice?' on':''); it.tabIndex=0; it.setAttribute('role','option'); it.setAttribute('aria-selected',v.id===voice);
+      const nm=document.createElement('b'); nm.textContent=v.name; const mt=document.createElement('small'); mt.textContent=[v.labels.gender,v.labels.age,v.labels.accent,v.labels.style].filter(Boolean).join(' · ')||v.category||'';
+      const pb=document.createElement('button'); pb.type='button'; pb.className='aiv-pv'; pb.title='Listen to a sample'; pb.innerHTML=drawIcon(DRAW_TL_IC.play); pb.hidden=!v.preview;
+      pb.onclick=e=>{ e.stopPropagation(); if(playing&&playing._id===v.id&&!playing.paused){ playing.pause(); return; } if(playing) playing.pause(); playing=new Audio(v.preview); playing._id=v.id; playing.play().catch(()=>{}); };
+      const tx=document.createElement('div'); tx.append(nm,mt); it.append(pb,tx);
+      const pick=()=>{ voice=v.id; box.querySelectorAll('.aiv-vo').forEach(x=>{ x.classList.toggle('on',x===it); x.setAttribute('aria-selected',x===it); }); };
+      it.onclick=pick; it.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(); } }; box.append(it); });
+    const on=box.querySelector('.aiv-vo.on'); if(on) on.scrollIntoView({block:'nearest'}); };
+  q('.aiv-q').oninput=renderVoices;
+  const fail=e=>{ msg((e&&e.message)||'Something went wrong',true); if(e&&e.code==='auth'){ const b=document.createElement('button'); b.type='button'; b.className='aiv-b'; b.textContent='Sign in'; b.onclick=()=>{ close(); openAccount(); }; q('.aiv-msg').append(' ',b); } };
+  (async()=>{ try{ if(!aivVoices){ const d=await aivCall({action:'voices'}); aivVoices=d.voices||[]; used=d.used||0; limit=d.limit||0; maxT=d.maxText||800; } else { const d=await aivCall({action:'voices'}); used=d.used||0; limit=d.limit||0; }
+      renderVoices(); quota(); cnt(); }catch(e){ q('.aiv-voices').innerHTML=''; const d=document.createElement('div'); d.className='aiv-empty'; d.textContent=e.message||'Couldn’t load voices'; q('.aiv-voices').append(d); fail(e); q('.aiv-gen').disabled=true; } })();
+  const vName=()=>((aivVoices||[]).find(v=>v.id===voice)||{}).name||'Voice';
+  const place=async(blob,i,text)=>{ let info={dur:0,pk:[]}; try{ info=await audAnalyse(blob); }catch(e){} const src=await storeAudio(blob), D=drawEd; if(!D) return null;
+    const p=D.pages[i]; if(q('.aiv-fit').checked&&info.dur+.3>drawDur(p)) drawSetDur(p,Math.ceil((info.dur+.3)*10)/10);
+    const at=aivStarts()[i], clip={id:uid(),src,nm:`AI · ${vName()} · F${i+1}`,kind:'voice',at:Math.round(at*10)/10,len:info.dur||2,full:info.dur||2,off:0,vol:1,pk:info.pk,ai:{voice,text:text.slice(0,200)}};
+    (D.audio=D.audio||[]).push(clip); D.audSel=clip.id; D.dirty=true; return clip; };
+  const opts=text=>({text,voice,model:P.model,settings:{speed:+sp.value,stability:1-(+ex.value)*.7,style:+ex.value*.5}});
+  q('.aiv-gen').onclick=async()=>{ if(busy) return; if(!voice){ msg('Pick a voice',true); return; } const g=q('.aiv-gen'); busy=true; g.disabled=true; msg('');
+    try{ if(sc==='one'){ const t=ta.value.trim(); if(!t){ msg('Type the line first',true); return; } g.textContent='Generating…';
+        const r=await aivCall(Object.assign(opts(t),{previous_text:E.pi>0?((E.pages[E.pi-1].info||{}).dlg||''):'',next_text:((E.pages[E.pi+1]||{}).info||{}).dlg||''}));
+        used=r.used||used; limit=r.limit||limit; quota(); last={blob:r.blob,text:t}; const a=q('audio'); a.src=URL.createObjectURL(r.blob); q('.aiv-out').hidden=false; a.play().catch(()=>{});
+        q('.aiv-add').hidden=false; g.textContent='Try again'; g.classList.remove('pri'); msg('Listen, then add it to the timeline, or change the voice or delivery and try again.'); }
+      else { const L=lines(); if(!L.length){ msg('No frames have dialogue yet',true); return; } let n=0;
+        for(const x of L){ if(voiced(x.i,x.t)) continue; g.textContent=`Frame ${x.i+1} (${n+1} of ${L.length})…`; const prev=(E.pages[x.i-1]||{info:{}}).info.dlg||'', next=(E.pages[x.i+1]||{info:{}}).info.dlg||'';
+          const r=await aivCall(Object.assign(opts(x.t),{previous_text:prev,next_text:next})); used=r.used||used; limit=r.limit||limit; quota(); await place(r.blob,x.i,x.t); n++; drawTimeline(); }
+        track('ai_voice_batch',{n}); close(); toast(n?`${n} AI voice clip${n>1?'s':''} added to the timeline · play the animatic to hear them`:'Every line already has a clip with this voice'); } }
+    catch(e){ fail(e); if(sc==='all') drawTimeline(); }
+    finally{ busy=false; g.disabled=false; if(sc==='all') g.textContent='Generate all'; else if(!last) g.textContent='Generate'; } };
+  q('.aiv-add').onclick=async()=>{ if(!last) return; const i=drawEd.pi, c=await place(last.blob,i,last.text); if(!c) return;
+    const p=drawEd.pages[i]; p.info=p.info||{}; if(!p.info.dlg&&last.text) p.info.dlg=last.text;
+    track('ai_voice_add'); close(); drawTimeline(); drawShotPanelSync(); toast(`AI voice added at frame ${i+1} · ${c.len.toFixed(1)} s`); };
+  setTimeout(()=>{ (sc==='one'?ta:q('.aiv-gen')).focus({preventScroll:true}); },60); }
 /* frames */
 function drawPageSync(){ const E=drawEd, pg=E.pages[E.pi]; pg.ops=E.ops; pg.hist=E.hist; pg.fut=E.fut; }
 function drawGoPage(i){ const E=drawEd; if(i<0||i>=E.pages.length||i===E.pi&&E.ops===E.pages[i].ops) { return; } drawCommitText(); if(E.pi>=0&&E.pages[E.pi]) drawPageSync(); E.pi=i; const pg=E.pages[i]; E.ops=pg.ops; E.hist=pg.hist; E.fut=pg.fut; drawSelClear(); E.region=null;
@@ -7926,7 +8066,9 @@ function drawShotPanel(){ const E=drawEd, box=E.el.querySelector('.de-shot'), in
     <div class="ds-2"><label>Lens<input data-i="lens" value="${esc(inf.lens||'')}" placeholder="50mm"></label><label>Duration<input data-i="dur" value="${esc(inf.dur||'')}" placeholder="4s"></label></div>
     <label>Movement<select data-i="move">${opt(SB_MOVES,inf.move||'')}</select></label>
     <label>Action<textarea data-i="action" rows="2" placeholder="What happens">${esc(inf.action||'')}</textarea></label>
-    <label>Dialogue<textarea data-i="dlg" rows="2" placeholder="What's said">${esc(inf.dlg||'')}</textarea></label>`;
+    <label>Dialogue<textarea data-i="dlg" rows="2" placeholder="What's said">${esc(inf.dlg||'')}</textarea></label>
+    <button type="button" class="ds-aiv">${drawIcon('<path d="M12 3.5l1.8 4.7 4.7 1.8-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>')}Voice this line with AI</button>`;
+  box.querySelector('.ds-aiv').onclick=()=>drawAiVoice('one');
   const set=(k,v)=>{ inf[k]=v; E.dirty=true; if(k==='shot') drawStrip(); if(k==='dur') drawTimeline(); };
   box.querySelectorAll('[data-i]').forEach(f=>{ f.addEventListener(f.tagName==='SELECT'?'change':'input',()=>{ const k=f.dataset.i; set(k,f.value);
       if(k==='cam'){ const c=cams.find(q=>(q.label||'Camera')===f.value); if(c&&c.p&&c.p.lens){ inf.lens=c.p.lens+'mm'; box.querySelector('[data-i="lens"]').value=inf.lens; } } });   /* picking a plot camera fills in its lens */
