@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin · Set Plot</title>
+<style>
+:root{color-scheme:light;
+  --page:#f9f9f7;--surface:#fcfcfb;--card:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--ring:rgba(11,11,11,.10);
+  --s1:#2a78d6;--s2:#eb6834;--good:#0ca30c;--warning:#fab219;--serious:#ec835a;--critical:#d03b3b;--up:#006300;--accent:#2a78d6;
+  --q1:#cde2fb;--q2:#9ec5f4;--q3:#6da7ec;--q4:#3987e5;--q5:#256abf;--q6:#184f95;--q7:#0d366b;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme: dark){ :root:where(:not([data-theme="light"])){color-scheme:dark;
+  --page:#0d0d0d;--surface:#1a1a19;--card:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);
+  --s1:#3987e5;--s2:#d95926;--up:#0ca30c;--accent:#3987e5} }
+:root[data-theme="dark"]{color-scheme:dark;--page:#0d0d0d;--surface:#1a1a19;--card:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--ring:rgba(255,255,255,.10);--s1:#3987e5;--s2:#d95926;--up:#0ca30c;--accent:#3987e5}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font:400 14px/1.45 var(--sans);overflow-x:clip}
+[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+/* top bar */
+.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--page) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--ring)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;white-space:nowrap}
+.mark{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#16191d}
+.mark svg{width:18px;height:18px}
+.tag{font:600 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;color:var(--muted);border:1px solid var(--ring);border-radius:999px;padding:4px 7px}
+.sp{flex:1}
+.me{color:var(--ink2);font-size:13px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--ring);background:var(--card);cursor:pointer;font-weight:600;font-size:13px;white-space:nowrap}
+.btn:hover{border-color:var(--axis)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+/* filters row */
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:18px 0 4px}
+.seg{display:inline-flex;padding:2px;border-radius:9px;background:var(--card);border:1px solid var(--ring)}
+.seg button{border:0;background:transparent;height:28px;padding:0 12px;border-radius:7px;cursor:pointer;font-weight:600;font-size:13px;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--page)}
+.stamp{color:var(--muted);font-size:12.5px}
+main.loading .grid{opacity:.55;transition:opacity .2s ease}
+/* cards */
+.grid{display:grid;gap:12px;padding:12px 0 40px;transition:opacity .2s ease}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:16px;min-width:0}
+.card h2{margin:0 0 2px;font-size:14px;font-weight:700}
+.card .sub{margin:0 0 12px;color:var(--muted);font-size:12.5px}
+.kpi .lbl{color:var(--ink2);font-size:12.5px;font-weight:600}
+.kpi .val{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin-top:6px}
+.kpi .val small{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0;margin-left:4px}
+.kpi .foot{margin-top:6px;color:var(--muted);font-size:12.5px}
+.kpi .foot b{font-weight:600;color:var(--ink2)}
+.delta{font-weight:600}.delta.up{color:var(--up)}.delta.down{color:var(--critical)}
+/* charts */
+.chart{position:relative;height:220px}
+.chart svg{display:block;width:100%;height:100%;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:-4px 0 8px;color:var(--ink2);font-size:12.5px}
+.legend i{display:inline-block;width:14px;height:2px;border-radius:1px;vertical-align:middle;margin-right:6px}
+.tip{position:absolute;pointer-events:none;z-index:3;min-width:130px;background:var(--card);border:1px solid var(--ring);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.14);padding:8px 10px;font-size:12.5px;opacity:0;transition:opacity .12s ease}
+.tip.on{opacity:1}
+.tip .d{color:var(--muted);margin-bottom:4px}
+.tip .r{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.tip .r i{width:12px;height:2px;border-radius:1px;flex:none}
+.tip .r b{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.tip .r span{color:var(--ink2)}
+.empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px;text-align:center;padding:12px}
+/* retention */
+.ret{width:100%;border-collapse:separate;border-spacing:2px;font-size:12px;font-variant-numeric:tabular-nums}
+.ret th{color:var(--muted);font-weight:600;text-align:left;padding:2px 6px;white-space:nowrap}
+.ret td{height:28px;text-align:center;border-radius:4px;padding:0 4px;min-width:38px}
+.ret td.c{text-align:left;color:var(--ink2);white-space:nowrap;padding-right:10px}
+.ret td.n{color:var(--ink2)}
+.ret td.v{cursor:default}
+.ret td.v:hover{outline:2px solid var(--ink);outline-offset:-1px}
+.retwrap{overflow-x:auto}
+/* features */
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(90px,30%) minmax(0,1fr) auto;align-items:center;gap:10px;font-size:13px}
+.bar .n{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .t{height:14px;border-radius:0 4px 4px 0;background:var(--grid);position:relative}
+.bar .t i{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0;background:var(--s1)}
+.bar .v{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;white-space:nowrap}
+.bar .v small{color:var(--muted);font-weight:500}
+/* status */
+.meter{margin:0 0 14px}
+.meter .row{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:6px}
+.meter .row b{font-weight:600}
+.meter .row span{color:var(--ink2);font-variant-numeric:tabular-nums}
+.meter .t{height:8px;border-radius:4px;background:var(--grid);overflow:hidden}
+.meter .t i{display:block;height:100%;border-radius:4px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill svg{width:13px;height:13px;flex:none}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin:4px 0 12px}
+.facts div{font-size:12.5px;color:var(--muted)}
+.facts b{display:block;font-size:16px;color:var(--ink);font-weight:700}
+.errs{list-style:none;margin:0;padding:0;font-size:12.5px;max-height:180px;overflow:auto;border-top:1px solid var(--grid)}
+.errs li{padding:7px 0;border-bottom:1px solid var(--grid);display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px}
+.errs time{color:var(--muted);white-space:nowrap}
+.errs code{font:12px ui-monospace,Menlo,monospace;color:var(--ink2);overflow-wrap:anywhere}
+/* accounts */
+.acct-h{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px}
+.acct-h h2{margin:0}
+.search{flex:1;min-width:180px;max-width:320px;height:34px;border-radius:8px;border:1px solid var(--ring);background:var(--surface);padding:0 12px}
+.search:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.tblwrap{overflow-x:auto;margin:0 -16px;padding:0 16px}
+table.acc{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
+table.acc th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:8px 10px;border-bottom:1px solid var(--grid);white-space:nowrap}
+table.acc td{padding:10px;border-bottom:1px solid var(--grid);white-space:nowrap;font-variant-numeric:tabular-nums}
+table.acc td.e{max-width:280px;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+table.acc td.e small{display:block;font-weight:400;color:var(--muted)}
+table.acc td.r,table.acc th.r{text-align:right}
+.adm{font:600 10px/1 ui-monospace,Menlo,monospace;color:var(--accent);border:1px solid currentColor;border-radius:999px;padding:2px 5px;margin-left:6px;vertical-align:1px}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:12.5px}
+/* sign-in */
+.gate{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.gate .card{width:min(380px,100%);padding:24px}
+.gate h1{margin:14px 0 4px;font-size:20px}
+.gate p{margin:0 0 16px;color:var(--ink2)}
+.gate input{width:100%;height:40px;border-radius:9px;border:1px solid var(--ring);background:var(--surface);padding:0 12px;margin-bottom:8px}
+.gate .btn{height:40px;width:100%;margin-top:4px}
+.gate .msg{margin:12px 0 0;font-size:13px;color:var(--ink2);min-height:1.2em}
+.gate .msg.bad{color:var(--critical)}
+.note{margin:0;color:var(--muted);font-size:12.5px}
+@media (max-width:1020px){ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:760px){ .two{grid-template-columns:1fr} .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} .me{display:none} .kpi .val{font-size:26px} }
+@media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr} .top .tag{display:none} }
+</style>
+</head>
+<body>
+
+<div class="gate" id="gate" hidden>
+  <form class="card" id="gateForm" novalidate>
+    <span class="mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="7" width="5" height="6" rx="1.2" fill="#ffffff"/><path d="M8.5 7.5 L17.5 3.5 V16.5 L8.5 12.5Z" fill="#e38a2b"/></svg></span>
+    <h1>Set Plot admin</h1>
+    <p id="gateText">Sign in with an admin account.</p>
+    <input type="email" id="gEmail" placeholder="you@example.com" autocomplete="email" required>
+    <input type="password" id="gPass" placeholder="Password (leave empty for a sign-in link)" autocomplete="current-password">
+    <button class="btn pri" type="submit">Sign in</button>
+    <p class="msg" id="gateMsg" role="status"></p>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="top"><div class="wrap">
+    <div class="brand"><span class="mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="7" width="5" height="6" rx="1.2" fill="#ffffff"/><path d="M8.5 7.5 L17.5 3.5 V16.5 L8.5 12.5Z" fill="#e38a2b"/></svg></span>Set Plot <span class="tag">ADMIN</span></div>
+    <span class="sp"></span>
+    <span class="me" id="me"></span>
+    <button class="btn" id="out" type="button">Sign out</button>
+  </div></header>
+
+  <main class="wrap" id="main">
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Period"><button type="button" data-days="7" aria-pressed="false">7 days</button><button type="button" data-days="30" aria-pressed="true">30 days</button><button type="button" data-days="90" aria-pressed="false">90 days</button></div>
+      <button class="btn" id="refresh" type="button">Refresh</button>
+      <span class="stamp" id="stamp"></span>
+    </div>
+
+    <div class="grid">
+      <section class="kpis" aria-label="Key numbers">
+        <div class="card kpi"><div class="lbl">Accounts</div><div class="val" id="kAcc">–</div><div class="foot" id="kAccF"></div></div>
+        <div class="card kpi"><div class="lbl">Active this week</div><div class="val" id="kWau">–</div><div class="foot" id="kWauF"></div></div>
+        <div class="card kpi"><div class="lbl">30-day churn</div><div class="val" id="kChurn">–</div><div class="foot" id="kChurnF"></div></div>
+        <div class="card kpi"><div class="lbl">Beta list</div><div class="val" id="kBeta">–</div><div class="foot" id="kBetaF"></div></div>
+        <div class="card kpi"><div class="lbl">Storyboards &amp; plots</div><div class="val" id="kPlots">–</div><div class="foot" id="kPlotsF"></div></div>
+      </section>
+
+      <section class="two">
+        <div class="card"><h2>Active people per day</h2><p class="sub">Signed in, edited a plot or used the app that day</p><div class="chart" id="cActive"></div></div>
+        <div class="card"><h2>New people per day</h2><p class="sub">Accounts created and beta sign-ups</p><div class="legend" id="lNew"></div><div class="chart" id="cNew"></div></div>
+      </section>
+
+      <section class="two">
+        <div class="card"><h2>Retention by sign-up week</h2><p class="sub">Share of each week's new accounts that came back in the weeks after</p><div class="retwrap" id="ret"></div></div>
+        <div class="card"><h2>Features used</h2><p class="sub" id="featSub">Times used, and by how many people</p><div class="bars" id="feat"></div></div>
+      </section>
+
+      <section class="card" aria-label="Accounts">
+        <div class="acct-h"><h2>Accounts</h2><input class="search" id="q" type="search" placeholder="Search by email" aria-label="Search accounts by email"><span class="sp"></span><span class="note" id="accN"></span></div>
+        <div class="tblwrap"><table class="acc"><thead><tr><th>Account</th><th>Status</th><th>Joined</th><th>Last active</th><th class="r">Plots</th><th class="r">Storage</th><th class="r">Actions, 30 days</th><th>Sign-in</th></tr></thead><tbody id="accRows"></tbody></table></div>
+        <div class="pager"><button class="btn" id="prev" type="button">Previous</button><span id="pageInfo"></span><button class="btn" id="next" type="button">Next</button></div>
+      </section>
+
+      <section class="card" aria-label="Platform status">
+        <h2>Platform status</h2><p class="sub">Free-tier limits, errors from the app in the last 24 hours</p>
+        <div class="two" style="gap:24px">
+          <div><div id="meters"></div><div class="facts" id="facts"></div></div>
+          <div><div class="pill" id="errPill"></div><ul class="errs" id="errs" style="margin-top:10px"></ul>
+            <p class="note" style="margin-top:10px">Server logs, sign-in emails and backups: <a href="https://supabase.com/dashboard/project/jwpikfywijqdjfozzmpl" target="_blank" rel="noopener" style="color:inherit">open the Supabase dashboard</a>.</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(()=>{
+const SB_URL='https://jwpikfywijqdjfozzmpl.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cGlrZnl3aWpxZGpmb3p6bXBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTEzNDcsImV4cCI6MjEwOTgyNzM0N30.OkUXW_8lyd1ketEJnGs0UFyCnzHNpV_8cyPayDRv0CI';
+const $=s=>document.querySelector(s), el=(t,c,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e; };
+const NS='http://www.w3.org/2000/svg', sv=(t,a)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; };
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const nf=new Intl.NumberFormat('en-GB'), fmt=n=>nf.format(n||0);
+const bytes=b=>{ b=+b||0; if(b<1024) return b+' B'; const u=['KB','MB','GB','TB']; let i=-1; do{ b/=1024; i++; }while(b>=1024&&i<u.length-1); return (b<10?b.toFixed(1):Math.round(b))+' '+u[i]; };
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const dShort=s=>new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+const ago=s=>{ if(!s) return '–'; const m=(Date.now()-new Date(s))/60000; if(m<2) return 'just now'; if(m<60) return Math.round(m)+' min ago'; const h=m/60; if(h<24) return Math.round(h)+' h ago'; const d=h/24; if(d<14){ const n=Math.round(d); return n===1?'yesterday':n+' days ago'; } if(d<60) return Math.round(d/7)+' weeks ago'; return dShort(s); };
+const FEAT={open:'Opened the app',sign_in:'Signed in',setup_create:'New setup',draw_open:'Opened the drawing editor',frame_add:'Added a frame',frame_duplicate:'Duplicated a frame',row_add:'Added a row',drawing_save:'Saved a drawing / storyboard',animatic_play:'Played the animatic',present:'Presented full screen',tap_timing:'Used tap timing',voice_open:'Opened voice recording',voice_record:'Recorded a voice-over',audio_add:'Added music or SFX',export:'Exported',palette_photo:'Palette from a photo'};
+const ICON={good:'<path d="M3.5 8.4 6.6 11.4 12.5 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  warning:'<path d="M8 2.5 14 13H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6.5v3M8 11.2v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  critical:'<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.8 5.8l4.4 4.4M10.2 5.8l-4.4 4.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  quiet:'<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 5v3.2l2 1.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'};
+const pill=(kind,label,color)=>{ const p=el('span','pill'); p.style.color=color; p.innerHTML=`<svg viewBox="0 0 16 16" aria-hidden="true">${ICON[kind]}</svg>`; p.append(document.createTextNode(label)); return p; };
+
+let sb=null, user=null, days=30, page=0, q='', qT=0, data={};
+const PAGE=25;
+
+function gate(text,bad){ $('#app').hidden=true; $('#gate').hidden=false; if(text!=null){ $('#gateText').textContent=text; } $('#gateMsg').textContent=''; $('#gateMsg').classList.toggle('bad',!!bad); }
+async function boot(){
+  if(!window.supabase){ gate('The sign-in library could not load. Check the connection and reload.',true); return; }
+  sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
+  sb.auth.onAuthStateChange((ev,s)=>{ const was=user&&user.id; user=s&&s.user||null; if((user&&user.id)!==was) check(); });
+  const {data:d}=await sb.auth.getSession(); user=d&&d.session&&d.session.user||null; check(); }
+async function check(){
+  if(!user){ gate('Sign in with an admin account.'); return; }
+  const {data:ok,error}=await sb.rpc('is_admin');
+  if(error||!ok){ gate(`${user.email} isn't an admin. Sign in with an admin account, or add this email to the admins table in Supabase.`,true); return; }
+  $('#gate').hidden=true; $('#app').hidden=false; $('#me').textContent=user.email; load(); }
+$('#gateForm').addEventListener('submit',async e=>{ e.preventDefault(); const em=$('#gEmail').value.trim(), pw=$('#gPass').value, m=$('#gateMsg'), b=e.submitter||$('#gateForm button');
+  if(!/.+@.+\..+/.test(em)){ m.textContent='Type your email address.'; m.classList.add('bad'); return; } b.disabled=true; m.classList.remove('bad'); m.textContent='…';
+  const r=pw?await sb.auth.signInWithPassword({email:em,password:pw}):await sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:false}});
+  b.disabled=false; if(r.error){ m.textContent=r.error.message; m.classList.add('bad'); } else m.textContent=pw?'Signed in':'Check your inbox for a sign-in link.'; });
+$('#out').onclick=async()=>{ await sb.auth.signOut(); gate('Signed out.'); };
+document.querySelectorAll('[data-days]').forEach(b=>b.onclick=()=>{ days=+b.dataset.days; document.querySelectorAll('[data-days]').forEach(x=>x.setAttribute('aria-pressed',x===b)); load(); });
+$('#refresh').onclick=()=>load();
+$('#q').addEventListener('input',e=>{ clearTimeout(qT); qT=setTimeout(()=>{ q=e.target.value.trim(); page=0; loadAccounts(); },250); });
+$('#prev').onclick=()=>{ if(page>0){ page--; loadAccounts(); } };
+$('#next').onclick=()=>{ if((page+1)*PAGE<(data.accounts&&data.accounts.total||0)){ page++; loadAccounts(); } };
+
+async function rpc(fn,args){ const {data:d,error}=await sb.rpc(fn,args||{}); if(error) throw error; return d; }
+async function load(){ const m=$('#main'); m.classList.add('loading');
+  try{ const [ov,daily,ret,feat,st]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status')]);
+    Object.assign(data,{ov,daily,ret,feat,st}); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); await loadAccounts();
+    $('#stamp').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+  catch(err){ $('#stamp').textContent='Couldn’t load: '+(err.message||err); }
+  m.classList.remove('loading'); }
+async function loadAccounts(){ try{ data.accounts=await rpc('admin_accounts',{q,lim:PAGE,off:page*PAGE}); renderAccounts(data.accounts); }catch(err){ $('#accN').textContent='Couldn’t load accounts'; } }
+
+function renderKpis(o){
+  $('#kAcc').textContent=fmt(o.accounts);
+  const d=o.accounts_7d-o.accounts_prev7d; const f=$('#kAccF'); f.textContent=''; f.append(Object.assign(el('span','delta '+(d>0?'up':d<0?'down':''),(d>0?'+':'')+fmt(o.accounts_7d)+' this week')), document.createTextNode(` · ${fmt(o.accounts_prev7d)} the week before`));
+  $('#kWau').textContent=fmt(o.wau); $('#kWauF').innerHTML=''; $('#kWauF').append(document.createTextNode(`${fmt(o.dau)} today · ${fmt(o.mau)} this month`));
+  const ch=o.eligible_30d?Math.round(o.churned_30d/o.eligible_30d*100):null; $('#kChurn').textContent=ch==null?'–':ch+'%';
+  $('#kChurnF').textContent=o.eligible_30d?`${fmt(o.churned_30d)} of ${fmt(o.eligible_30d)} accounts older than 30 days haven't been back in 30 days`:'Shows once accounts are older than 30 days';
+  $('#kBeta').textContent=fmt(o.signups); $('#kBetaF').textContent=`+${fmt(o.signups_7d)} this week · ${pct(o.signups_converted,o.signups)}% made an account`;
+  $('#kPlots').textContent=fmt(o.plots); $('#kPlotsF').textContent=`${bytes(o.storage_bytes)} of photos & audio · ${fmt(o.events_7d)} actions this week`; }
+
+/* line chart with a crosshair tooltip; series share one y-axis (all are counts of people) */
+function lineChart(box,rows,series){
+  box.textContent=''; const W=box.clientWidth, H=box.clientHeight; if(!W) return;
+  if(!rows.length||rows.every(r=>series.every(s=>!r[s.key]))){ box.append(el('div','empty','No activity in this period yet')); }
+  const L=34, R=series.length>1?64:12, T=10, B=24, w=Math.max(10,W-L-R), h=H-T-B;
+  const max=Math.max(1,...rows.flatMap(r=>series.map(s=>+r[s.key]||0))); const step=niceStep(max/4), top=Math.ceil(max/step)*step;
+  const x=i=>L+(rows.length<2?w/2:i*w/(rows.length-1)), y=v=>T+h-(v/top)*h;
+  const svg=sv('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':series.map(s=>s.label).join(' and ')+' per day'});
+  for(let v=0;v<=top+1e-9;v+=step){ svg.append(sv('line',{x1:L,x2:L+w,y1:y(v),y2:y(v),stroke:v?css('--grid'):css('--axis'),'stroke-width':1})); const t=sv('text',{x:L-8,y:y(v)+4,'text-anchor':'end','font-size':11,fill:css('--muted'),'font-variant-numeric':'tabular-nums'}); t.textContent=fmt(v); svg.append(t); }
+  const every=Math.max(1,Math.ceil(rows.length/Math.max(2,Math.floor(w/70))));
+  rows.forEach((r,i)=>{ if(i%every&&i!==rows.length-1) return; if(i!==rows.length-1&&rows.length-1-i<every*.6) return; const t=sv('text',{x:x(i),y:H-6,'text-anchor':i===0?'start':i===rows.length-1?'end':'middle','font-size':11,fill:css('--muted')}); t.textContent=dShort(r.day); svg.append(t); });
+  series.forEach(s=>{ const c=css(s.color); const d=rows.map((r,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(+r[s.key]||0).toFixed(1)).join(' ');
+    svg.append(sv('path',{d,fill:'none',stroke:c,'stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'}));
+    if(series.length>1&&rows.length){ const last=rows.length-1, t=sv('text',{x:x(last)+8,y:y(+rows[last][s.key]||0)+4,'font-size':11.5,fill:css('--ink2')}); t.textContent=s.short||s.label; svg.append(t); } });
+  const cross=sv('line',{y1:T,y2:T+h,stroke:css('--axis'),'stroke-width':1,opacity:0}); svg.append(cross);
+  const dots=series.map(s=>{ const c=sv('circle',{r:4,fill:css(s.color),stroke:css('--card'),'stroke-width':2,opacity:0}); svg.append(c); return c; });
+  const hit=sv('rect',{x:L,y:T,width:w,height:h,fill:'transparent',tabindex:0,'aria-label':'Chart data, use arrow keys'}); svg.append(hit); box.append(svg);
+  const tip=el('div','tip'); box.append(tip); let cur=-1;
+  const show=i=>{ if(i<0||i>=rows.length) return; cur=i; const r=rows[i]; cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i)); cross.setAttribute('opacity',1);
+    dots.forEach((d,k)=>{ d.setAttribute('cx',x(i)); d.setAttribute('cy',y(+r[series[k].key]||0)); d.setAttribute('opacity',1); });
+    tip.textContent=''; tip.append(el('div','d',new Date(r.day).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})));
+    series.forEach(s=>{ const row=el('div','r'); const k=el('i'); k.style.background=css(s.color); row.append(k,el('b',null,fmt(r[s.key])),el('span',null,s.label)); tip.append(row); });
+    tip.classList.add('on'); const tw=tip.offsetWidth; let left=x(i)+12; if(left+tw>W) left=x(i)-12-tw; tip.style.left=Math.max(0,left)+'px'; tip.style.top=T+'px'; };
+  const hide=()=>{ cur=-1; tip.classList.remove('on'); cross.setAttribute('opacity',0); dots.forEach(d=>d.setAttribute('opacity',0)); };
+  hit.addEventListener('pointermove',e=>{ const r=svg.getBoundingClientRect(), px=(e.clientX-r.left)*(W/r.width); show(Math.round((px-L)/(w/Math.max(1,rows.length-1)))); });
+  hit.addEventListener('pointerleave',hide); hit.addEventListener('blur',hide);
+  hit.addEventListener('focus',()=>show(rows.length-1)); hit.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft'){ e.preventDefault(); show(Math.max(0,cur-1)); } if(e.key==='ArrowRight'){ e.preventDefault(); show(Math.min(rows.length-1,cur+1)); } }); }
+function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(Math.max(raw,1e-9)))), f=raw/p; return Math.max(1,(f<=1?1:f<=2?2:f<=5?5:10)*p); }
+function renderCharts(){ const rows=data.daily||[];
+  lineChart($('#cActive'),rows,[{key:'active',label:'Active people',color:'--s1'}]);
+  const lg=$('#lNew'); lg.textContent=''; [['New accounts','--s1'],['Beta sign-ups','--s2']].forEach(([n,c])=>{ const s=el('span'); const i=el('i'); i.style.background=css(c); s.append(i,document.createTextNode(n)); lg.append(s); });
+  lineChart($('#cNew'),rows,[{key:'accounts',label:'New accounts',short:'Accounts',color:'--s1'},{key:'signups',label:'Beta sign-ups',short:'Sign-ups',color:'--s2'}]); }
+let rT=0; new ResizeObserver(()=>{ clearTimeout(rT); rT=setTimeout(()=>{ if(data.daily) renderCharts(); },80); }).observe(document.body);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(data.daily){ renderCharts(); renderRetention(data.ret); renderFeatures(data.feat); renderStatus(data.st); } });
+
+function renderRetention(rows){ const box=$('#ret'); box.textContent=''; rows=(rows||[]).filter(r=>r.size>0);
+  if(!rows.length){ box.append(el('div','empty','Shows once people have signed up')); box.firstChild.style.height='140px'; return; }
+  const n=Math.max(...rows.map(r=>r.weeks.length)), t=el('table','ret'), hd=el('tr'); hd.append(el('th',null,'Joined'),el('th',null,'People')); for(let i=0;i<n;i++) hd.append(el('th',null,i?'W'+i:'W0')); t.append(hd);
+  const steps=['--q1','--q2','--q3','--q4','--q5','--q6','--q7'];
+  rows.forEach(r=>{ const tr=el('tr'); tr.append(el('td','c','Week of '+dShort(r.week)),el('td','n',fmt(r.size)));
+    for(let i=0;i<n;i++){ const td=el('td'); if(i<r.weeks.length){ const p=pct(r.weeks[i],r.size); td.className='v'; td.textContent=p+'%'; const k=Math.min(6,Math.floor(p/100*6.999)); td.style.background=css(steps[k]); td.style.color=k>=4?'#ffffff':'#0b0b0b'; td.title=`Joined week of ${dShort(r.week)}: ${r.weeks[i]} of ${r.size} active in week ${i}`; } tr.append(td); }
+    t.append(tr); });
+  box.append(t); }
+
+function renderFeatures(rows){ const box=$('#feat'); box.textContent=''; $('#featSub').textContent=`Times used in the last ${days} days, and by how many people`;
+  rows=(rows||[]).filter(r=>r.name!=='open'&&r.name!=='sign_in');
+  if(!rows.length){ const e=el('div','empty','No usage yet. Events are logged once people sign in and use the app'); e.style.height='140px'; box.append(e); return; }
+  const max=Math.max(...rows.map(r=>r.count)); rows.slice(0,12).forEach(r=>{ const b=el('div','bar'); b.title=`${FEAT[r.name]||r.name}: ${r.count} times by ${r.users} ${r.users===1?'person':'people'}`;
+    const t=el('div','t'); const i=el('i'); i.style.width=Math.max(2,r.count/max*100)+'%'; t.append(i);
+    const v=el('div','v',fmt(r.count)+' '); v.append(el('small',null,`· ${fmt(r.users)} ${r.users===1?'person':'people'}`)); b.append(el('div','n',FEAT[r.name]||r.name),t,v); box.append(b); }); }
+
+function level(p){ return p>=90?['critical','Near the limit','--critical']:p>=70?['warning','Getting full','--warning']:['good','Plenty of room','--good']; }
+function renderStatus(s){ const m=$('#meters'); m.textContent='';
+  [['Database',s.db_bytes,s.db_limit],['Photo & audio storage',s.storage_bytes,s.storage_limit]].forEach(([n,v,lim])=>{ const p=Math.min(100,v/lim*100), [k,lbl,c]=level(p);
+    const d=el('div','meter'), row=el('div','row'), a=el('div'); a.append(el('b',null,n+' '),pill(k,lbl,css(c))); row.append(a,el('span',null,`${bytes(v)} of ${bytes(lim)} · ${p<1&&p>0?'<1':Math.round(p)}%`));
+    const t=el('div','t'), i=el('i'); i.style.width=Math.max(p,.8)+'%'; i.style.background=css(c); t.append(i); d.append(row,t); m.append(d); });
+  const f=$('#facts'); f.textContent=''; [['Last sign-in',ago(s.last_signin)],['Last edit synced',ago(s.last_edit)],['Unconfirmed accounts',fmt(s.unconfirmed)],['People hit by errors',fmt(s.errors_users_24h)]].forEach(([a,b])=>{ const d=el('div'); d.append(el('b',null,b),document.createTextNode(a)); f.append(d); });
+  const errs=(s.client_errors_24h||0)+(s.sync_errors_24h||0), ep=$('#errPill'); ep.textContent='';
+  ep.append(errs?pill(errs>20?'critical':'warning',`${fmt(s.client_errors_24h)} app errors, ${fmt(s.sync_errors_24h)} sync errors in 24 h`,css(errs>20?'--critical':'--serious')):pill('good','No errors reported in the last 24 hours',css('--good')));
+  const ul=$('#errs'); ul.textContent=''; (s.recent_errors||[]).forEach(e=>{ const li=el('li'); li.append(el('time',null,ago(e.at)),el('code',null,(e.name==='sync_error'?'Sync: ':'App: ')+((e.meta&&e.meta.m)||'(no message)'))); ul.append(li); }); ul.hidden=!ul.children.length; }
+
+function status(last){ const d=(Date.now()-new Date(last))/864e5; return d<=7?['good','Active','--good']:d<=30?['quiet','Quiet','--muted']:['critical','Churned','--critical']; }
+function renderAccounts(a){ const tb=$('#accRows'); tb.textContent=''; const rows=a&&a.rows||[];
+  $('#accN').textContent=q?`${fmt(a.total)} matching`:`${fmt(a.total)} accounts`;
+  if(!rows.length){ const tr=el('tr'), td=el('td',null,q?'No accounts match that search':'No accounts yet'); td.colSpan=8; td.style.color=css('--muted'); td.style.textAlign='center'; td.style.padding='24px'; tr.append(td); tb.append(tr); }
+  rows.forEach(r=>{ const tr=el('tr'), e=el('td','e'); e.append(document.createTextNode(r.email||'(no email)')); if(r.is_admin) e.append(el('span','adm','ADMIN')); if(!r.confirmed) e.append(el('small',null,'Email not confirmed yet'));
+    const [k,l,c]=status(r.last_active), st=el('td'); st.append(pill(k,l,css(c)));
+    const lj=el('td',null,dShort(r.created_at)); lj.title=new Date(r.created_at).toLocaleString('en-GB');
+    const la=el('td',null,ago(r.last_active)); la.title=r.last_active?new Date(r.last_active).toLocaleString('en-GB'):'';
+    tr.append(e,st,lj,la,el('td','r',fmt(r.plots)),el('td','r',bytes(r.storage_bytes)),el('td','r',fmt(r.events_30d)),el('td',null,{email:'Email',google:'Google',azure:'Microsoft',apple:'Apple'}[r.provider]||r.provider)); tb.append(tr); });
+  const from=a.total?page*PAGE+1:0, to=Math.min(a.total,(page+1)*PAGE); $('#pageInfo').textContent=a.total?`${from}–${to} of ${fmt(a.total)}`:'';
+  $('#prev').disabled=page===0; $('#next').disabled=to>=a.total; }
+
+boot();
+})();
+</script>
+</body>
+</html>

@@ -104,7 +104,7 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .acct{display:flex;flex-direction:column;gap:12px;width:min(380px,calc(100vw - 48px))}.acct-h{display:flex;align-items:center;justify-content:space-between}.acct-h h3{margin:0;font-size:17px}.acct p{margin:0}
 .acct-prov{display:flex;flex-direction:column;gap:8px}.acct-p{justify-content:center;gap:10px;height:40px}.acct-p svg{width:18px;height:18px}
 .acct-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.acct-or::before,.acct-or::after{content:'';flex:1;height:1px;background:var(--line)}
-.acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.acct-msg.bad{color:#e5484d}
+.acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.acct-msg.bad{color:#e5484d}.acct-legal{font-size:12px;margin:2px 0 0}.acct-legal a{color:inherit}
 .acct-me{display:flex;align-items:center;gap:10px}.acct-me img,.acct-me .acct-i{width:36px;height:36px;font-size:15px}.acct-me small{display:block}
 .modmenu{width:min(420px,calc(100vw - 16px));gap:10px}.modmenu .extopts{flex-wrap:wrap}.modmenu .extopts button{width:76px;position:relative;padding-bottom:9px}
 .modmenu .extopts button.on{background:color-mix(in srgb,var(--accent) 14%,var(--field));box-shadow:inset 0 0 0 1.5px var(--accent)}
@@ -4118,7 +4118,7 @@ function openDiagram(id,keepView){ activeLayer=null; isoSet=null; isoAmt=0; setT
   renderHeader(); renderInspector();
   if(!keepView) requestAnimationFrame(fit); else draw();
 }
-function createDiagram(tplKey, base){
+function createDiagram(tplKey, base){ track('setup_create',{t:String(tplKey||'blank').slice(0,24)});
   if(readOnly) return;
   const t=tplOf(tplKey), now=Date.now(), id=uid();
   const inShoot = base ? Object.values(all).filter(d=>(d.shoot||'')===(base.shoot||'')).length : 0;
@@ -6096,7 +6096,7 @@ addEventListener('keydown',e=>{
     e.preventDefault(); e.stopImmediatePropagation(); presentStep(e.key==='ArrowRight'||e.key==='PageDown'?1:-1); }
 },true);
 const fname=ext=>(`${cur.shoot?cur.shoot+' - ':''}${cur.title||'Setup'}`.replace(/[\\/:*?"<>|]+/g,'').trim()||'lighting-plot')+'.'+ext;
-async function saveFile(name,data,previewUrl){
+async function saveFile(name,data,previewUrl){ track('export',{ext:String(name||'').split('.').pop().slice(0,6)});
   if(dlApi){ try{ await dlApi.save({filename:name,data}); return true; }catch(e){ if(e&&e.code==='declined') return false; if(e&&e.code==='rate_limited'){ toast('Another save is open. Try again in a moment.'); return false; } } }
   if(previewUrl){ showModal(`<div style="display:flex;align-items:center"><h3 style="margin:0;font-size:16px;flex:1">Right-click or long-press to save</h3><button class="ib" data-close aria-label="Close">${ic('close')}</button></div><img src="${previewUrl}" alt="Exported lighting plot">`); return false; }
   try{ const u=URL.createObjectURL(data), a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),8000); return true; }
@@ -6810,7 +6810,7 @@ const DRAW_AREA=[['rect','Rectangle select','<rect x="4" y="5" width="16" height
 function drawName(o){ if(o.t==='img') return (o.loc?'Location · ':'')+(o.nm||'Photo'); if(o.t==='fig'){ const F=DRAW_FIGS.find(q=>q[0]===o.k); return F?F[1]:'Figure'; } if(o.t==='text') return '“'+String(o.text).split('\n')[0].slice(0,22)+(String(o.text).length>22?'…':'')+'”';
   return {rough:'Rough pencil',pen:'Brush stroke',marker:'Marker',eraser:'Eraser',line:'Line',arrow:'Arrow',rect:'Rectangle',ellipse:'Ellipse'}[o.t]||'Object'; }
 function drawOpIcon(o){ if(o.t==='img'){ const u=imgURL(o.src); return u?`<img src="${esc(u)}" alt="">`:drawIcon(DRAW_PHOTO_ICON); } if(o.t==='fig') return figIcon(o.k); const T=DRAW_TOOLS.find(q=>q[0]===o.t); return drawIcon(T?T[3]:DRAW_SELECT_ICON); }
-function openDraw(it){ if(readOnly||!it) return; closeFloating&&closeFloating();
+function openDraw(it){ if(readOnly||!it) return; track('draw_open'); closeFloating&&closeFloating();
   const saved=it.p.draw&&Array.isArray(it.p.draw.ops)?it.p.draw:null;
   const W=saved?saved.W:1600, H=saved?saved.H:1200;
   let ops=saved?JSON.parse(JSON.stringify(saved.ops)):[]; { let k=ops.length-1; while(k>=0&&ops[k].t!=='clear') k--; ops=ops.slice(k+1); }   /* older drawings kept a "clear" step */
@@ -7011,7 +7011,7 @@ function drawPalMenu(anchor,items){ const E=drawEd, el=E.el; let m=el.querySelec
   const r=anchor.getBoundingClientRect(), t=el.getBoundingClientRect(); m.style.top=(r.bottom-t.top+4)+'px'; m.style.left=Math.max(8,Math.min(r.right-t.left-m.offsetWidth,t.width-m.offsetWidth-8))+'px';
   m.addEventListener('click',e=>{ const b=e.target.closest('[data-mi]'); if(!b||b.disabled) return; const it=items[+b.dataset.mi]; m.remove(); it[1](); });
   setTimeout(()=>{ const off=e=>{ if(!e.target.closest('.pal-menu')){ m.remove(); removeEventListener('pointerdown',off,true); } }; addEventListener('pointerdown',off,true); },0); }
-function drawPalFromPhoto(){ const E=drawEd, pg=E.pages[E.pi], sel=drawSelOps().find(o=>o.t==='img'), pick=sel||pg.ops.find(o=>o.t==='img'&&!o.h), ref=(pg.refs||[])[0]||(E.grefs||[])[0], src=pick?pick.src:ref&&ref.src, nm=pick?pick.nm:ref&&ref.nm;
+function drawPalFromPhoto(){ track('palette_photo'); const E=drawEd, pg=E.pages[E.pi], sel=drawSelOps().find(o=>o.t==='img'), pick=sel||pg.ops.find(o=>o.t==='img'&&!o.h), ref=(pg.refs||[])[0]||(E.grefs||[])[0], src=pick?pick.src:ref&&ref.src, nm=pick?pick.nm:ref&&ref.nm;
   if(!src){ toast('Place a photo first (a location photo, a reference, or one under the drawing) and this makes a palette from it'); return; }
   const im=drawImgGet(src); const go=()=>{ let cols=[]; try{ cols=paletteOf(im,6); }catch(e){} if(!cols.length){ toast('Couldn’t read the colours of that photo'); return; }
     const K=brandKit(), now=Date.now(), g={id:uid(),name:(nm||'Photo')+' palette',colors:cols.map(hx=>({id:uid(),hex:hx,name:colourName(hx),t:now}))}; K.groups.unshift(g); brandSave(); drawKitTab(); drawPalFlash(g.id); toast(`${cols.length} colours taken from ${nm?'“'+nm+'”':'the photo'}`); };
@@ -7746,7 +7746,7 @@ function drawOverview(){ const E=drawEd; drawCommitText(); const ob=E.el.querySe
   const box=E.el.querySelector('.de-sibs'), pp=E.el.querySelector('.de-paper'); box.classList.add('dragging','gliding'); pp.classList.add('fd-anim'); drawFit(); clearTimeout(box._fx); box._fx=setTimeout(()=>{ box.classList.remove('dragging','gliding'); pp.classList.remove('fd-anim'); },340);
   if(ob) ob.classList.add('on'); toast('Overview · drag frames between rows, click one to draw on it · Overview again goes back'); }
 /* player: animatic (plays with timing + transitions), present (step through, captions), tap (set timing by tapping) */
-function drawPlayer(mode){ const E=drawEd; if(!E||E.player) return; drawCommitText(); drawPageSync();
+function drawPlayer(mode){ const E=drawEd; if(!E||E.player) return; track({play:'animatic_play',present:'present',tap:'tap_timing',rec:'voice_open'}[mode]||'player',{frames:E.pages.length}); drawCommitText(); drawPageSync();
   const durs=E.pages.map(drawDur), starts=[]; let acc=0; durs.forEach(d=>{ starts.push(acc); acc+=d; });
   const I=DRAW_TL_IC, ov=document.createElement('div'); ov.className='de-player pl-'+mode;
   ov.innerHTML=`<div class="pl-stage"><canvas></canvas><div class="pl-hint"></div><div class="pl-rev" hidden></div></div><div class="pl-cap"></div>
@@ -7841,7 +7841,7 @@ function drawAudPick(){ const inp=document.createElement('input'); inp.type='fil
 async function drawAudAdd(files){ const E=drawEd; if(!E) return 0; const at0=E.pages.slice(0,E.pi).reduce((a,pg)=>a+drawDur(pg),0); let n=0, last=null;
   for(const f of files){ if(!/^audio\//.test(f.type)&&!/\.(mp3|wav|m4a|aac|ogg|oga|flac|webm|aif|aiff)$/i.test(f.name||'')) continue; let info; try{ info=await audAnalyse(f); }catch(e){ toast(`Couldn’t read ${f.name||'that file'} as audio`); continue; }
     const src=await storeAudio(f), kind=info.dur>12?'music':'sfx'; last={id:uid(),src,nm:(f.name||'Audio').replace(/\.[^.]+$/,''),kind,at:Math.round(at0*10)/10,len:info.dur,full:info.dur,off:0,vol:kind==='music'?.7:1,pk:info.pk}; (E.audio=E.audio||[]).push(last); n++; }
-  if(n&&drawEd===E){ E.dirty=true; E.audSel=last.id; drawTimeline(); toast(n>1?`${n} audio clips added at frame ${E.pi+1}`:`${DRAW_AUD_K[last.kind][1]} added at frame ${E.pi+1} · drag it to move, drag its ends to trim, click the tag to change the type`); } return n; }
+  if(n&&drawEd===E){ track('audio_add',{n,k:last.kind}); E.dirty=true; E.audSel=last.id; drawTimeline(); toast(n>1?`${n} audio clips added at frame ${E.pi+1}`:`${DRAW_AUD_K[last.kind][1]} added at frame ${E.pi+1} · drag it to move, drag its ends to trim, click the tag to change the type`); } return n; }
 function drawAudDel(id){ const E=drawEd, i=(E.audio||[]).findIndex(a=>a.id===id); if(i<0) return; const a=E.audio.splice(i,1)[0]; E.audSel=null; E.dirty=true; drawTimeline(); toast(`“${a.nm}” removed from the timeline`); }
 function drawAudLanes(tl,pps){ const E=drawEd, track=tl.querySelector('.tl-track'); let box=tl.querySelector('.tl-aud');
   if(!box){ box=document.createElement('div'); box.className='tl-aud'; track.appendChild(box);
@@ -7890,13 +7890,13 @@ async function drawRecDone(P){ const E=drawEd, keep=P.keepOnStop!==false, blob=n
   if(!keep||blob.size<600){ if(E&&E.player===P) drawPlayerCmd('close'); if(keep) toast('Nothing was recorded'); return; }
   P.ov.querySelector('.pl-hint').textContent='Saving the recording…'; let info={dur:secs,pk:[]}; try{ info=await audAnalyse(blob); }catch(e){}
   const src=await storeAudio(blob); if(!drawEd) return; const D=drawEd, n=(D.audio=D.audio||[]).filter(a=>a.kind==='voice').length+1, clip={id:uid(),src,nm:`Voice ${n}`,kind:'voice',at:Math.round(P.recAt*10)/10,len:info.dur||secs,full:info.dur||secs,off:0,vol:1,pk:info.pk};
-  D.audio.push(clip); D.audSel=clip.id; D.dirty=true; if(D.player===P) drawPlayerCmd('close'); drawTimeline(); toast(`Voice-over recorded · ${clip.len.toFixed(1)} s from frame ${P.start+1} · drag it on the timeline to move it`); }
+  D.audio.push(clip); D.audSel=clip.id; track('voice_record',{s:Math.round(clip.len)}); D.dirty=true; if(D.player===P) drawPlayerCmd('close'); drawTimeline(); toast(`Voice-over recorded · ${clip.len.toFixed(1)} s from frame ${P.start+1} · drag it on the timeline to move it`); }
 /* frames */
 function drawPageSync(){ const E=drawEd, pg=E.pages[E.pi]; pg.ops=E.ops; pg.hist=E.hist; pg.fut=E.fut; }
 function drawGoPage(i){ const E=drawEd; if(i<0||i>=E.pages.length||i===E.pi&&E.ops===E.pages[i].ops) { return; } drawCommitText(); if(E.pi>=0&&E.pages[E.pi]) drawPageSync(); E.pi=i; const pg=E.pages[i]; E.ops=pg.ops; E.hist=pg.hist; E.fut=pg.fut; drawSelClear(); E.region=null;
   drawRender(); drawUnder(); drawSyncUI(); drawStrip(); drawRefPanel(); drawSibs(); drawTimeline(); }
-function drawAddRow(){ const E=drawEd, G=drawGrid(false); E.rowAdd=true; drawAddPage(false,E.pages.length,G.length); E.rowAdd=false; if(!E.quietPage) toast(`Row ${G.length+1} started · drag frames into it`); }
-function drawAddPage(dup,at,row){ const E=drawEd; drawCommitText(); drawPageSync(); const cur0=E.pages[E.pi]; const at2=at==null?E.pi+1:at, row2=row==null?(cur0.row|0):row, oc=drawCell(E.pi,false);
+function drawAddRow(){ track('row_add'); const E=drawEd, G=drawGrid(false); E.rowAdd=true; drawAddPage(false,E.pages.length,G.length); E.rowAdd=false; if(!E.quietPage) toast(`Row ${G.length+1} started · drag frames into it`); }
+function drawAddPage(dup,at,row){ const E=drawEd; if(!E.quietPage) track(dup?'frame_duplicate':'frame_add'); drawCommitText(); drawPageSync(); const cur0=E.pages[E.pi]; const at2=at==null?E.pi+1:at, row2=row==null?(cur0.row|0):row, oc=drawCell(E.pi,false);
   const pg=dup?{ops:JSON.parse(JSON.stringify(cur0.ops)).map(o=>(o.i=++E.nid,o)), info:Object.assign({},cur0.info), ref:cur0.ref?{src:cur0.ref.src,op:cur0.ref.op,out:cur0.ref.out,hide:cur0.ref.hide}:undefined, refs:(cur0.refs||[]).map(r=>Object.assign({},r)), hist:[], fut:[]}:{ops:[], info:{cam:cur0.info.cam||'', lens:cur0.info.lens||''}, hist:[], fut:[]};
   pg.row=row2; const same=at2===E.pi+1&&row2===(cur0.row|0); E.pages.splice(at2,0,pg); E.dirty=true; drawLoadRef(pg);
   if(!same){ const nc=drawCell(at2,false); E.pan[0]+=(nc[0]-oc[0])*drawSibStep()*E.scale; E.pan[1]+=(nc[1]-oc[1])*drawRowStep(); }
@@ -7998,7 +7998,7 @@ async function closeDraw(save){ const E=drawEd; if(!E) return; drawCommitText();
       await Promise.race([Promise.all(ims.map(im=>im.complete?0:im.decode().catch(()=>0))),new Promise(r=>setTimeout(r,4000))]); }
     const out=drawCompose();
     const blob=await new Promise(r=>out.toBlob(r,'image/png')); if(!blob){ toast('Couldn’t save the drawing'); return; }
-    checkpoint(); it.p.name=(E.name||'Drawing').trim()||'Drawing';
+    checkpoint(); it.p.name=(E.name||'Drawing').trim()||'Drawing'; track('drawing_save',{frames:E.pages.length,rows:new Set(E.pages.map(p=>p.row|0)).size,audio:(E.audio||[]).length});
     const clean=ops=>ops.map(o=>{ const c=Object.assign({},o); delete c.i; return c; });   /* hidden layers stay hidden, and stay editable */
     const pages=E.pages.map(pg=>{ const q={ops:clean(pg.ops), info:pg.info||{}}; if(pg.row) q.row=pg.row; if(pg.tr) q.tr=pg.tr; if(pg.ref) q.ref={src:pg.ref.src, op:pg.ref.op, out:!!pg.ref.out, hide:!!pg.ref.hide}; if(pg.refs&&pg.refs.length) q.refs=pg.refs.map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})); return q; });
     it.p.draw={W:E.W,H:E.H,G:E.G,audio:(E.audio||[]).map(a=>({id:a.id,src:a.src,nm:a.nm,kind:a.kind,at:a.at,len:a.len,full:a.full,off:a.off||0,vol:a.vol==null?1:a.vol,pk:a.pk||[]})),rowTitles:(E.rowTitles||[]).slice(0,drawGrid(false,null).length).map(t=>(t||'').trim()),grefs:(E.grefs||[]).map(r=>({src:r.src,iw:r.iw,ih:r.ih,nm:r.nm,show:!!r.show})),art:!!E.art,artDir:E.artDir,showLoc:E.showLoc,showRefs:E.showRefs,title:out._title||null,bg:E.bg,guide:E.guide,color:E.color,size:E.size,ops:pages[0].ops,pages};
@@ -8228,7 +8228,7 @@ function mdToHtml(md){ if(!md) return ''; const L=String(md).replace(/\r/g,'').r
 var bdDepth=0, saveDocT={};
 function saveDoc(id){ const d=all[id]; if(!d) return; clearTimeout(saveDocT[id]); if(!dbApi) cloudPush(id);
   saveDocT[id]=setTimeout(async()=>{ const data=JSON.parse(JSON.stringify(d)); try{ if(dbApi) await dbApi.collection('diagrams').doc(id).set(data); else localWrite(); }catch(e){ setStatus('Retrying save','warn'); setTimeout(()=>saveDoc(id),2000); } },400); }
-function createChildSetup(){ const now=Date.now(), id=uid(), n=Object.values(all).filter(d=>d.parent===cur.id).length;
+function createChildSetup(){ track('setup_create',{t:'child'}); const now=Date.now(), id=uid(), n=Object.values(all).filter(d=>d.parent===cur.id).length;
   all[id]={title:'Setup '+String.fromCharCode(65+Math.min(25,n)),shoot:cur.shoot||'',client:cur.client||'',date:cur.date||'',location:cur.location||'',crew:cur.crew||'',notes:'',parent:cur.id,items:[],createdAt:now,updatedAt:now};
   saveDoc(id); return id; }
 function openBoardCard(it){ const d=it&&it.p.target&&all[it.p.target]; if(!d){ toast('That setup no longer exists'); return; } if(dirty) flush(); openDiagram(it.p.target); }
@@ -9160,9 +9160,10 @@ function sbLoad(){ return new Promise((res,rej)=>{ if(window.supabase&&window.su
 async function sbInit(){ const c=sbConf(); renderAccount(); if(!c||mode!=='local') return;
   try{ await sbLoad(); sb=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}}); }
   catch(e){ sb=null; renderAccount(); return; }
-  sb.auth.onAuthStateChange((ev,session)=>{ const was=sbUser&&sbUser.id; sbUser=session&&session.user||null; renderAccount();
+  sb.auth.onAuthStateChange((ev,session)=>{ const was=sbUser&&sbUser.id; sbUser=session&&session.user||null; renderAccount(); if(sbUser) trackOpen(); if(ev==='SIGNED_IN'&&sbUser&&sbUser.id!==was) track('sign_in');
     if(sbUser&&sbUser.id!==was) cloudSync(true); if(!sbUser&&was) setStatus('Saved in this browser'); });
-  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); if(sbUser) cloudSync(true);
+  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); if(sbUser){ cloudSync(true); trackOpen(); }
+  if(/[?&]signin\b/.test(location.search)){ if(!sbUser) setTimeout(openAccount,300); try{ history.replaceState(null,'',location.pathname+location.search.replace(/[?&]signin\b=?[^&]*/,'').replace(/^&/,'?')+location.hash); }catch(e){} }   /* "Sign in" on the landing page opens the dialog */
   addEventListener('focus',()=>{ if(sbUser&&Date.now()-sbLastSync>15000) cloudSync(false); }); }
 const sbName=u=>u&&((u.user_metadata&&(u.user_metadata.full_name||u.user_metadata.name))||u.email||'Account');
 function renderAccount(){ const b=$('#acctBtn'); if(!b) return; const u=sbUser;
@@ -9183,8 +9184,16 @@ async function cloudSync(first){ if(!sb||!sbUser||sbBusy) return; sbBusy=true; s
     if(curChanged&&cur) openDiagram(cur.id); else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); }
     if(!$('#drawer').hidden) renderDrawer();
     setStatus('Synced to your account'); if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`); }
-  catch(e){ setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); }
+  catch(e){ setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); track('sync_error',{m:String(e&&e.message||e).slice(0,120)}); }
   sbBusy=false; }
+/* usage events: which features get used. Only when signed in, name + time + account, never any content. Sent in small batches */
+var sbQ=[], sbQT=0;
+function track(name,meta){ try{ if(!sb||!sbUser) return; sbQ.push({name,meta:meta||null}); if(sbQ.length>60) sbQ.splice(0,sbQ.length-60); clearTimeout(sbQT); sbQT=setTimeout(trackFlush,8000); }catch(e){} }
+async function trackFlush(){ if(!sb||!sbUser||!sbQ.length) return; const rows=sbQ.splice(0).map(r=>({user_id:sbUser.id,name:r.name,meta:r.meta})); try{ const {error}=await sb.from('events').insert(rows); if(error) throw error; }catch(e){} }
+function trackOpen(){ if(!sbUser) return; const k=new Date().toISOString().slice(0,10)+':'+sbUser.id; try{ if(localStorage.getItem('setplot-ev-open')===k) return; localStorage.setItem('setplot-ev-open',k); }catch(e){} track('open',{w:Math.round(innerWidth/100)*100}); }   /* one "open" per person per day: enough for active users and retention */
+addEventListener('pagehide',()=>{ trackFlush(); });
+addEventListener('error',e=>{ const m=String(e&&e.message||'').slice(0,140); if(m&&!/ResizeObserver|Script error/i.test(m)) track('client_error',{m,l:e.lineno||0}); });
+addEventListener('unhandledrejection',e=>{ const m=String(e&&e.reason&&(e.reason.message||e.reason)||'').slice(0,140); if(m) track('client_error',{m,p:1}); });
 /* photos and audio live in this browser (IndexedDB); signed in, they also go to the account's private "media" bucket so a plot opens complete on any device */
 const SB_BUCKET='media';
 function sbUpDone(){ try{ return new Set(JSON.parse(localStorage.getItem('setplot-sb-up')||'[]')); }catch(e){ return new Set(); } }
@@ -9195,7 +9204,7 @@ async function sbMediaUp(doc){ if(!sb||!sbUser||!doc) return; const keys=[...new
 async function sbMediaGet(k){ if(!sb||!sbUser) return null; try{ const {data,error}=await sb.storage.from(SB_BUCKET).download(sbUser.id+'/'+k); if(error||!data) return null; IDB.put(k,data).catch(()=>{}); return data; }catch(e){ return null; } }
 function cloudPush(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sbPushT[id]=setTimeout(async()=>{ const d=all[id]; if(!d) return;
   try{ const {error}=await sb.from('plots').upsert({owner:sbUser.id,id,doc:JSON.parse(JSON.stringify(d)),updated_at:new Date(d.updatedAt||Date.now()).toISOString()},{onConflict:'owner,id'}); if(error) throw error; setStatus('Synced to your account'); sbMediaUp(d); }
-  catch(e){ setStatus('Offline · will sync later','warn'); } },900); }
+  catch(e){ setStatus('Offline · will sync later','warn'); if(navigator.onLine!==false) track('sync_error',{m:String(e&&e.message||e).slice(0,120),push:1}); } },900); }
 function cloudDelete(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sb.from('plots').delete().eq('owner',sbUser.id).eq('id',id).then(()=>{},()=>{}); }
 /* the sign-in dialog */
 const PROV=[['google','Google','<path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" fill="#4285F4"/><path d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z" fill="#34A853"/><path d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z" fill="#FBBC05"/><path d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z" fill="#EA4335"/>'],
@@ -9218,7 +9227,7 @@ function accountHTML(){ const c=sbConf(), close=`<button class="ib" data-close a
     <input class="fi" type="email" data-acc-email placeholder="you@example.com" autocomplete="email">
     <input class="fi" type="password" data-acc-pass placeholder="Password (leave empty for a sign-in link)" autocomplete="current-password">
     <div class="acct-row"><button class="btn primary" data-acc="email">Continue</button><button class="btn ghost" data-acc="signup">Create account</button></div>
-    <p class="muted acct-msg" id="acctMsg"></p></div>`; }
+    <p class="muted acct-msg" id="acctMsg"></p><p class="muted acct-legal">By signing in you agree to how we handle your data in the <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p></div>`; }
 function openAccount(){ showModal(accountHTML()); }
 const acctMsg=(t,bad)=>{ const m=$('#acctMsg'); if(m){ m.textContent=t; m.classList.toggle('bad',!!bad); } };
 const sbRedirect=()=>location.origin+location.pathname;
