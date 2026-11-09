@@ -6749,7 +6749,7 @@ const IDB=(()=>{ let dbp=null; const open=()=>dbp||(dbp=new Promise((res,rej)=>{
   return { put:(k,v)=>tx('readwrite',st=>st.put(v,k)), get:k=>tx('readonly',st=>st.get(k)) }; })();
 function imgURL(src){ if(!src) return null; if(src.startsWith('asset:')) return '/_blob/'+src.slice(6); if(src.startsWith('data:')) return src;
   const c=IMG[src]; if(c) return c.url||null;
-  if(src.startsWith('idb:')){ IMG[src]={state:'loading'}; IDB.get(src.slice(4)).then(b=>{ IMG[src]=b?{url:URL.createObjectURL(b),state:'ok'}:{state:'missing'}; imgRefresh(src); }).catch(()=>{ IMG[src]={state:'missing'}; imgRefresh(src); }); }
+  if(src.startsWith('idb:')){ IMG[src]={state:'loading'}; IDB.get(src.slice(4)).then(b=>b||sbMediaGet(src.slice(4))).then(b=>{ IMG[src]=b?{url:URL.createObjectURL(b),state:'ok'}:{state:'missing'}; imgRefresh(src); }).catch(()=>{ IMG[src]={state:'missing'}; imgRefresh(src); }); }
   return null; }
 function imgState(src){ if(!src) return 'empty'; if(src.startsWith('asset:')||src.startsWith('data:')) return (IMG[src]&&IMG[src].state)||'ok'; return (IMG[src]&&IMG[src].state)||'loading'; }
 function imgSig(src){ const c=src&&IMG[src]; return (src||'')+'|'+(c?c.state+(c.url?1:0):''); }
@@ -7831,7 +7831,7 @@ function drawPlayerKey(e){ const P=drawEd.player; e.stopPropagation(); if(e.stop
   else if(k==='Home'){ P.t=0; P.stopAt=null; drawPlayerPaint(); } else if(l==='f') drawPlayerCmd('fs'); else if(l==='k'||l==='p') drawPlayerCmd('play'); }
 /* ---------- audio: recorded voice-over, music and sound effects on the timeline ---------- */
 const AUD={}, DRAW_AUD_K={voice:['VO','Voice-over','#5fd38d'],music:['MUSIC','Music','#a78bfa'],sfx:['SFX','Sound effect','#f5a524']};
-function audURL(src){ if(!src) return Promise.resolve(null); if(AUD[src]) return AUD[src]; if(src.startsWith('idb:')) return AUD[src]=IDB.get(src.slice(4)).then(b=>b?URL.createObjectURL(b):null).catch(()=>null); if(src.startsWith('asset:')) return Promise.resolve('/_blob/'+src.slice(6)); return Promise.resolve(src); }
+function audURL(src){ if(!src) return Promise.resolve(null); if(AUD[src]) return AUD[src]; if(src.startsWith('idb:')) return AUD[src]=IDB.get(src.slice(4)).then(b=>b||sbMediaGet(src.slice(4))).then(b=>b?URL.createObjectURL(b):null).catch(()=>null); if(src.startsWith('asset:')) return Promise.resolve('/_blob/'+src.slice(6)); return Promise.resolve(src); }
 async function storeAudio(blob){ const key=uid()+Date.now().toString(36); await IDB.put(key,blob); AUD['idb:'+key]=Promise.resolve(URL.createObjectURL(blob)); return 'idb:'+key; }   /* audio stays in this browser, like photos without a cloud store */
 async function audAnalyse(blob){ const buf=await blob.arrayBuffer(), AC=window.AudioContext||window.webkitAudioContext, ac=new AC();
   try{ const ab=await ac.decodeAudioData(buf), ch=ab.getChannelData(0), N=Math.min(600,Math.max(40,Math.round(ab.duration*24))), step=Math.max(1,Math.floor(ch.length/N)), pk=[];
@@ -9151,7 +9151,8 @@ addEventListener('scroll',hideTip,true); addEventListener('blur',hideTip);
 
 /* ================= account: sign in (Supabase) and keep plots in the cloud ================= */
 // Fill these two in once, or paste them in Account → Set up. The anon key is public by design; the database rules protect the data.
-const SB_URL_DEFAULT='', SB_KEY_DEFAULT='';
+const SB_URL_DEFAULT='https://jwpikfywijqdjfozzmpl.supabase.co', SB_KEY_DEFAULT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cGlrZnl3aWpxZGpmb3p6bXBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTEzNDcsImV4cCI6MjEwOTgyNzM0N30.OkUXW_8lyd1ketEJnGs0UFyCnzHNpV_8cyPayDRv0CI';   /* SetPlot EU project (Frankfurt) · public anon key, safe in the page: the database rules keep each person's plots private */
+const SB_PROVIDERS=[];   /* add 'google', 'azure' or 'apple' once that provider is switched on in Supabase → Authentication → Sign In / Providers */
 const SB_LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
 var sb=null, sbUser=null, sbBusy=false, sbPushT={}, sbLastSync=0;
 function sbConf(){ let c=null; try{ c=JSON.parse(localStorage.getItem('setplot-sb')||'null'); }catch(e){} const url=(c&&c.url)||SB_URL_DEFAULT, key=(c&&c.key)||SB_KEY_DEFAULT; return url&&key?{url,key}:null; }
@@ -9176,15 +9177,24 @@ async function cloudSync(first){ if(!sb||!sbUser||sbBusy) return; sbBusy=true; s
       if(!l||((l.updatedAt||0)<ru)){ if(cur&&id===cur.id){ if(dirty) return; curChanged=true; } all[id]=r.doc; pulled++; } });
     Object.keys(all).forEach(id=>{ const r=remote.get(id), lu=all[id].updatedAt||0, ru=r?((r.doc&&r.doc.updatedAt)||Date.parse(r.updated_at)||0):-1; if(lu>ru) push.push(id); });
     if(push.length){ const rows=push.map(id=>({owner:sbUser.id,id,doc:all[id],updated_at:new Date(all[id].updatedAt||Date.now()).toISOString()}));
-      for(let i=0;i<rows.length;i+=50){ const {error:e2}=await sb.from('plots').upsert(rows.slice(i,i+50),{onConflict:'owner,id'}); if(e2) throw e2; } }
-    localWrite(); sbLastSync=Date.now();
+      for(let i=0;i<rows.length;i+=50){ const {error:e2}=await sb.from('plots').upsert(rows.slice(i,i+50),{onConflict:'owner,id'}); if(e2) throw e2; }
+      (async()=>{ for(const id of push) await sbMediaUp(all[id]); })(); }
+    localWrite(); sbLastSync=Date.now(); if(pulled) Object.keys(IMG).forEach(k=>{ if(IMG[k]&&IMG[k].state==='missing'&&k.startsWith('idb:')) delete IMG[k]; });
     if(curChanged&&cur) openDiagram(cur.id); else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); }
     if(!$('#drawer').hidden) renderDrawer();
     setStatus('Synced to your account'); if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`); }
   catch(e){ setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); }
   sbBusy=false; }
+/* photos and audio live in this browser (IndexedDB); signed in, they also go to the account's private "media" bucket so a plot opens complete on any device */
+const SB_BUCKET='media';
+function sbUpDone(){ try{ return new Set(JSON.parse(localStorage.getItem('setplot-sb-up')||'[]')); }catch(e){ return new Set(); } }
+async function sbMediaUp(doc){ if(!sb||!sbUser||!doc) return; const keys=[...new Set((JSON.stringify(doc).match(/idb:[A-Za-z0-9]+/g)||[]).map(x=>x.slice(4)))], done=sbUpDone(), uid0=sbUser.id; let n=0;
+  for(const k of keys){ const tag=uid0+'/'+k; if(done.has(tag)) continue; const b=await IDB.get(k).catch(()=>null); if(!b) continue;
+    try{ const {error}=await sb.storage.from(SB_BUCKET).upload(tag,b,{upsert:true,contentType:b.type||'application/octet-stream',cacheControl:'31536000'}); if(!error||/exists|duplicate/i.test(error.message||'')){ done.add(tag); n++; } }catch(e){} }
+  if(n) try{ localStorage.setItem('setplot-sb-up',JSON.stringify([...done].slice(-8000))); }catch(e){} }
+async function sbMediaGet(k){ if(!sb||!sbUser) return null; try{ const {data,error}=await sb.storage.from(SB_BUCKET).download(sbUser.id+'/'+k); if(error||!data) return null; IDB.put(k,data).catch(()=>{}); return data; }catch(e){ return null; } }
 function cloudPush(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sbPushT[id]=setTimeout(async()=>{ const d=all[id]; if(!d) return;
-  try{ const {error}=await sb.from('plots').upsert({owner:sbUser.id,id,doc:JSON.parse(JSON.stringify(d)),updated_at:new Date(d.updatedAt||Date.now()).toISOString()},{onConflict:'owner,id'}); if(error) throw error; setStatus('Synced to your account'); }
+  try{ const {error}=await sb.from('plots').upsert({owner:sbUser.id,id,doc:JSON.parse(JSON.stringify(d)),updated_at:new Date(d.updatedAt||Date.now()).toISOString()},{onConflict:'owner,id'}); if(error) throw error; setStatus('Synced to your account'); sbMediaUp(d); }
   catch(e){ setStatus('Offline · will sync later','warn'); } },900); }
 function cloudDelete(id){ if(!sb||!sbUser) return; clearTimeout(sbPushT[id]); sb.from('plots').delete().eq('owner',sbUser.id).eq('id',id).then(()=>{},()=>{}); }
 /* the sign-in dialog */
@@ -9203,8 +9213,8 @@ function accountHTML(){ const c=sbConf(), close=`<button class="ib" data-close a
     <p class="muted">Your plots sync to your account and follow you to any device you sign in on.</p>
     <div class="acct-row"><button class="btn" data-acc="sync">Sync now</button><button class="btn ghost" data-acc="signout">Sign out</button></div></div>`;
   return `<div class="acct"><div class="acct-h"><h3>Sign in</h3>${close}</div><p class="muted">Keep your plots in the cloud and open them on any device.</p>
-    <div class="acct-prov">${PROV.map(([id,n,svgp])=>`<button class="btn acct-p" data-acc="oauth" data-prov="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${svgp}</svg>Continue with ${n}</button>`).join('')}</div>
-    <div class="acct-or"><span>or with email</span></div>
+    ${PROV.some(p=>SB_PROVIDERS.includes(p[0]))?`<div class="acct-prov">${PROV.filter(p=>SB_PROVIDERS.includes(p[0])).map(([id,n,svgp])=>`<button class="btn acct-p" data-acc="oauth" data-prov="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${svgp}</svg>Continue with ${n}</button>`).join('')}</div>
+    <div class="acct-or"><span>or with email</span></div>`:''}
     <input class="fi" type="email" data-acc-email placeholder="you@example.com" autocomplete="email">
     <input class="fi" type="password" data-acc-pass placeholder="Password (leave empty for a sign-in link)" autocomplete="current-password">
     <div class="acct-row"><button class="btn primary" data-acc="email">Continue</button><button class="btn ghost" data-acc="signup">Create account</button></div>
