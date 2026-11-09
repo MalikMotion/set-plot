@@ -1538,7 +1538,11 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .de-sib.ghost:hover .dg-in{color:#e6e6e6;transform:scale(1.04)}
 #drawEd .de-sib.ghost:active .dg-in{transform:scale(.97)}
 #drawEd .de-sibs.dragging:not(.gliding) .de-sib.ghost{opacity:.35}
-#drawEd .de-tl{flex:none;display:flex;flex-direction:column;background:#232323;border-top:1px solid #1a1a1a;user-select:none}
+#drawEd .de-tl{flex:none;display:flex;flex-direction:column;background:#232323;border-top:1px solid #1a1a1a;user-select:none;max-height:150px;overflow:hidden;transition:max-height .42s cubic-bezier(.2,.8,.2,1),opacity .3s ease,border-color .3s ease}
+#drawEd .de-tl.solo{max-height:0;opacity:0;border-top-width:0;pointer-events:none}
+#drawEd .de-tl.tl-show .tl-h{animation:tlRise .45s cubic-bezier(.2,.8,.2,1) both}
+#drawEd .de-tl.tl-show .tl-track{animation:tlRise .5s .08s cubic-bezier(.2,.8,.2,1) both}
+@keyframes tlRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 #drawEd .tl-h{display:flex;align-items:center;gap:6px;height:30px;padding:0 8px;color:#a8a8a8;font:400 11.5px var(--font,inherit);font-variant-numeric:tabular-nums}
 #drawEd .tl-h button{display:flex;align-items:center;gap:5px;height:21px;padding:0 8px;border:1px solid #3c3c3c;border-radius:2px;background:#2d2d2d;color:#ddd;font:400 11.5px var(--font,inherit);cursor:pointer;transition:background .15s ease,border-color .15s ease}
 #drawEd .tl-h button:hover{background:#383838}
@@ -1572,6 +1576,8 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .tl-tr[data-tr="cut"]{width:9px;min-width:9px;height:9px;top:-14px;padding:0;border-radius:2px;transform:translateX(50%) rotate(45deg)}
 #drawEd .tl-tr:not([data-tr="cut"]){opacity:1;background:#3b2f5c;border-color:#6e56cf;color:#e9e4ff}
 #drawEd .tl-tr:hover{opacity:1;border-color:#1473e6}
+#drawEd .de-paper.zooming{transition:transform .34s cubic-bezier(.2,.8,.2,1),width .34s cubic-bezier(.2,.8,.2,1),height .34s cubic-bezier(.2,.8,.2,1)!important}
+#drawEd .de-sibs.zooming .de-sib,#drawEd .de-sibs.zooming .de-rowt{transition:transform .34s cubic-bezier(.2,.8,.2,1),width .34s cubic-bezier(.2,.8,.2,1),height .34s cubic-bezier(.2,.8,.2,1)!important}
 #drawEd .de-player{position:fixed;inset:0;z-index:300;background:#0b0b0b;display:grid;grid-template-rows:1fr auto auto;opacity:0;transition:opacity .22s ease;color:#ddd;font-family:var(--font,inherit)}
 #drawEd .de-player.on{opacity:1}
 #drawEd .pl-stage{position:relative;min-height:0;cursor:pointer}
@@ -1600,6 +1606,13 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
 #drawEd .pl-rl{overflow:auto;padding:6px 14px}
 #drawEd .pl-rl div{display:grid;grid-template-columns:28px 1fr 18px 1fr;align-items:center;padding:4px 0;font:500 12.5px var(--font,inherit);font-variant-numeric:tabular-nums;color:#9a9a9a}
 #drawEd .pl-rl b{color:#fff}#drawEd .pl-rl em{font-style:normal;color:#fff;font-weight:600}#drawEd .pl-rl i{font-style:normal;color:#666}
+#drawEd .pl-ri{padding:12px 14px 4px;font:400 13px/1.5 var(--font,inherit);color:#c8c8c8}
+#drawEd .pl-ri p{margin:0 0 10px}#drawEd .pl-ri b{color:#fff}
+#drawEd .pl-ri kbd{display:inline-block;padding:0 6px;border:1px solid #555;border-bottom-width:2px;border-radius:4px;background:#2d2d2d;color:#fff;font:600 11.5px var(--font,inherit)}
+#drawEd .pl-seg{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px;margin:0 0 10px;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:6px}
+#drawEd .pl-seg button{height:28px;border:0;border-radius:4px;background:transparent;color:#bbb;font:500 12.5px var(--font,inherit);cursor:pointer}
+#drawEd .pl-seg button.on{background:#1473e6;color:#fff}
+#drawEd .pl-sm{font-size:11.5px;color:#8a8a8a}
 #drawEd .pl-ra{display:flex;gap:8px;justify-content:flex-end;padding:12px 14px;border-top:1px solid #333}
 #drawEd .pl-ra button{height:28px;padding:0 12px;border:1px solid #444;border-radius:5px;background:#2d2d2d;color:#ddd;font:500 12.5px var(--font,inherit);cursor:pointer}
 #drawEd .pl-ra button.pri{background:#1473e6;border-color:#1473e6;color:#fff}
@@ -7645,7 +7658,7 @@ function drawPanelImg(pg,ops){ const E=drawEd, c=document.createElement('canvas'
   if(pg.ref&&pg.ref.out&&pg.ref.img) drawRefInto(g,pg,pg.ref.op);
   const l=document.createElement('canvas'); l.width=E.W; l.height=E.H; drawPaintOps(l.getContext('2d'),ops||pg.ops); g.drawImage(l,0,0);
   const F=drawFrameRect(); if(E.guide&&E.guide.ar!=='none'){ const o=document.createElement('canvas'); o.width=Math.round(F.w); o.height=Math.round(F.h); o.getContext('2d').drawImage(c,F.x,F.y,F.w,F.h,0,0,o.width,o.height); return o; } return c; }
-function drawTlBuild(){ const E=drawEd, tl=document.createElement('div'); let mn=false; try{ mn=localStorage.getItem('setplot-tl-min')==='1'; }catch(e){} tl.className='de-tl'+(mn?' min':'');
+function drawTlBuild(){ const E=drawEd, tl=document.createElement('div'); let mn=false; try{ mn=localStorage.getItem('setplot-tl-min')==='1'; }catch(e){} tl.className='de-tl'+(mn?' min':'')+(E.pages.length<2?' solo':'');   /* a single drawing has no timeline until a second frame exists */
   const I=DRAW_TL_IC;
   tl.innerHTML=`<div class="tl-h"><button type="button" class="tl-play" data-tl="play" title="Play the animatic">${drawIcon(I.play)}<span>Play</span></button><span class="tl-time"></span><span class="tl-sp"></span>
     <button type="button" data-tl="tap" title="Tap timing: the frames play one by one, tap Space on each beat to set how long each one lasts">${drawIcon(I.tap)}<span>Tap timing</span></button>
@@ -7664,10 +7677,11 @@ function drawTlBuild(){ const E=drawEd, tl=document.createElement('div'); let mn
   box.addEventListener('pointerup',up); box.addEventListener('pointercancel',up);
   box.addEventListener('click',e=>{ const D=drawEd; if(D.tlNoClick) return; const t=e.target.closest('.tl-tr'); if(t){ const i=+t.dataset.tri, pg=D.pages[i], ks=DRAW_TR.map(x=>x[0]), nx=ks[(ks.indexOf(pg.tr||'cut')+1)%ks.length];
       if(nx==='cut') delete pg.tr; else pg.tr=nx; D.dirty=true; drawTimeline(); toast(`Frame ${i+1} → ${i+2}: ${DRAW_TR.find(x=>x[0]===nx)[1]}`); return; }
-    if(e.target.closest('.tl-hd')) return; const n=e.target.closest('.tl-clip'); if(n) drawFrameGo(+n.dataset.i); });
+    if(e.target.closest('.tl-hd')) return; const n=e.target.closest('.tl-clip'); if(n) drawFrameFocus(+n.dataset.i); });
   const ro=new ResizeObserver(()=>{ if(drawEd===E) drawTimeline(); }); ro.observe(tl); E.tlRO=ro;
   setTimeout(()=>{ if(drawEd===E) drawTimeline(); },0); return tl; }
 function drawTimeline(){ const E=drawEd; if(!E||!E.el) return; const tl=E.el.querySelector('.de-tl'); if(!tl) return; const box=tl.querySelector('.tl-clips'), track=tl.querySelector('.tl-track');
+  { const solo=E.pages.length<2; if(tl.classList.contains('solo')!==solo){ tl.classList.toggle('solo',solo); if(!solo){ tl.classList.add('tl-show'); clearTimeout(tl._sx); tl._sx=setTimeout(()=>tl.classList.remove('tl-show'),700); } } }
   const durs=E.pages.map(drawDur), T=durs.reduce((a,b)=>a+b,0), timed=E.pages.some(pg=>(pg.info||{}).dur);
   tl.querySelector('.tl-time').textContent=`${E.pages.length} frame${E.pages.length>1?'s':''} · ${drawFmtT(T)}${timed?'':' · 2s each until you time them'}`;
   if(tl.classList.contains('min')) return;
@@ -7688,6 +7702,12 @@ function drawTimeline(){ const E=drawEd; if(!E||!E.el) return; const tl=E.el.que
       const t=document.createElement('canvas'); t.width=E.W; t.height=E.H; drawPaintOps(t.getContext('2d'),ops); g.drawImage(t,0,0,c.width,c.height); g.fillStyle='rgba(0,0,0,.35)'; g.fillRect(c.width-2,0,2,c.height);
       const im=n.querySelector('.tl-in'); im.style.backgroundImage=`url(${c.toDataURL('image/jpeg',.8)})`; im.style.backgroundSize=`${tw}px ${ch}px`; } });   /* the frame repeats along the clip, like a video track */
   const cur=box.querySelector('.tl-clip.cur'); if(cur&&!E.tlDrag){ const a=cur.offsetLeft, b=a+cur.offsetWidth; if(a<track.scrollLeft||b>track.scrollLeft+track.clientWidth) track.scrollTo({left:Math.max(0,a-40),behavior:'smooth'}); } }
+/* go to a frame and zoom to fit it, with a glide */
+function drawFrameFocus(j){ const E=drawEd; if(!E||j<0||j>=E.pages.length) return; drawCommitText(); E.ovPrev=null; const ob=E.el.querySelector('.tl-ov'); if(ob) ob.classList.remove('on');
+  if(j!==E.pi){ const a=drawCell(E.pi,false), b=drawCell(j,false); E.pan[0]+=(b[0]-a[0])*drawSibStep()*E.scale; E.pan[1]+=(b[1]-a[1])*drawRowStep(); drawGoPage(j); drawFit(); }
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ drawZoomFit(); return; }
+  const box=E.el.querySelector('.de-sibs'), pp=E.el.querySelector('.de-paper'); requestAnimationFrame(()=>{ if(drawEd!==E) return; box.classList.add('dragging','gliding','zooming'); pp.classList.add('fd-anim','zooming'); drawZoomFit();
+    clearTimeout(box._zx); box._zx=setTimeout(()=>{ box.classList.remove('dragging','gliding','zooming'); pp.classList.remove('fd-anim','zooming'); },380); }); }
 /* overview: every row and frame fits on screen; click again to go back */
 function drawOverview(){ const E=drawEd; drawCommitText(); const ob=E.el.querySelector('.tl-ov');
   if(E.ovPrev){ const p=E.ovPrev; E.ovPrev=null; E.zoom=p.zoom; E.pan=p.pan; drawFit(); if(ob) ob.classList.remove('on'); return; }
@@ -7708,13 +7728,14 @@ function drawPlayer(mode){ const E=drawEd; if(!E||E.player) return; drawCommitTe
   E.el.appendChild(ov); const cv=ov.querySelector('canvas');
   const P=E.player={mode,ov,cv,g:cv.getContext('2d'),imgs:E.pages.map(pg=>drawPanelImg(pg)),durs,starts,T:acc,t:0,playing:mode==='play',stopAt:null,raf:0,last:0,k:0,taps:[],tap0:performance.now(),done:false,capK:-1};
   P.ro=new ResizeObserver(()=>{ const r=cv.parentNode.getBoundingClientRect(), d=devicePixelRatio||1; cv.width=Math.max(1,Math.round(r.width*d)); cv.height=Math.max(1,Math.round(r.height*d)); drawPlayerPaint(); }); P.ro.observe(cv.parentNode);
-  ov.addEventListener('click',e=>{ const b=e.target.closest('[data-pl]'); if(b){ drawPlayerCmd(b.dataset.pl); return; } if(e.target.closest('.pl-rev')) return;
+  ov.addEventListener('click',e=>{ const sc2=e.target.closest('[data-sc]'); if(sc2){ P.scope=sc2.dataset.sc; ov.querySelectorAll('[data-sc]').forEach(x=>x.classList.toggle('on',x===sc2)); return; }
+    const b=e.target.closest('[data-pl]'); if(b){ drawPlayerCmd(b.dataset.pl); return; } if(e.target.closest('.pl-rev')) return; if(P.mode==='tap'&&!P.ready) return;
     if(e.target.closest('.pl-stage')) drawPlayerCmd(P.mode==='present'?'next':P.mode==='tap'?'tap':'play'); });
   const sc=ov.querySelector('.pl-scrub'); let scr=false; const seek=e=>{ const r=sc.getBoundingClientRect(); P.t=Math.max(0,Math.min(P.T-.001,(e.clientX-r.left)/r.width*P.T)); P.stopAt=null; drawPlayerPaint(); };
   sc.addEventListener('pointerdown',e=>{ if(P.mode==='tap') return; scr=true; P.wasPlaying=P.playing; P.playing=false; sc.setPointerCapture(e.pointerId); seek(e); });
   sc.addEventListener('pointermove',e=>{ if(scr) seek(e); }); sc.addEventListener('pointerup',()=>{ if(!scr) return; scr=false; if(P.wasPlaying){ P.playing=true; drawPlayerRun(); } });
   if(mode==='present'){ try{ const fp=ov.requestFullscreen&&ov.requestFullscreen(); if(fp&&fp.catch) fp.catch(()=>{}); }catch(e){} }
-  if(mode==='tap') drawTapTick();
+  if(mode==='tap'){ P.start=P.k=E.pi; P.scope='one'; P.ready=false; drawTapIntro(); }
   requestAnimationFrame(()=>ov.classList.add('on')); if(P.playing) drawPlayerRun(); drawPlayerPaint(); }
 function drawPlayerRun(){ const P=drawEd&&drawEd.player; if(!P) return; cancelAnimationFrame(P.raf); P.last=performance.now();
   const step=now=>{ const Q=drawEd&&drawEd.player; if(Q!==P||!P.playing) return; P.t+=(now-P.last)/1000; P.last=now;
@@ -7737,28 +7758,38 @@ function drawPlayerPaint(){ const E=drawEd, P=E&&E.player; if(!P) return; const 
   ov.querySelector('.pl-head').style.left=(P.mode==='tap'?0:P.t/P.T*100)+'%';
   ov.querySelector('.pl-pp').innerHTML=drawIcon(P.playing?DRAW_TL_IC.pause:DRAW_TL_IC.play);
   if(P.mode!=='tap') ov.querySelector('.pl-t').textContent=P.mode==='present'?`Frame ${k+1} of ${pages.length}`:`${drawFmtT(P.t)} / ${drawFmtT(P.T)}`; }
-function drawTapTick(){ const P=drawEd&&drawEd.player; if(!P||P.mode!=='tap'||P.done) return; const el=(performance.now()-P.tap0)/1000;
-  P.ov.querySelector('.pl-t').textContent=`Frame ${P.k+1} of ${P.imgs.length} · ${el.toFixed(1)} s`;
-  P.ov.querySelector('.pl-hint').textContent='Tap Space (or click) on each beat · Esc to stop'; requestAnimationFrame(drawTapTick); }
-function drawTapFinish(stopped){ const E=drawEd, P=E&&E.player; if(!P) return; if(stopped&&P.k<P.imgs.length){ const el=(performance.now()-P.tap0)/1000; if(el>.15) P.taps.push(el); }
+function drawTapIntro(){ const E=drawEd, P=E&&E.player; if(!P) return; const n=P.start+1, last=P.start>=P.imgs.length-1, rv=P.ov.querySelector('.pl-rev');
+  P.ready=false; P.done=false; P.taps=[]; P.k=P.start; if(last) P.scope='one';
+  rv.innerHTML=`<div class="pl-rh">Tap timing · Frame ${n}</div><div class="pl-ri"><p>Press <b>Ready</b> and frame ${n} starts. Read the line or act out the moment, and tap <kbd>Space</kbd> (or click the picture) the moment the shot should end.</p>
+    ${last?'':`<div class="pl-seg"><button type="button" data-sc="one" class="${P.scope==='one'?'on':''}">Just frame ${n}</button><button type="button" data-sc="rest" class="${P.scope==='rest'?'on':''}">Frame ${n} to the end</button></div>`}
+    <p class="pl-sm">${last?'':'With “to the end”, each tap moves on to the next frame. '}Esc stops. Nothing changes until you choose “Use this timing”.</p></div>
+    <div class="pl-ra"><button type="button" data-pl="discard">Cancel</button><button type="button" data-pl="ready" class="pri">Ready</button></div>`;
+  rv.hidden=false; P.ov.querySelector('.pl-hint').textContent=''; P.ov.querySelector('.pl-t').textContent=`Frame ${n} · now ${drawDur(E.pages[P.start]).toFixed(1)} s`; drawPlayerPaint(); setTimeout(()=>{ const r=rv.querySelector('.pri'); if(r) r.focus({preventScroll:true}); },50); }
+function drawTapTick(){ const P=drawEd&&drawEd.player; if(!P||P.mode!=='tap'||P.done||!P.ready) return; const el=(performance.now()-P.tap0)/1000, one=P.end-P.start===1;
+  P.ov.querySelector('.pl-t').textContent=`Frame ${P.k+1}${one?'':` (${P.k-P.start+1} of ${P.end-P.start})`} · ${el.toFixed(1)} s`;
+  P.ov.querySelector('.pl-hint').textContent=one?'Tap Space (or click) when the shot ends · Esc to stop':'Tap Space (or click) on each beat · Esc to stop'; requestAnimationFrame(drawTapTick); }
+function drawTapFinish(stopped){ const E=drawEd, P=E&&E.player; if(!P) return; if(stopped&&P.k<P.end){ const el=(performance.now()-P.tap0)/1000; if(el>.15) P.taps.push(el); }
   if(!P.taps.length){ drawPlayerCmd('close'); return; } P.done=true; const rv=P.ov.querySelector('.pl-rev'), tot=P.taps.reduce((a,b)=>a+b,0);
-  rv.innerHTML=`<div class="pl-rh">New timing · ${P.taps.length} frame${P.taps.length>1?'s':''} · ${drawFmtT(tot)}</div><div class="pl-rl">${P.taps.map((d,i)=>`<div><b>${i+1}</b><span>${drawDur(E.pages[i]).toFixed(1)} s</span><i>→</i><em>${(Math.round(d*10)/10).toFixed(1)} s</em></div>`).join('')}</div>
+  rv.innerHTML=`<div class="pl-rh">New timing · ${P.taps.length} frame${P.taps.length>1?'s':''} · ${drawFmtT(tot)}</div><div class="pl-rl">${P.taps.map((d,i)=>`<div><b>${P.start+i+1}</b><span>${drawDur(E.pages[P.start+i]).toFixed(1)} s</span><i>→</i><em>${(Math.round(d*10)/10).toFixed(1)} s</em></div>`).join('')}</div>
     <div class="pl-ra"><button type="button" data-pl="discard">Discard</button><button type="button" data-pl="again">Try again</button><button type="button" data-pl="apply" class="pri">Use this timing</button></div>`;
   rv.hidden=false; P.ov.querySelector('.pl-hint').textContent=''; P.ov.querySelector('.pl-t').textContent='Enter to use it'; }
 function drawPlayerCmd(c){ const E=drawEd, P=E&&E.player; if(!P) return;
   if(c==='close'||c==='discard'){ cancelAnimationFrame(P.raf); P.ro.disconnect(); try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }catch(e){} P.ov.classList.remove('on'); setTimeout(()=>P.ov.remove(),200); E.player=null;
     if(P.mode!=='tap'&&P.k2!=null&&P.k2!==E.pi) drawFrameGo(P.k2); return; }
   if(c==='fs'){ try{ if(document.fullscreenElement) document.exitFullscreen(); else P.ov.requestFullscreen(); }catch(e){} return; }
-  if(P.mode==='tap'){ if(c==='tap'||c==='next'){ if(P.done) return; const now=performance.now(); P.taps.push((now-P.tap0)/1000); P.tap0=now; P.k++; if(P.k>=P.imgs.length) drawTapFinish(false); else drawPlayerPaint(); }
-    else if(c==='apply'){ const n=P.taps.length, tot=P.taps.reduce((a,b)=>a+b,0); P.taps.forEach((d,i)=>drawSetDur(E.pages[i],d)); drawPlayerCmd('close'); drawTimeline(); drawShotPanelSync(); toast(`Timing set for ${n} frame${n>1?'s':''} · ${drawFmtT(tot)} in total`); }
-    else if(c==='again'){ P.taps=[]; P.k=0; P.done=false; P.ov.querySelector('.pl-rev').hidden=true; P.tap0=performance.now(); drawPlayerPaint(); drawTapTick(); }
+  if(P.mode==='tap'){ if(c==='ready'){ P.ready=true; P.end=P.scope==='rest'?P.imgs.length:P.start+1; P.k=P.start; P.taps=[]; P.ov.querySelector('.pl-rev').hidden=true; P.tap0=performance.now(); drawPlayerPaint(); drawTapTick(); return; }
+    if(!P.ready&&c!=='discard') return;
+    if(c==='tap'||c==='next'){ if(P.done) return; const now=performance.now(); P.taps.push((now-P.tap0)/1000); P.tap0=now; P.k++; if(P.k>=P.end) drawTapFinish(false); else drawPlayerPaint(); }
+    else if(c==='apply'){ const n=P.taps.length, tot=P.taps.reduce((a,b)=>a+b,0); P.taps.forEach((d,i)=>drawSetDur(E.pages[P.start+i],d)); drawPlayerCmd('close'); drawTimeline(); drawShotPanelSync(); toast(n>1?`Timing set for frames ${P.start+1}–${P.start+n} · ${drawFmtT(tot)} in total`:`Frame ${P.start+1} now lasts ${(Math.round(tot*10)/10).toFixed(1)} s`); }
+    else if(c==='again'){ drawTapIntro(); }
     else if(c==='play'&&!P.done){ drawTapFinish(true); } return; }
   if(c==='play'){ if(P.playing){ P.playing=false; drawPlayerPaint(); return; } if(P.t>=P.T-.01) P.t=0; P.stopAt=null; P.playing=true; drawPlayerRun(); drawPlayerPaint(); return; }
   if(c==='next'||c==='prev'){ const k=drawPlayerAt(P), j=Math.max(0,Math.min(P.starts.length-1,k+(c==='next'?1:-1))); if(j===k) return;
     if(P.mode==='present'&&c==='next'){ const L=drawTrLen(j,P.durs,E.pages); P.t=P.starts[j]; if(L>0){ P.stopAt=P.starts[j]+L; P.playing=true; drawPlayerRun(); } else { P.playing=false; drawPlayerPaint(); } return; }
     P.t=P.starts[j]+(P.mode==='present'?drawTrLen(j,P.durs,E.pages):0); if(P.mode==='present') P.playing=false; drawPlayerPaint(); } }
 function drawPlayerKey(e){ const P=drawEd.player; e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation(); if(e.metaKey||e.ctrlKey) return; e.preventDefault(); const k=e.key, l=k.toLowerCase();
-  if(k==='Escape'){ if(P.mode==='tap'&&!P.done){ drawTapFinish(true); return; } drawPlayerCmd('close'); return; }
+  if(k==='Escape'){ if(P.mode==='tap'&&P.ready&&!P.done){ drawTapFinish(true); return; } drawPlayerCmd('close'); return; }
+  if(P.mode==='tap'&&!P.ready){ if(k==='Enter'||k===' ') drawPlayerCmd('ready'); return; }
   if(P.mode==='tap'){ if(P.done){ if(k==='Enter') drawPlayerCmd('apply'); return; } if(k===' '||k==='Enter'||k==='ArrowRight'||l==='t') drawPlayerCmd('tap'); return; }
   if(k===' ') drawPlayerCmd(P.mode==='present'?'next':'play'); else if(k==='ArrowRight'||k==='PageDown'||k==='.') drawPlayerCmd('next'); else if(k==='ArrowLeft'||k==='PageUp'||k===',') drawPlayerCmd('prev');
   else if(k==='Home'){ P.t=0; P.stopAt=null; drawPlayerPaint(); } else if(l==='f') drawPlayerCmd('fs'); else if(l==='k'||l==='p') drawPlayerCmd('play'); }
