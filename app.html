@@ -160,6 +160,9 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 @media (prefers-reduced-motion:reduce){.acct.q .acct-qbody{animation:none}}
 .acct-mail{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}.acct-mail svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .acct-msg{font-size:13px;color:var(--muted)}
+.acct-danger{border-top:1px solid var(--line);padding-top:12px;margin-top:2px}.acct-link.danger{color:var(--danger,#e5484d);font-weight:600}
+.btn.danger-fill{background:var(--danger,#e5484d);border-color:var(--danger,#e5484d);color:#fff}.btn.danger-fill:hover{filter:brightness(1.08)}
+.acct textarea.fi{resize:vertical;height:72px;min-height:58px;max-height:200px;flex:none;font:inherit;font-size:14px;padding:10px 12px;background:var(--field);color:var(--ink);border:1px solid transparent;border-radius:10px;width:100%;box-sizing:border-box}.acct textarea.fi:focus{outline:none;border-color:var(--accent)}
 @media (max-height:760px){.acct.auth{max-height:calc(100vh - 40px);overflow:auto}}
 .acct-me{display:flex;align-items:center;gap:10px}.acct-me img,.acct-me .acct-i{width:36px;height:36px;font-size:15px}.acct-me small{display:block}
 .modmenu{width:min(420px,calc(100vw - 16px));gap:10px}.modmenu .extopts{flex-wrap:wrap}.modmenu .extopts button{width:76px;position:relative;padding-bottom:9px}
@@ -710,6 +713,10 @@ body.placing #plot,body.placing #cards .bc{cursor:copy!important}
 .empty p{margin:0 0 18px;color:var(--muted)}
 
 .toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--primary-ink);border-radius:10px;padding:9px 16px;z-index:60;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);max-width:calc(100% - 32px)}
+body.gating::after{content:"";position:fixed;inset:0;z-index:69;background:var(--bg,#16191d)}
+body.gated .modal{background:color-mix(in srgb,var(--bg,#16191d) 55%,transparent);backdrop-filter:blur(10px) saturate(.8);-webkit-backdrop-filter:blur(10px) saturate(.8)}
+body.gated #betaPop,body.gated #tour,body.gated #tourBtn,body.gating #betaPop{display:none!important}
+.acct-brand{display:flex;align-items:center;gap:9px;font:800 15px var(--sans);color:var(--ink);margin-bottom:-2px}.acct-brand span{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--ink)}.acct-brand svg{width:17px;height:17px}
 .modal{position:fixed;inset:0;z-index:70;background:rgba(18,20,24,.45);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal > div{background:var(--card);border-radius:var(--r);padding:16px;max-width:min(980px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-lg)}
 .modal img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
@@ -9406,18 +9413,18 @@ addEventListener('scroll',hideTip,true); addEventListener('blur',hideTip);
 /* ================= account: sign in (Supabase) and keep plots in the cloud ================= */
 // Fill these two in once, or paste them in Account → Set up. The anon key is public by design; the database rules protect the data.
 const SB_URL_DEFAULT='https://jwpikfywijqdjfozzmpl.supabase.co', SB_KEY_DEFAULT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cGlrZnl3aWpxZGpmb3p6bXBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTEzNDcsImV4cCI6MjEwOTgyNzM0N30.OkUXW_8lyd1ketEJnGs0UFyCnzHNpV_8cyPayDRv0CI';   /* SetPlot EU project (Frankfurt) · public anon key, safe in the page: the database rules keep each person's plots private */
-const SB_PROVIDERS=[];   /* add 'google', 'azure' or 'apple' once that provider is switched on in Supabase → Authentication → Sign In / Providers */
+const SB_PROVIDERS=['google','apple'];   /* add 'google', 'azure' or 'apple' once that provider is switched on in Supabase → Authentication → Sign In / Providers */
 const SB_LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
 var sb=null, sbUser=null, sbBusy=false, sbPushT={}, sbLastSync=0;
 function sbConf(){ let c=null; try{ c=JSON.parse(localStorage.getItem('setplot-sb')||'null'); }catch(e){} const url=(c&&c.url)||SB_URL_DEFAULT, key=(c&&c.key)||SB_KEY_DEFAULT; return url&&key?{url,key}:null; }
 function sbLoad(){ return new Promise((res,rej)=>{ if(window.supabase&&window.supabase.createClient) return res(); const s=document.createElement('script'); s.src=SB_LIB; s.onload=()=>res(); s.onerror=()=>rej(new Error('lib')); document.head.appendChild(s); }); }
-async function sbInit(){ const c=sbConf(); renderAccount(); if(!c||mode!=='local') return;
+async function sbInit(){ const c=sbConf(); renderAccount(); if(!c||mode!=='local') return; if(gateWanted()) document.body.classList.add('gating');
   try{ await sbLoad(); sb=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}}); }
-  catch(e){ sb=null; renderAccount(); return; }
+  catch(e){ sb=null; renderAccount(); document.body.classList.remove('gating'); if(gateWanted()){ authGate=true; document.body.classList.add('gated'); showModal(gateOffline()); } return; }
   sb.auth.onAuthStateChange((ev,session)=>{ const was=sbUser&&sbUser.id; sbUser=session&&session.user||null; renderAccount(); if(sbUser) trackOpen(); if(ev==='SIGNED_IN'&&sbUser&&sbUser.id!==was) track('sign_in');
     if(ev==='PASSWORD_RECOVERY'){ openAccount('newpass'); } else if(sbUser&&sbUser.id!==was) profileCheck();
-    if(sbUser&&sbUser.id!==was){ acctSwitch(sbUser.id); cloudSync(true); } if(!sbUser&&was){ sbProfile=null; setStatus('Saved in this browser'); sbProj={}; acctSwitch(null); syncProjectRO(); } renderShareBtn(); });
-  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); acctSwitch(sbUser?sbUser.id:null); if(sbUser){ cloudSync(true); trackOpen(); if(!/type=recovery/.test(location.hash)) profileCheck(); }
+    if(sbUser&&sbUser.id!==was){ gateOff(); acctSwitch(sbUser.id); cloudSync(true); } if(!sbUser&&was){ sbProfile=null; setStatus('Saved in this browser'); sbProj={}; acctSwitch(null); syncProjectRO(); gateOn('signin'); } renderShareBtn(); });
+  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); acctSwitch(sbUser?sbUser.id:null); document.body.classList.remove('gating'); if(sbUser) gateOff(); else gateOn(); if(sbUser){ cloudSync(true); trackOpen(); if(!/type=recovery/.test(location.hash)) profileCheck(); }
   else { const q=new URLSearchParams(location.search); if(q.has('signup')||q.has('signin')) setTimeout(()=>openAccount(q.has('signup')?'signup':'signin'),400); }
   if(/[?&]signin\b/.test(location.search)){ if(!sbUser) setTimeout(openAccount,300); try{ history.replaceState(null,'',location.pathname+location.search.replace(/[?&]signin\b=?[^&]*/,'').replace(/^&/,'?')+location.hash); }catch(e){} }   /* "Sign in" on the landing page opens the dialog */
   addEventListener('focus',()=>{ if(sbUser&&Date.now()-sbLastSync>15000) cloudSync(false); }); }
@@ -9473,8 +9480,8 @@ function guestOffer(){ if(!sbUser||mode!=='local') return; const g=guestDocs(); 
   const n=g.length, names=g.slice(0,3).map(([,d])=>esc(d.title||d.shoot||'Untitled')).join(', ')+(n>3?` and ${n-3} more`:'');
   showModal(`<div class="acct"><div class="acct-h"><h3>Setups from this browser</h3><button class="ib" data-close aria-label="Close">${ic('close')}</button></div>
     <p>You made ${n===1?'a setup':n+' setups'} here while signed out: <b>${names}</b>.</p>
-    <p class="muted">Add ${n===1?'it':'them'} to ${esc(sbUser.email||'this account')}? If not, ${n===1?'it stays':'they stay'} in this browser and ${n===1?'shows':'show'} up again when you sign out.</p>
-    <div class="acct-row end"><button class="btn ghost" data-gs="keep">Keep in this browser</button><button class="btn primary" data-gs="add">Add to my account</button></div></div>`); }
+    <p class="muted">Add ${n===1?'it':'them'} to ${esc(sbUser.email||'this account')}? If not, ${n===1?'it stays':'they stay'} in this browser and we’ll ask again next time you sign in.</p>
+    <div class="acct-row end"><button class="btn ghost" data-gs="keep">Not now</button><button class="btn primary" data-gs="add">Add to my account</button></div></div>`); }
 $('#modal').addEventListener('click',e=>{ const b=e.target.closest('[data-gs]'); if(!b) return; $('#modal').hidden=true; if(b.dataset.gs!=='add'||!sbUser) return;
   const g=guestDocs(); g.forEach(([k,d])=>{ d.acc=sbUser.id; all[k]=d; }); try{ localStorage.removeItem(ACCT_STASH('guest')); }catch(err){} localWrite();
   if(!cur&&g.length) openDiagram(g[0][0]); try{ if(!$('#drawer').hidden) renderDrawer(); }catch(err){} cloudSync(false); toast(`${g.length===1?'Setup':g.length+' setups'} added to your account`); });
@@ -9709,9 +9716,19 @@ const ABOUT={
   work:[['commercials','Commercials'],['music','Music videos'],['film','Film & series'],['docs','Documentary'],['corporate','Corporate & events'],['weddings','Weddings'],['social','Social content'],['stills','Stills']],
   crew:[['solo','Just me'],['2-5','2–5 people'],['6-20','6–20'],['20+','More than 20']],
   heard:[['friend','A friend or colleague'],['instagram','Instagram'],['youtube','YouTube'],['facebook','A Facebook group'],['search','Searching online'],['other','Somewhere else']]};
-var sbProfile=null; let ACCT_Q=['role','work','crew','heard'];
+var sbProfile=null;
+/* you need an account to use Set Plot on the website: until you're signed in, the app sits behind the sign-in / sign-up window */
+var authGate=false;
+const gateWanted=()=>mode==='local'&&!EMBED;
+function gateOn(view){ if(!gateWanted()) return; authGate=true; document.body.classList.add('gated');
+  if(sbUser) return gateOff(); const okV=['signin','signup','about','reset','check','linksent'];
+  if($('#modal').hidden||!$('#modal .acct.auth')||!okV.includes(acct.view)){ let had=false; try{ had=!!localStorage.getItem('setplot-had-acct'); }catch(e){}
+    openAccount(view||(new URLSearchParams(location.search).has('signin')||had?'signin':'signup')); } }
+function gateOff(){ if(!authGate) return; authGate=false; document.body.classList.remove('gated'); try{ localStorage.setItem('setplot-had-acct','1'); }catch(e){}
+  if(!$('#modal').hidden&&$('#modal .acct.auth')&&!$('#modal .acct.must')&&acct.view!=='newpass') $('#modal').hidden=true; }
+setInterval(()=>{ if(authGate&&!sbUser&&($('#modal').hidden||!$('#modal .acct'))) gateOn(); },700); let ACCT_Q=['role','work','crew','heard'];
 var acct={view:'signin',email:'',name:'',about:{role:'',work:[],crew:'',heard:''},msg:'',bad:false,back:'',must:false};
-const acctClose=()=>`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`;
+const acctClose=()=>authGate&&!sbUser?'':`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`;
 const acctField=(label,attrs,extra)=>`<label class="acct-f"><span class="acct-fl">${label}${extra||''}</span>${attrs}</label>`;
 const acctPw=(ac,ph)=>`<span class="acct-pw"><input class="fi" type="password" data-a="pass" autocomplete="${ac}" placeholder="${ph||''}"><button type="button" class="acct-eye" data-acc="eye" aria-label="Show password">Show</button></span>`;
 const acctMsgHTML=()=>`<p class="acct-msg${acct.bad?' bad':''}" id="acctMsg" role="status">${esc(acct.msg)}</p>`;
@@ -9719,7 +9736,9 @@ const acctProv=verb=>PROV.some(p=>SB_PROVIDERS.includes(p[0]))?`<div class="acct
 const acctLegal=`<p class="muted acct-legal">By creating an account you agree to how we handle your data in the <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p>`;
 function acctChips(key,multi){ const v=acct.about[key]; return `<div class="acct-chips" role="${multi?'group':'radiogroup'}" data-q="${key}">`+ABOUT[key].map(([k,l])=>{ const on=multi?v.includes(k):v===k;
   return `<button type="button" class="acct-chip${on?' on':''}" data-acc="chip" data-q="${key}" data-k="${k}" role="${multi?'checkbox':'radio'}" aria-checked="${on}">${esc(l)}</button>`; }).join('')+`</div>`; }
-function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
+function accountHTML(){ return gateBrand(accountHTML0()); }
+function gateBrand(h){ if(!(authGate&&!sbUser)||!/class="acct auth/.test(h)) return h; return h.replace(/(<div class="acct auth[^"]*">)/,'$1<div class="acct-brand"><span><svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="7" width="5" height="6" rx="1.2" fill="var(--card,#fff)"/><path d="M8.5 7.5 L17.5 3.5 V16.5 L8.5 12.5Z" fill="#e38a2b"/></svg></span>Set Plot</div>'); }
+function accountHTML0(){ const c=sbConf(), close=acctClose(), v=acct.view;
   if(mode!=='local') return `<div class="acct"><div class="acct-h"><h3>Account</h3>${close}</div><p class="muted">Here on claude.ai your plots are already saved with your Claude account. Sign-in is for the version on your own website.</p></div>`;
   if(!c||!sb) return `<div class="acct"><div class="acct-h"><h3>Set up sign-in</h3>${close}</div>
     <p class="muted">${c&&!sb?'The sign-in library could not load. Check the connection and reload.':'Connect a free Supabase project to let people sign in and keep their plots in the cloud.'}</p>
@@ -9740,13 +9759,23 @@ function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
       ${acctMsgHTML()}
       <div class="acct-row end">${signup||qi>0?'<button class="btn ghost" data-acc="qback">Back</button>':''}<button class="btn primary acct-main" data-acc="qnext">${!last?'Continue':signup?'Create account':'Save'}</button></div>
       ${signup&&last?acctLegal:''}</div>`; }
+  if(sbUser&&v==='delete'){ const R=[['no_need','I don’t need it anymore'],['missing','It’s missing something I need'],['hard','It’s hard to use'],['other_tool','I use another tool'],['testing','I was just trying it out'],['privacy','Privacy concerns'],['other','Something else']];
+    return `<div class="acct auth"><div class="acct-h"><h3>Delete your account</h3>${close}</div>
+      <p>This permanently deletes <b>${esc(sbUser.email||'your account')}</b> with your setups, storyboards, photos and audio. It can’t be undone.</p>
+      <p class="muted">Shared projects you started go to another member, and your setups in them stay with the team, so your crew doesn’t lose their work.</p>
+      <div class="acct-q"><b>Why are you leaving? <span class="muted">Optional</span></b><div class="acct-chips" role="radiogroup">${R.map(([k,l])=>`<button type="button" class="acct-chip${acct.why===k?' on':''}" data-acc="why" data-k="${k}" role="radio" aria-checked="${acct.why===k}">${esc(l)}</button>`).join('')}</div></div>
+      <label class="acct-f"><span class="acct-fl">Anything we could do better? <span class="muted">Optional</span></span><textarea class="fi" data-a="comment" rows="2" maxlength="500" placeholder="A sentence or two helps a lot">${esc(acct.comment||'')}</textarea></label>
+      <label class="acct-f"><span class="acct-fl">Type DELETE to confirm</span><input class="fi" data-a="confirm" autocomplete="off" spellcheck="false" placeholder="DELETE"></label>
+      ${acctMsgHTML()}
+      <div class="acct-row end"><button class="btn ghost" data-acc="go" data-v="me">Cancel</button><button class="btn danger-fill" data-acc="delacct">Delete my account</button></div></div>`; }
   if(sbUser&&v==='newpass') return `<div class="acct auth"><div class="acct-h"><h3>Choose a new password</h3>${close}</div><p class="muted">For ${esc(sbUser.email||'your account')}.</p>
       ${acctField('New password',acctPw('new-password','At least 8 characters'))}${acctMsgHTML()}<button class="btn primary acct-main" data-acc="newpass">Save password</button></div>`;
   if(sbUser){ const P=sbProfile, rl=P&&P.role&&(ABOUT.role.find(r=>r[0]===P.role)||[])[1];
     return `<div class="acct"><div class="acct-h"><h3>Account</h3>${close}</div>
     <div class="acct-me">${$('#acctBtn').innerHTML}<div><b>${esc(sbName(sbUser))}</b><small class="muted">${esc(sbUser.email||'')}${rl?' · '+esc(rl):''}</small></div></div>
     <p class="muted">Your plots sync to your account and follow you to any device you sign in on.</p>
-    <div class="acct-row"><button class="btn" data-acc="sync">Sync now</button><button class="btn" data-acc="editprofile">Edit profile</button><button class="btn ghost" data-acc="signout">Sign out</button></div></div>`; }
+    <div class="acct-row"><button class="btn" data-acc="sync">Sync now</button><button class="btn" data-acc="editprofile">Edit profile</button><button class="btn ghost" data-acc="signout">Sign out</button></div>
+    <div class="acct-danger"><button class="acct-link danger" data-acc="go" data-v="delete">Delete account…</button></div></div>`; }
   const em=`<input class="fi" type="email" data-a="email" autocomplete="email" placeholder="you@example.com" value="${esc(acct.email)}">`;
   if(v==='signup') return `<div class="acct auth"><div class="acct-h"><div><span class="acct-step">Step 1 of 2</span><h3>Create your account</h3></div>${close}</div>
       <p class="muted">Free during the beta. Keep your plots in the cloud and work on them with your crew.</p>
@@ -9767,7 +9796,7 @@ function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
       <p>We sent ${v==='check'?'a confirmation link':'a sign-in link'} to <b>${esc(acct.email)}</b>. ${v==='check'?'Click it to confirm your email and you’re in.':'Click it to sign in, no password needed.'}</p>
       <p class="muted">Nothing there? Look in spam, or send it again.</p>${acctMsgHTML()}
       <div class="acct-row"><button class="btn" data-acc="${v==='check'?'resend':'magic'}">Send again</button><button class="btn ghost" data-acc="go" data-v="${v==='check'?'signup':'signin'}">Use another email</button></div></div>`;
-  return `<div class="acct auth"><div class="acct-h"><h3>Sign in</h3>${close}</div><p class="muted">Welcome back. Your plots are waiting.</p>
+  return `<div class="acct auth"><div class="acct-h"><h3>Sign in</h3>${close}</div><p class="muted">${authGate?'Sign in to plan your lighting and storyboards.':'Welcome back. Your plots are waiting.'}</p>
     ${acctProv('Continue')}
     ${acctField('Email',em)}
     ${acctField('Password',acctPw('current-password'),'<button type="button" class="acct-link" data-acc="go" data-v="reset">Forgot password?</button>')}
@@ -9775,6 +9804,7 @@ function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
     <button class="btn primary acct-main" data-acc="signin">Sign in</button>
     <button type="button" class="acct-link center" data-acc="magic">Email me a sign-in link instead</button>
     <div class="acct-switch">New to Set Plot? <button class="acct-link" data-acc="go" data-v="signup">Create an account</button></div></div>`; }
+function gateOffline(){ return `<div class="acct auth"><div class="acct-h"><h3>Can’t reach Set Plot</h3></div><p class="muted">The sign-in service didn’t load. Check your internet connection and try again.</p><button class="btn primary acct-main" onclick="location.reload()">Try again</button></div>`; }
 function acctGrab(){ const m=$('#modal'); if(!m) return; const g=k=>m.querySelector(`[data-a="${k}"]`);
   if(g('email')) acct.email=g('email').value.trim(); if(g('name')) acct.name=g('name').value.trim(); if(g('heard')) acct.about.heard=g('heard').value; }
 function openAccount(view,keepQ){ if(typeof view!=='string') view=sbUser?'me':'signin'; if(view==='about'&&!keepQ){ acct.qi=0; ACCT_Q=sbUser?['name','role','work','crew','heard']:['role','work','crew','heard']; } acct.view=view; acct.msg=''; acct.bad=false;
@@ -9795,8 +9825,9 @@ async function profileCheck(){ if(!sb||!sbUser) return; try{ const {data,error}=
     if(!sbProfile||!sbProfile.role){ const md=sbUser.user_metadata||{}; acct.name=(sbProfile&&sbProfile.name)||md.full_name||md.name||''; acct.about={role:'',work:[],crew:'',heard:''}; acct.must=true; acct.view='about'; acct.qi=0; ACCT_Q=acct.name?['role','work','crew','heard']:['name','role','work','crew','heard']; acct.msg=''; showModal(accountHTML()); }
   }catch(e){} }
 function acctAboutOk(needName){ const A=acct.about; if(needName&&acct.name.length<2) return 'Type your name'; if(!A.role) return 'Pick what describes you best'; if(!A.work.length) return 'Pick at least one kind of work'; if(!A.crew) return 'Pick your usual crew size'; return ''; }
-$('#modal').addEventListener('click',e=>{ if(e.target.id==='modal'&&$('#modal .acct.must')) e.stopImmediatePropagation(); },true);
-addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#modal').hidden&&$('#modal .acct.must')){ e.stopImmediatePropagation(); e.preventDefault(); } },true);
+$('#modal').addEventListener('click',e=>{ if(e.target.id==='modal'&&($('#modal .acct.must')||(authGate&&!sbUser))) e.stopImmediatePropagation(); },true);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#modal').hidden&&$('#modal .acct.must')){ e.stopImmediatePropagation(); e.preventDefault(); return; }
+  if(authGate&&!sbUser&&!(e.target&&e.target.closest&&e.target.closest('#modal'))){ e.stopImmediatePropagation(); if(e.key!=='Tab') e.preventDefault(); } },true);
 $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-acc]'); if(!b) return; const a=b.dataset.acc;
   if(a==='savecfg'){ const url=$('#modal [data-sb=url]').value.trim().replace(/\/+$/,''), key=$('#modal [data-sb=key]').value.trim(); if(!/^https:\/\/.+/.test(url)||key.length<20){ toast('Paste the project URL and the anon key'); return; }
     try{ localStorage.setItem('setplot-sb',JSON.stringify({url,key})); }catch(err){} b.disabled=true; await sbInit(); openAccount(); return; }
@@ -9809,9 +9840,19 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
   if(a==='go'){ const keep=pass; acct.pass=b.dataset.v==='about'?keep:acct.pass; openAccount(b.dataset.v); if(b.dataset.v==='signup'&&acct.pass){ const p2=$('#modal [data-a=pass]'); if(p2) p2.value=acct.pass; } return; }
   if(a==='oauth'){ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:sbRedirect(),scopes:b.dataset.prov==='azure'?'email':undefined}}); if(error) acctMsg(acctErr(error),true); return; }
   if(a==='sync'){ await cloudSync(true); return; }
-  if(a==='signout'){ b.disabled=true; try{ if(drawEd) await closeDraw(true); if(dirty) await flush(); await cloudSync(false,true); }catch(err){} await sb.auth.signOut(); $('#modal').hidden=true; toast('Signed out · your setups are safe in your account'); return; }
+  if(a==='signout'){ b.disabled=true; try{ if(drawEd) await closeDraw(true); if(dirty) await flush(); await cloudSync(false,true); }catch(err){} await sb.auth.signOut(); if(!authGate) $('#modal').hidden=true; toast('Signed out · your setups are safe in your account'); return; }
   if(a==='editprofile'){ const P=sbProfile||{}; acct.name=P.name||sbName(sbUser); acct.about={role:P.role||'',work:(P.work||[]).slice(),crew:P.crew||'',heard:P.heard||''}; openAccount('about'); return; }
   const busy=async fn=>{ b.disabled=true; b.classList.add('busy'); try{ await fn(); }catch(err){ acctMsg(acctErr(err),true); } finally{ b.disabled=false; b.classList.remove('busy'); } };
+  if(a==='why'){ acct.why=acct.why===b.dataset.k?'':b.dataset.k; b.parentElement.querySelectorAll('.acct-chip').forEach(c=>{ const on=c.dataset.k===acct.why; c.classList.toggle('on',on); c.setAttribute('aria-checked',on); }); return; }
+  if(a==='delacct'){ const conf=($('#modal [data-a=confirm]')||{}).value||'', com=(($('#modal [data-a=comment]')||{}).value||'').trim(); acct.comment=com;
+    if(conf.trim().toUpperCase()!=='DELETE'){ acctMsg('Type DELETE in the box to confirm',true); return; }
+    return busy(async()=>{ const uid=sbUser.id; acctMsg('Deleting your files…');
+      try{ for(let round=0;round<20;round++){ const {data:files,error:le}=await sb.storage.from(SB_BUCKET).list(uid,{limit:100}); if(le||!files||!files.length) break;
+          const names=files.filter(f=>f&&f.name&&f.id!==null).map(f=>uid+'/'+f.name); if(!names.length) break; const {error:re}=await sb.storage.from(SB_BUCKET).remove(names); if(re) break; } }catch(err){}
+      acctMsg('Deleting your account…'); const {error}=await sb.rpc('delete_my_account',{p_reason:acct.why||null,p_comment:com||null}); if(error) throw error;
+      Object.keys(all).forEach(id=>{ const d=all[id]; if(d&&(d.acc===uid||d.own===uid)){ delete all[id]; if(cur&&cur.id===id){ cur=null; dirty=false; } } });
+      try{ localStorage.removeItem(ACCT_STASH(uid)); localStorage.removeItem('setplot-sb-seen:'+uid); localStorage.removeItem('setplot-had-acct'); }catch(err){} localWrite();
+      acct.why=''; acct.comment=''; await sb.auth.signOut({scope:'local'}).catch(()=>{}); toast('Your account has been deleted. Thanks for trying Set Plot'); }); }
   if(a==='qback'){ if((acct.qi||0)>0){ acct.qi--; openAccount('about',true); } else { openAccount('signup'); const p2=$('#modal [data-a=pass]'); if(p2&&acct.pass) p2.value=acct.pass; } return; }
   if(a==='qnext'){ const Q=ACCT_Q[acct.qi||0], A=acct.about;
     const bad=Q==='name'&&acct.name.length<2?'Type your name':Q==='role'&&!A.role?'Pick the one closest to what you do':Q==='work'&&!A.work.length?'Pick at least one':Q==='crew'&&!A.crew?'Pick your usual crew size':'';
