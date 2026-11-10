@@ -101,7 +101,7 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .extopts button:hover{background:var(--hover);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .extopts svg{width:46px;height:30px;display:block}
 #lcLayer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:4}
-.lc{position:absolute;left:0;top:0;transition:transform .09s linear,opacity .4s;will-change:transform}
+.lc{position:absolute;left:0;top:0;transition:opacity .4s;will-change:transform}
 .lc svg{display:block;width:22px;height:22px;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
 .lc b{position:absolute;left:15px;top:17px;padding:2px 7px;border-radius:7px 7px 7px 2px;color:#fff;font:600 12px/16px var(--sans);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:opacity .4s}
 .lc.idle{opacity:.55}.lc.idle b{opacity:0}
@@ -4209,7 +4209,7 @@ async function flush(){
   }
   saving=false; if(again){ again=false; flush(); }
 }
-function localWrite(){ try{ localStorage.setItem('setplot-diagrams',JSON.stringify(all)); }catch(e){ setStatus('Browser storage full','warn'); } }
+function localWrite(){ if(sbUser&&mode==='local') for(const k in all){ const d=all[k]; if(d&&!d.acc&&!d.demo) d.acc=sbUser.id; } try{ localStorage.setItem('setplot-diagrams',JSON.stringify(all)); }catch(e){ setStatus('Browser storage full','warn'); } }
 function localRead(){ try{ return JSON.parse(localStorage.getItem('setplot-diagrams')||'{}')||{}; }catch(e){ return {}; } }
 addEventListener('pagehide',()=>{ if(dirty) flush(); });
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden'&&dirty) flush(); });
@@ -9416,8 +9416,8 @@ async function sbInit(){ const c=sbConf(); renderAccount(); if(!c||mode!=='local
   catch(e){ sb=null; renderAccount(); return; }
   sb.auth.onAuthStateChange((ev,session)=>{ const was=sbUser&&sbUser.id; sbUser=session&&session.user||null; renderAccount(); if(sbUser) trackOpen(); if(ev==='SIGNED_IN'&&sbUser&&sbUser.id!==was) track('sign_in');
     if(ev==='PASSWORD_RECOVERY'){ openAccount('newpass'); } else if(sbUser&&sbUser.id!==was) profileCheck();
-    if(sbUser&&sbUser.id!==was) cloudSync(true); if(!sbUser&&was){ sbProfile=null; setStatus('Saved in this browser'); sbProj={}; syncProjectRO(); } renderShareBtn(); });
-  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); if(sbUser){ cloudSync(true); trackOpen(); if(!/type=recovery/.test(location.hash)) profileCheck(); }
+    if(sbUser&&sbUser.id!==was){ acctSwitch(sbUser.id); cloudSync(true); } if(!sbUser&&was){ sbProfile=null; setStatus('Saved in this browser'); sbProj={}; acctSwitch(null); syncProjectRO(); } renderShareBtn(); });
+  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); acctSwitch(sbUser?sbUser.id:null); if(sbUser){ cloudSync(true); trackOpen(); if(!/type=recovery/.test(location.hash)) profileCheck(); }
   else { const q=new URLSearchParams(location.search); if(q.has('signup')||q.has('signin')) setTimeout(()=>openAccount(q.has('signup')?'signup':'signin'),400); }
   if(/[?&]signin\b/.test(location.search)){ if(!sbUser) setTimeout(openAccount,300); try{ history.replaceState(null,'',location.pathname+location.search.replace(/[?&]signin\b=?[^&]*/,'').replace(/^&/,'?')+location.hash); }catch(e){} }   /* "Sign in" on the landing page opens the dialog */
   addEventListener('focus',()=>{ if(sbUser&&Date.now()-sbLastSync>15000) cloudSync(false); }); }
@@ -9453,6 +9453,31 @@ async function sbWrite(id){ const d=all[id]; if(!d) return; if(docMine(d)){ cons
 async function sbAllPlots(){ const out=[]; for(let a=0;;a+=1000){ let q=sb.from('plots').select('owner,id,doc,updated_at,project_id'); const paged=typeof q.order==='function'; if(paged) q=q.order('id').range(a,a+999);
   const {data,error}=await q; if(error) throw error; out.push(...(data||[])); if(!paged||(data||[]).length<1000) break; } return out; }
 /* sync: newest wins per setup. Setups that were in the cloud and are gone (deleted elsewhere, or you were removed from the project) go away here too */
+/* each account's setups stay with that account: on sign-out (or when someone else signs in) they're put away in this browser,
+   and they come back only when that same account signs in again. Setups made while signed out are kept apart ("guest");
+   on sign-in we ask whether to add them to the account */
+const ACCT_STASH=a=>'setplot-acct:'+a;
+function acctSwitch(uid){ if(mode!=='local') return; let moved=0, back=0; const out={};
+  Object.keys(all).forEach(id=>{ const d=all[id]; if(!d||d.demo) return; const tag=d.acc||d.own||'guest'; if(tag===uid||(!uid&&tag==='guest')) return; (out[tag]=out[tag]||{})[id]=d; delete all[id]; delete sbRow[id]; moved++; });
+  Object.keys(out).forEach(a=>{ let st={}; try{ st=JSON.parse(localStorage.getItem(ACCT_STASH(a))||'{}')||{}; }catch(e){} Object.keys(out[a]).forEach(id=>{ if(!st[id]||(st[id].updatedAt||0)<=(out[a][id].updatedAt||0)) st[id]=out[a][id]; });
+    try{ localStorage.setItem(ACCT_STASH(a),JSON.stringify(st)); }catch(e){} });
+  { const k=uid||'guest'; try{ const st=JSON.parse(localStorage.getItem(ACCT_STASH(k))||'null'); if(st){ Object.keys(st).forEach(id=>{ if(!all[id]||(all[id].updatedAt||0)<(st[id].updatedAt||0)){ all[id]=st[id]; back++; } }); localStorage.removeItem(ACCT_STASH(k)); } }catch(e){} }
+  if(uid) setTimeout(guestOffer,600);
+  if(!moved&&!back) return; localWrite();
+  if(cur&&!all[cur.id]){ cur=null; dirty=false; sel.clear(); }
+  if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); else { renderHeader(); renderInspector(); draw(); } } else if(back){ renderHeader(); }
+  try{ if(!$('#drawer').hidden) renderDrawer(); }catch(e){} }
+function guestDocs(){ try{ const st=JSON.parse(localStorage.getItem(ACCT_STASH('guest'))||'{}')||{}; return Object.keys(st).filter(k=>st[k]&&!st[k].demo).map(k=>[k,st[k]]); }catch(e){ return []; } }
+function guestOffer(){ if(!sbUser||mode!=='local') return; const g=guestDocs(); if(!g.length) return;
+  if(!$('#modal').hidden){ clearTimeout(guestOffer.t); guestOffer.t=setTimeout(guestOffer,1200); return; }
+  const n=g.length, names=g.slice(0,3).map(([,d])=>esc(d.title||d.shoot||'Untitled')).join(', ')+(n>3?` and ${n-3} more`:'');
+  showModal(`<div class="acct"><div class="acct-h"><h3>Setups from this browser</h3><button class="ib" data-close aria-label="Close">${ic('close')}</button></div>
+    <p>You made ${n===1?'a setup':n+' setups'} here while signed out: <b>${names}</b>.</p>
+    <p class="muted">Add ${n===1?'it':'them'} to ${esc(sbUser.email||'this account')}? If not, ${n===1?'it stays':'they stay'} in this browser and ${n===1?'shows':'show'} up again when you sign out.</p>
+    <div class="acct-row end"><button class="btn ghost" data-gs="keep">Keep in this browser</button><button class="btn primary" data-gs="add">Add to my account</button></div></div>`); }
+$('#modal').addEventListener('click',e=>{ const b=e.target.closest('[data-gs]'); if(!b) return; $('#modal').hidden=true; if(b.dataset.gs!=='add'||!sbUser) return;
+  const g=guestDocs(); g.forEach(([k,d])=>{ d.acc=sbUser.id; all[k]=d; }); try{ localStorage.removeItem(ACCT_STASH('guest')); }catch(err){} localWrite();
+  if(!cur&&g.length) openDiagram(g[0][0]); try{ if(!$('#drawer').hidden) renderDrawer(); }catch(err){} cloudSync(false); toast(`${g.length===1?'Setup':g.length+' setups'} added to your account`); });
 async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=true; if(!quiet) setStatus('Syncing','busy');
   try{ const pOK=await projLoad(), me=sbUser.id, data=await sbAllPlots();
     const remote=new Map(data.map(r=>[r.id,r])); let pulled=0, curChanged=false, removed=0; const push=[];
@@ -9461,9 +9486,10 @@ async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=t
       if(!l||((l.updatedAt||0)<ru)){ if(isCur&&(dirty||drawEd)) return; if(isCur) curChanged=true; all[id]=r.doc; pulled++; }
       const d=all[id]; d.own=r.owner; if((d.updatedAt||0)<=ru){ if((d.pid||null)!==(r.project_id||null)&&isCur) curChanged=true; d.pid=r.project_id||null; } });
     Object.keys(all).forEach(id=>{ if(remote.has(id)||!seen.has(id)) return; const d=all[id]; if(cur&&cur.id===id){ if((dirty||drawEd)&&docMine(d)&&!d.pid) return; cur=null; dirty=false; } delete all[id]; delete sbRow[id]; removed++; });
-    Object.keys(all).forEach(id=>{ const d=all[id], r=remote.get(id), lu=d.updatedAt||0, ru=r?docTime(r):-1; if(pOK&&d.pid&&!sbProj[d.pid]&&!r){ d.pid=null; }
+    Object.keys(all).forEach(id=>{ const d=all[id], r=remote.get(id), lu=d.updatedAt||0, ru=r?docTime(r):-1; if(pOK&&d.pid&&!sbProj[d.pid]&&!r&&(!d.acc||d.acc===me)&&(!d.own||d.own===me)){ d.pid=null; }
       if(lu<=ru) return; if(docCanWrite(d)&&(docMine(d)||r)&&(!d.pid||sbProj[d.pid])) push.push(id);
       else if(r&&!(cur&&cur.id===id&&(dirty||drawEd))){ all[id]=r.doc; all[id].own=r.owner; all[id].pid=r.project_id||null; if(cur&&cur.id===id) curChanged=true; } });   /* edits you weren't allowed to make are dropped */
+    const guests=push.filter(id=>!all[id].acc&&!all[id].own); Object.keys(all).forEach(id=>{ if(all[id]&&!all[id].demo) all[id].acc=me; });
     if(push.length){ const mine=push.filter(id=>docMine(all[id])).map(id=>sbRowOf(all[id],id));
       for(let i=0;i<mine.length;i+=50){ const {error:e2}=await sb.from('plots').upsert(mine.slice(i,i+50),{onConflict:'owner,id'}); if(e2) throw e2; }
       for(const id of push){ if(!docMine(all[id])) await sbWrite(id); else sbRow[id]={own:me,pid:all[id].pid||null}; all[id].own=all[id].own||me; }
@@ -9472,7 +9498,7 @@ async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=t
     localWrite(); sbLastSync=Date.now(); if(pulled) Object.keys(IMG).forEach(k=>{ if(IMG[k]&&IMG[k].state==='missing'&&k.startsWith('idb:')) delete IMG[k]; });
     if(curChanged&&cur&&all[cur.id]) openDiagram(cur.id,true); else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); else { renderHeader(); renderInspector(); draw(); } } else syncProjectRO();
     if(!$('#drawer').hidden) renderDrawer();
-    if(!quiet||pulled||removed) setStatus('Synced to your account'); if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`);
+    if(!quiet||pulled||removed) setStatus('Synced to your account'); if(first&&guests.length) toast(`${guests.length===1?'1 setup':guests.length+' setups'} you made while signed out ${guests.length===1?'was':'were'} added to this account`); else if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`);
     else if(quiet&&curChanged) toast('Updated with changes from your crew'); }
   catch(e){ if(!quiet) setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); track('sync_error',{m:String(e&&e.message||e).slice(0,120)}); }
   sbBusy=false; }
@@ -9498,14 +9524,14 @@ async function lcSync(){ const t=lcTopic();
   try{ const {data}=await sb.auth.getSession(), tok=data&&data.session&&data.session.access_token;
     if(lc.topic!==t) return; if(tok&&sb.realtime&&sb.realtime.setAuth) await sb.realtime.setAuth(tok); if(lc.topic!==t) return;
     const ch=sb.channel(t,{config:{private:true,broadcast:{self:false},presence:{key:sbUser.id}}}); lc.ch=ch;
-    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
+    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('broadcast',{event:'mv'},m=>lcRecvMove(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
       .subscribe(st=>{ if(lc.ch!==ch) return; if(st==='SUBSCRIBED'){ lc.ok=true; lc.where=lcWhere(); try{ ch.track(lcMe()); }catch(e){} }
         else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ lc.ok=false; } });
   }catch(e){ lc.ch=null; } }
 function lcRecv(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={});
   o.name=String(p.name||o.name||'Someone').slice(0,40); o.color=LC_COL.includes(p.color)?p.color:lcColor(p.id);
-  if(typeof p.x!=='number'||typeof p.y!=='number'||!isFinite(p.x)||!isFinite(p.y)){ o.off=true; } else { o.off=false; o.x=p.x; o.y=p.y; o.ts=Date.now(); }
-  lcPaint(); }
+  if(typeof p.x!=='number'||typeof p.y!=='number'||!isFinite(p.x)||!isFinite(p.y)){ o.off=true; o.hidden=true; } else { o.off=false; if(o.dx==null||o.hidden){ o.dx=p.x; o.dy=p.y; } o.x=p.x; o.y=p.y; o.ts=Date.now(); o.hidden=false; }
+  lcAnimKick(); }
 function lcPresence(){ if(!lc.ch) return; let st={}; try{ st=lc.ch.presenceState()||{}; }catch(e){}
   const seen={}, me=sbUser&&sbUser.id; lc.online=[];
   Object.keys(st).forEach(k=>{ const m=(st[k]||[])[0]; if(!m||k===me||seen[k]) return; seen[k]=1;
@@ -9516,14 +9542,14 @@ function lcPresence(){ if(!lc.ch) return; let st={}; try{ st=lc.ch.presenceState
   lcPeople(); if(typeof draw==='function') draw(); lcPaint(); }
 function lcSend(pt,now){ if(!lc.ch||!lc.ok||!sbUser) return; lc.pend=pt; const go=()=>{ lc.pt=0; lc.sent=Date.now(); const q=lc.pend;
     try{ lc.ch.send({type:'broadcast',event:'cur',payload:Object.assign({id:sbUser.id,name:lcName(),color:lcColor(sbUser.id)},q?{x:+q.x.toFixed(3),y:+q.y.toFixed(3)}:{})}); }catch(e){} };
-  if(now){ clearTimeout(lc.pt); go(); return; } if(lc.pt) return; const wait=Math.max(0,50-(Date.now()-lc.sent)); lc.pt=setTimeout(go,wait); }
+  if(now){ clearTimeout(lc.pt); go(); return; } if(lc.pt) return; const wait=Math.max(0,40-(Date.now()-lc.sent)); lc.pt=setTimeout(go,wait); }
 function lcPaint(){ if(!lc.lay){ if(!lc.ch) return; lc.lay=document.createElement('div'); lc.lay.id='lcLayer'; lc.lay.setAttribute('aria-hidden','true'); ($('#inkOv')||svg).after(lc.lay); }
   const L=lc.lay, now=Date.now(), show=!drawEd; const keep={};
   Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(!show||o.off||o.x==null||now-(o.ts||0)>60000) return; keep[k]=1;
     let el=L.querySelector(`[data-lc="${CSS.escape(k)}"]`);
     if(!el){ el=document.createElement('div'); el.className='lc'; el.dataset.lc=k; el.innerHTML='<svg viewBox="0 0 20 20"><path d="M3 2.2 16.6 9.4 10.2 10.8 7.4 17Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg><b></b>'; L.appendChild(el); }
     el.querySelector('path').setAttribute('fill',o.color); const b=el.querySelector('b'); b.style.background=o.color; if(b.textContent!==o.name) b.textContent=o.name;
-    const sx=W/2+(o.x-view.x)*view.s, sy=H/2+(o.y-view.y)*view.s; el.style.transform=`translate(${Math.round(sx-3)}px,${Math.round(sy-2)}px)`;
+    const cx=o.dx!=null?o.dx:o.x, cy=o.dy!=null?o.dy:o.y, sx=W/2+(cx-view.x)*view.s, sy=H/2+(cy-view.y)*view.s; el.style.transform=`translate(${(sx-3).toFixed(1)}px,${(sy-2).toFixed(1)}px)`;
     el.classList.toggle('idle',now-(o.ts||0)>8000); });
   L.querySelectorAll('.lc').forEach(el=>{ if(!keep[el.dataset.lc]) el.remove(); });
   /* what the others have selected: a box in their colour with marching ants and their name */
@@ -9551,10 +9577,36 @@ function lcSay(ps){ const now=Date.now(); if(now-lc.said<1500) return; lc.said=n
   toast(n.length===1?`${n[0]} is editing this right now`:`${n.slice(0,-1).join(', ')} and ${n.slice(-1)} are editing these right now`); }
 function lcTrack(){ clearTimeout(lc.tt); lc.tt=setTimeout(()=>{ if(lc.ch&&lc.ok){ try{ lc.ch.track(lcMe()); }catch(e){} } },120); }
 function lcSelSync(){ if(!lc||!lc.ch) return; const a=lcMySel(), key=a.join(','); if(key===lc.selKey) return; lc.selKey=key; lc.mine=new Set(a); lc.at=a.length?Date.now():0; lcTrack(); }
+/* smoothing: cursors and objects someone else is moving glide to where they are instead of jumping every message */
+const LC_MOVE=['x','y','rot'];
+function lcAnimKick(){ if(!lc.anim){ lc.anim=requestAnimationFrame(lcAnimStep); lc.at0=performance.now(); } }
+function lcAnimStep(now){ lc.anim=0; const dt=Math.min(64,now-(lc.at0||now)); lc.at0=now; const k=1-Math.exp(-dt/55); let busy=false, moved=false;
+  Object.keys(lc.peers).forEach(id=>{ const o=lc.peers[id]; if(o.x==null||o.dx==null) return; const ex=o.x-o.dx, ey=o.y-o.dy;
+    if(Math.abs(ex)+Math.abs(ey)<1e-3){ o.dx=o.x; o.dy=o.y; return; } o.dx+=ex*k; o.dy+=ey*k; busy=true; });
+  if(lc.tgt&&cur){ Object.keys(lc.tgt).forEach(iid=>{ const t=lc.tgt[iid], it=cur.items.find(i=>String(i.id)===iid); if(!it){ delete lc.tgt[iid]; return; } let open=false;
+      LC_MOVE.forEach(f=>{ if(t[f]==null||typeof it[f]!=='number'){ if(t[f]!=null) it[f]=t[f]; return; } let e=t[f]-it[f]; if(f==='rot'){ e=((e+540)%360)-180; }
+        if(Math.abs(e)<(f==='rot'?.05:.0005)){ it[f]=t[f]; return; } it[f]+=e*Math.min(1,k*1.15); open=true; });
+      moved=true; if(!open) delete lc.tgt[iid]; else busy=true; }); }
+  if(moved) draw(); else lcPaint();
+  if(busy) lc.anim=requestAnimationFrame(lcAnimStep); }
+/* live object changes: whatever I hold (have selected) is broadcast as it changes, so the others see it move instead of jumping on save */
+function lcLiveSend(){ if(!lc.ch||!lc.ok||readOnly||!cur||!lc.mine.size||drawEd) return; const ids=[...lc.mine].slice(0,40);
+  const items=ids.map(id=>cur.items.find(i=>String(i.id)===id)).filter(Boolean); if(!items.length) return; let sig; try{ sig=JSON.stringify(items); }catch(e){ return; }
+  if(sig===lc.mvSig) return; lc.mvSig=sig; if(sig.length>60000) return; lc.mvPend=sig;
+  if(lc.mvT) return; const go=()=>{ lc.mvT=0; lc.mvLast=Date.now(); const raw=lc.mvPend; lc.mvPend=null; if(!raw||!lc.ch) return;
+    try{ lc.ch.send({type:'broadcast',event:'mv',payload:{id:sbUser.id,doc:cur.id,items:JSON.parse(raw)}}); }catch(e){} };
+  const wait=Math.max(0,45-(Date.now()-(lc.mvLast||0))); lc.mvT=setTimeout(go,wait); }
+function lcRecvMove(p){ if(!p||!p.id||!cur||p.doc!==cur.id||!Array.isArray(p.items)||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]; if(!o) return;
+  lc.tgt=lc.tgt||{}; let hit=false;
+  p.items.slice(0,40).forEach(n=>{ if(!n||n.id==null) return; const iid=String(n.id); if(!(o.sel||[]).includes(iid)) return; const h=lcHolder(iid); if(!h||h.k!==p.id) return;
+    const it=cur.items.find(i=>String(i.id)===iid); if(!it||it.type!==n.type) return;
+    Object.keys(n).forEach(f=>{ if(f==='id'||LC_MOVE.includes(f)) return; it[f]=n[f]; }); Object.keys(it).forEach(f=>{ if(!(f in n)&&f!=='id'&&f[0]!=='_'&&!LC_MOVE.includes(f)) delete it[f]; });
+    const t=lc.tgt[iid]||(lc.tgt[iid]={}); LC_MOVE.forEach(f=>{ if(typeof n[f]==='number') t[f]=n[f]; else if(f in it&&!(f in n)) delete it[f]; }); hit=true; });
+  if(hit){ draw(); lcAnimKick(); } }
 function lcGuard(){ if(!lc||!lc.ch||!cur) return; if(!readOnly&&sel.size&&Object.keys(lc.peers).length){ const lost=[];
     [...sel].forEach(id=>{ const p=lcHolder(id); if(p){ sel.delete(id); lost.push(p); if(drag&&drag.it&&String(drag.it.id)===String(id)){ drag=null; svg.classList.remove('grabbing'); } } });
     if(lost.length){ lcSay(lost); try{ renderInspector(); syncCardSel(); renderLayersSoon(); }catch(e){} } }
-  lcSelSync(); }
+  lcSelSync(); lcLiveSend(); }
 /* a click on something another person holds goes nowhere, with a note who has it */
 ['pointerdown','mousedown','dblclick','contextmenu'].forEach(ev=>addEventListener(ev,e=>{ if(!lc.ch||readOnly||drawEd) return;
   const t=e.target.closest&&e.target.closest('#plot [data-id], #cards [data-cid]'); if(!t) return; const p=lcHolder(t.dataset.id||t.dataset.cid); if(!p) return;
@@ -9757,7 +9809,7 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
   if(a==='go'){ const keep=pass; acct.pass=b.dataset.v==='about'?keep:acct.pass; openAccount(b.dataset.v); if(b.dataset.v==='signup'&&acct.pass){ const p2=$('#modal [data-a=pass]'); if(p2) p2.value=acct.pass; } return; }
   if(a==='oauth'){ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:sbRedirect(),scopes:b.dataset.prov==='azure'?'email':undefined}}); if(error) acctMsg(acctErr(error),true); return; }
   if(a==='sync'){ await cloudSync(true); return; }
-  if(a==='signout'){ await sb.auth.signOut(); $('#modal').hidden=true; toast('Signed out · your plots stay in this browser'); return; }
+  if(a==='signout'){ b.disabled=true; try{ if(drawEd) await closeDraw(true); if(dirty) await flush(); await cloudSync(false,true); }catch(err){} await sb.auth.signOut(); $('#modal').hidden=true; toast('Signed out · your setups are safe in your account'); return; }
   if(a==='editprofile'){ const P=sbProfile||{}; acct.name=P.name||sbName(sbUser); acct.about={role:P.role||'',work:(P.work||[]).slice(),crew:P.crew||'',heard:P.heard||''}; openAccount('about'); return; }
   const busy=async fn=>{ b.disabled=true; b.classList.add('busy'); try{ await fn(); }catch(err){ acctMsg(acctErr(err),true); } finally{ b.disabled=false; b.classList.remove('busy'); } };
   if(a==='qback'){ if((acct.qi||0)>0){ acct.qi--; openAccount('about',true); } else { openAccount('signup'); const p2=$('#modal [data-a=pass]'); if(p2&&acct.pass) p2.value=acct.pass; } return; }
