@@ -9413,7 +9413,7 @@ addEventListener('scroll',hideTip,true); addEventListener('blur',hideTip);
 /* ================= account: sign in (Supabase) and keep plots in the cloud ================= */
 // Fill these two in once, or paste them in Account → Set up. The anon key is public by design; the database rules protect the data.
 const SB_URL_DEFAULT='https://jwpikfywijqdjfozzmpl.supabase.co', SB_KEY_DEFAULT='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cGlrZnl3aWpxZGpmb3p6bXBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTEzNDcsImV4cCI6MjEwOTgyNzM0N30.OkUXW_8lyd1ketEJnGs0UFyCnzHNpV_8cyPayDRv0CI';   /* SetPlot EU project (Frankfurt) · public anon key, safe in the page: the database rules keep each person's plots private */
-const SB_PROVIDERS=['google','apple'];   /* add 'google', 'azure' or 'apple' once that provider is switched on in Supabase → Authentication → Sign In / Providers */
+const SB_PROVIDERS=['google'];   /* add 'google', 'azure' or 'apple' once that provider is switched on in Supabase → Authentication → Sign In / Providers */
 const SB_LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
 var sb=null, sbUser=null, sbBusy=false, sbPushT={}, sbLastSync=0;
 function sbConf(){ let c=null; try{ c=JSON.parse(localStorage.getItem('setplot-sb')||'null'); }catch(e){} const url=(c&&c.url)||SB_URL_DEFAULT, key=(c&&c.key)||SB_KEY_DEFAULT; return url&&key?{url,key}:null; }
