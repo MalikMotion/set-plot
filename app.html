@@ -119,6 +119,12 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .lc-people{display:flex;align-items:center;padding:0 4px 0 2px}.lc-people[hidden]{display:none}
 .lc-av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 12px/1 var(--sans);border:2px solid var(--card,#fff);margin-left:-6px;cursor:pointer;padding:0;position:relative}
 .lc-av:first-child{margin-left:0}.lc-av.away{opacity:.6}
+.lc-av.following{box-shadow:0 0 0 2px var(--card,#fff),0 0 0 4px var(--c);z-index:1}
+#lcFollow{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:8px;padding:5px 6px 5px 12px;border-radius:999px;background:var(--c);color:#fff;font:600 13px/1 var(--sans);box-shadow:0 6px 20px -8px rgba(0,0,0,.45)}
+#lcFollow button{border:0;border-radius:999px;background:rgba(255,255,255,.22);color:#fff;font:600 12.5px var(--sans);padding:5px 10px;cursor:pointer}#lcFollow button:hover{background:rgba(255,255,255,.34)}
+.lc-fdot{width:7px;height:7px;border-radius:50%;background:#fff;animation:lcFd 1.6s ease-in-out infinite}@keyframes lcFd{50%{opacity:.35}}
+body.lc-following::before{content:"";position:fixed;inset:0;z-index:5;pointer-events:none;box-shadow:inset 0 0 0 3px var(--lc-follow)}
+@media (prefers-reduced-motion:reduce){.lc-fdot{animation:none}}
 .lc-av.more{background:var(--soft,#eee);color:var(--ink);font-size:11px;cursor:default}
 @media (max-width:760px){.lc-av:nth-child(n+3):not(.more){display:none}}
 .share-btn{position:relative}.share-btn.on{color:var(--accent)}.share-btn .sh-n{position:absolute;right:1px;top:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--accent);color:#fff;font:700 10px/15px var(--sans);text-align:center}
@@ -4207,7 +4213,7 @@ $('#undoBtn').onclick=undo; $('#redoBtn').onclick=redo;
 /* ================= persistence ================= */
 function setStatus(t,kind){ const s=$('#status'); $('#statusT').textContent=t; s.classList.toggle('warn',kind==='warn'); s.classList.toggle('busy',kind==='busy'); }
 function touch(){ if(EMBED) embedFitSoon(); if(!cur||readOnly) return; if(!followHold) followSoon(); ensureLayers(cur); { const ids=new Set(cur.items.map(i=>i.id)); cur.items.forEach(i=>{ if(i.conns){ i.conns=i.conns.filter(c=>ids.has(c.to)&&c.to!==i.id); if(!i.conns.length) delete i.conns; } }); } renderLayersSoon(); cur.updatedAt=Date.now(); all[cur.id]=body(cur); pruneOrphanSetups(); dirty=true; setStatus('Saving','busy'); clearTimeout(saveT); saveT=setTimeout(flush,650); if(!$('#drawer').hidden) renderDrawer(); }
-async function flush(){
+async function flush(){ glideFinish();
   clearTimeout(saveT);
   if(!cur||!dirty||readOnly) return;
   if(saving){ again=true; return; }
@@ -9493,6 +9499,22 @@ function guestOffer(){ if(!sbUser||mode!=='local') return; const g=guestDocs(); 
 $('#modal').addEventListener('click',e=>{ const b=e.target.closest('[data-gs]'); if(!b) return; $('#modal').hidden=true; if(b.dataset.gs!=='add'||!sbUser) return;
   const g=guestDocs(); g.forEach(([k,d])=>{ d.acc=sbUser.id; all[k]=d; }); try{ localStorage.removeItem(ACCT_STASH('guest')); }catch(err){} localWrite();
   if(!cur&&g.length) openDiagram(g[0][0]); try{ if(!$('#drawer').hidden) renderDrawer(); }catch(err){} cloudSync(false); toast(`${g.length===1?'Setup':g.length+' setups'} added to your account`); });
+/* when a crew member's change arrives, objects glide from where they were to where they are now instead of jumping */
+const GLIDE_F=['x','y','rot','w','h','len','r'];
+let glide=null;
+function docSnap(d){ const m=new Map(); (d.items||[]).forEach(it=>{ const o={}; GLIDE_F.forEach(f=>{ if(typeof it[f]==='number') o[f]=it[f]; }); m.set(String(it.id),o); }); return m; }
+function glideFinish(){ if(!glide) return; glide.list.forEach(g=>Object.assign(g.it,g.end)); cancelAnimationFrame(glide.raf); glide=null; }
+function docGlide(before){ glideFinish(); if(!cur||matchMedia('(prefers-reduced-motion: reduce)').matches) return; const list=[];
+  cur.items.forEach(it=>{ const o=before.get(String(it.id)); if(!o||(lc&&lc.tgt&&lc.tgt[String(it.id)])) return; const from={}, to={}, end={};
+    GLIDE_F.forEach(f=>{ if(typeof it[f]!=='number'||typeof o[f]!=='number') return; const a=o[f], b=it[f];
+      if(f==='rot'){ const e=((b-a)%360+540)%360-180; if(Math.abs(e)<.05) return; from.rot=a; to.rot=a+e; end.rot=b; return; }
+      if(Math.abs(b-a)<1e-4) return; from[f]=a; to[f]=b; end[f]=b; });
+    if(Object.keys(to).length){ Object.assign(it,from); list.push({it,from,to,end}); } });
+  if(!list.length) return; const t0=performance.now(), D=420, ease=u=>1-Math.pow(1-u,3); glide={list,raf:0};
+  const step=now=>{ if(!glide||glide.list!==list) return; const u=Math.min(1,(now-t0)/D), k=ease(u);
+    if(u>=1){ list.forEach(g=>Object.assign(g.it,g.end)); glide=null; draw(); return; }
+    list.forEach(g=>{ for(const f in g.to) g.it[f]=g.from[f]+(g.to[f]-g.from[f])*k; }); draw(); glide.raf=requestAnimationFrame(step); };
+  glide.raf=requestAnimationFrame(step); }
 async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=true; if(!quiet) setStatus('Syncing','busy');
   try{ const pOK=await projLoad(), me=sbUser.id, data=await sbAllPlots();
     const remote=new Map(data.map(r=>[r.id,r])); let pulled=0, curChanged=false, removed=0; const push=[];
@@ -9511,10 +9533,10 @@ async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=t
       (async()=>{ for(const id of push) await sbMediaUp(all[id]); })(); }
     try{ localStorage.setItem(seenK,JSON.stringify([...new Set([...remote.keys(),...push])])); }catch(e){}
     localWrite(); sbLastSync=Date.now(); if(pulled) Object.keys(IMG).forEach(k=>{ if(IMG[k]&&IMG[k].state==='missing'&&k.startsWith('idb:')) delete IMG[k]; });
-    if(curChanged&&cur&&all[cur.id]) openDiagram(cur.id,true); else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); else { renderHeader(); renderInspector(); draw(); } } else syncProjectRO();
+    if(curChanged&&cur&&all[cur.id]){ const before=quiet&&cur!==all[cur.id]?docSnap(cur):null; openDiagram(cur.id,true); if(before) docGlide(before); } else if(!cur){ const id=(sorted()[0]||[])[0]; if(id) openDiagram(id); else { renderHeader(); renderInspector(); draw(); } } else syncProjectRO();
     if(!$('#drawer').hidden) renderDrawer();
     if(!quiet||pulled||removed) setStatus('Synced to your account'); if(first&&guests.length) toast(`${guests.length===1?'1 setup':guests.length+' setups'} you made while signed out ${guests.length===1?'was':'were'} added to this account`); else if(first&&(pulled||push.length)) toast(`Synced · ${pulled?pulled+' from the cloud':''}${pulled&&push.length?', ':''}${push.length?push.length+' uploaded':''}`);
-    else if(quiet&&curChanged) toast('Updated with changes from your crew'); }
+  }
   catch(e){ if(!quiet) setStatus(/relation|does not exist|schema/i.test(String(e&&e.message))?'Cloud table missing — see Account → Set up':'Sync failed · saved in this browser','warn'); track('sync_error',{m:String(e&&e.message||e).slice(0,120)}); }
   sbBusy=false; }
 /* live: when someone else saves a setup you can see, pull it in */
@@ -9528,10 +9550,10 @@ const LC_COL=['#e5484d','#2f7cf6','#2f9e62','#e38a2b','#8e4ec6','#d6409f','#12a5
 function lcColor(id){ let h=7; for(const c of String(id)) h=(h*31+c.charCodeAt(0))|0; return LC_COL[Math.abs(h)%LC_COL.length]; }
 function lcName(){ const m=sbUser&&sbUser.user_metadata||{}; return String(m.full_name||m.name||(sbUser&&sbUser.email||'').split('@')[0]||'Someone').trim().slice(0,40); }
 function lcWhere(){ return drawEd?'board':'plot'; }
-function lcMe(){ return {id:sbUser.id,name:lcName(),color:lcColor(sbUser.id),where:lcWhere(),sel:[...lc.mine],at:lc.at}; }
+function lcMe(){ return {id:sbUser.id,name:lcName(),color:lcColor(sbUser.id),where:lcWhere(),sel:[...lc.mine],at:lc.at,seq:lc.seq||0,follow:lc.follow||null}; }
 function lcTopic(){ try{ if(mode!=='local'||!sb||!sb.channel||!sbUser||!cur||!cur.pid||!sbProj[cur.pid]||document.visibilityState==='hidden') return '';
   const p=sbProj[cur.pid]; if(p.members!=null&&p.members<2) return ''; return 'plot:'+cur.pid+':'+cur.id; }catch(e){ return ''; } }
-function lcLeave(){ const ch=lc.ch; lc.ch=null; lc.topic=''; lc.peers={}; lc.online=[]; lc.where=''; lc.selKey=''; lc.mine=new Set(); lc.at=0;
+function lcLeave(){ if(lc.follow) lcUnfollow(); lc.followers=[]; const ch=lc.ch; lc.ch=null; lc.topic=''; lc.peers={}; lc.online=[]; lc.where=''; lc.selKey=''; lc.mine=new Set(); lc.at=0;
   if(ch){ try{ sb.removeChannel(ch); }catch(e){} } lcPaint(); lcPeople(); }
 async function lcSync(){ const t=lcTopic();
   if(t&&t===lc.topic){ if(lc.ch&&lc.where!==lcWhere()&&lc.ok){ lc.where=lcWhere(); try{ lc.ch.track(lcMe()); }catch(e){} if(lc.where==='board') lcSend(null,true); } return; }
@@ -9539,7 +9561,7 @@ async function lcSync(){ const t=lcTopic();
   try{ const {data}=await sb.auth.getSession(), tok=data&&data.session&&data.session.access_token;
     if(lc.topic!==t) return; if(tok&&sb.realtime&&sb.realtime.setAuth) await sb.realtime.setAuth(tok); if(lc.topic!==t) return;
     const ch=sb.channel(t,{config:{private:true,broadcast:{self:false},presence:{key:sbUser.id}}}); lc.ch=ch;
-    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('broadcast',{event:'mv'},m=>lcRecvMove(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
+    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('broadcast',{event:'vw'},m=>lcRecvView(m&&m.payload)).on('broadcast',{event:'sel'},m=>lcRecvSel(m&&m.payload)).on('broadcast',{event:'mv'},m=>lcRecvMove(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
       .subscribe(st=>{ if(lc.ch!==ch) return; if(st==='SUBSCRIBED'){ lc.ok=true; lc.where=lcWhere(); try{ ch.track(lcMe()); }catch(e){} }
         else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ lc.ok=false; } });
   }catch(e){ lc.ch=null; } }
@@ -9552,8 +9574,9 @@ function lcPresence(){ if(!lc.ch) return; let st={}; try{ st=lc.ch.presenceState
   Object.keys(st).forEach(k=>{ const m=(st[k]||[])[0]; if(!m||k===me||seen[k]) return; seen[k]=1;
     lc.online.push({id:k,name:String(m.name||'Someone').slice(0,40),color:LC_COL.includes(m.color)?m.color:lcColor(k),where:m.where==='board'?'board':'plot'});
     const o=lc.peers[k]||(lc.peers[k]={off:true}); o.name=String(m.name||o.name||'Someone').slice(0,40); o.color=lcColor(k); if(m.where==='board') o.off=true;
-    o.where=m.where==='board'?'board':'plot'; o.sel=Array.isArray(m.sel)?m.sel.slice(0,200).map(String):[]; o.at=+m.at||0; });
+    o.where=m.where==='board'?'board':'plot'; if((+m.seq||0)>=(o.seq||0)){ o.seq=+m.seq||0; o.sel=Array.isArray(m.sel)?m.sel.slice(0,200).map(String):[]; o.at=+m.at||0; } o.follow=m.follow||null; });
   Object.keys(lc.peers).forEach(k=>{ if(!seen[k]) delete lc.peers[k]; });
+  lcFollowPresence();
   lcPeople(); if(typeof draw==='function') draw(); lcPaint(); }
 function lcSend(pt,now){ if(!lc.ch||!lc.ok||!sbUser) return; lc.pend=pt; const go=()=>{ lc.pt=0; lc.sent=Date.now(); const q=lc.pend;
     try{ lc.ch.send({type:'broadcast',event:'cur',payload:Object.assign({id:sbUser.id,name:lcName(),color:lcColor(sbUser.id)},q?{x:+q.x.toFixed(3),y:+q.y.toFixed(3)}:{})}); }catch(e){} };
@@ -9591,7 +9614,11 @@ function lcHolder(id){ if(!lc||!lc.ch||readOnly) return null; id=String(id); let
 function lcSay(ps){ const now=Date.now(); if(now-lc.said<1500) return; lc.said=now; const n=[...new Set(ps.map(p=>p.name))];
   toast(n.length===1?`${n[0]} is editing this right now`:`${n.slice(0,-1).join(', ')} and ${n.slice(-1)} are editing these right now`); }
 function lcTrack(){ clearTimeout(lc.tt); lc.tt=setTimeout(()=>{ if(lc.ch&&lc.ok){ try{ lc.ch.track(lcMe()); }catch(e){} } },120); }
-function lcSelSync(){ if(!lc||!lc.ch) return; const a=lcMySel(), key=a.join(','); if(key===lc.selKey) return; lc.selKey=key; lc.mine=new Set(a); lc.at=a.length?Date.now():0; lcTrack(); }
+function lcSelSync(){ if(!lc||!lc.ch) return; const a=lcMySel(), key=a.join(','); if(key===lc.selKey) return; lc.selKey=key; lc.mine=new Set(a); lc.at=a.length?Date.now():0; lc.seq=(lc.seq||0)+1;
+  /* tell the others straight away over broadcast (as fast as the cursor); presence follows for anyone who joins later */
+  if(lc.ok){ try{ lc.ch.send({type:'broadcast',event:'sel',payload:{id:sbUser.id,sel:[...lc.mine],at:lc.at,seq:lc.seq,where:lcWhere()}}); }catch(e){} } lcTrack(); }
+function lcRecvSel(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)||!Array.isArray(p.sel)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={off:true,name:'Someone',color:lcColor(p.id)});
+  if((+p.seq||0)<(o.seq||0)) return; o.seq=+p.seq||0; o.sel=p.sel.slice(0,200).map(String); o.at=+p.at||0; o.where=p.where==='board'?'board':'plot'; draw(); lcPaint(); }
 /* smoothing: cursors and objects someone else is moving glide to where they are instead of jumping every message */
 const LC_MOVE=['x','y','rot'];
 function lcAnimKick(){ if(!lc.anim){ lc.anim=requestAnimationFrame(lcAnimStep); lc.at0=performance.now(); } }
@@ -9602,8 +9629,33 @@ function lcAnimStep(now){ lc.anim=0; const dt=Math.min(64,now-(lc.at0||now)); lc
       LC_MOVE.forEach(f=>{ if(t[f]==null||typeof it[f]!=='number'){ if(t[f]!=null) it[f]=t[f]; return; } let e=t[f]-it[f]; if(f==='rot'){ e=((e+540)%360)-180; }
         if(Math.abs(e)<(f==='rot'?.05:.0005)){ it[f]=t[f]; return; } it[f]+=e*Math.min(1,k*1.15); open=true; });
       moved=true; if(!open) delete lc.tgt[iid]; else busy=true; }); }
+  if(lc.follow&&lc.vt){ if(lc.vLast&&(Math.abs(view.x-lc.vLast.x)>1e-6||Math.abs(view.y-lc.vLast.y)>1e-6||Math.abs(view.s-lc.vLast.s)>1e-6)){ lcUnfollow('took'); }
+    else { const t=lc.vt, ex=t.x-view.x, ey=t.y-view.y, es=Math.log(t.s/view.s), kk=1-Math.exp(-dt/110);
+      if(Math.abs(ex)*view.s+Math.abs(ey)*view.s<.3&&Math.abs(es)<.002){ view.x=t.x; view.y=t.y; view.s=t.s; }
+      else { view.x+=ex*kk; view.y+=ey*kk; view.s*=Math.exp(es*kk); busy=true; } lc.vLast={x:view.x,y:view.y,s:view.s}; moved=true; } }
   if(moved) draw(); else lcPaint();
   if(busy) lc.anim=requestAnimationFrame(lcAnimStep); }
+/* follow a person: your view glides along with theirs until you pan or zoom yourself */
+function lcFollow(id){ const o=lc.peers[id]; if(!o||!lc.ch) return; lc.follow=id; lc.vt=null; lc.vLast=null; lcTrack(); lcFollowUI(); toast(`Following ${o.name}. Pan or zoom to stop`); }
+function lcUnfollow(why){ const o=lc.peers[lc.follow]; lc.follow=null; lc.vt=null; lc.vLast=null; try{ lcTrack(); }catch(e){} lcFollowUI();
+  if(why==='left') toast(`${o?o.name:'They'} left this setup`); else if(why==='took') toast('Stopped following'); }
+function lcFollowPresence(){ const me=sbUser&&sbUser.id; const fol=Object.keys(lc.peers).filter(k=>lc.peers[k].follow===me);
+  fol.filter(k=>!(lc.followers||[]).includes(k)).forEach(k=>{ toast(`${lc.peers[k].name} is following you`); lc.vwSig=''; });
+  lc.followers=fol; if(lc.follow&&!lc.peers[lc.follow]) lcUnfollow('left'); else lcFollowUI(); }
+function lcFollowUI(){ let el=$('#lcFollow'); const o=lc.follow&&lc.peers[lc.follow];
+  if(!o){ if(el) el.remove(); document.body.classList.remove('lc-following'); lcPeople(); return; }
+  if(!el){ el=document.createElement('div'); el.id='lcFollow'; el.innerHTML='<span class="lc-fdot"></span><span class="lc-ft"></span><button type="button" data-lcstop>Stop</button>'; document.body.append(el); }
+  el.style.setProperty('--c',o.color); document.body.style.setProperty('--lc-follow',o.color); document.body.classList.add('lc-following');
+  el.querySelector('.lc-ft').textContent=o.where==='board'?`${o.name} is on the storyboard`:`Following ${o.name}`; lcPeople(); }
+document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('[data-lcstop]')) lcUnfollow(); });
+function lcViewSend(){ if(!lc.ch||!lc.ok||!cur||!(lc.followers&&lc.followers.length)) return; const sig=[view.x.toFixed(3),view.y.toFixed(3),view.s.toFixed(3),W,H,lcWhere()].join(',');
+  if(sig===lc.vwSig) return; lc.vwSig=sig; if(lc.vwT) return; const go=()=>{ lc.vwT=0; lc.vwLast=Date.now();
+    try{ lc.ch.send({type:'broadcast',event:'vw',payload:{id:sbUser.id,doc:cur.id,x:view.x,y:view.y,w:W/view.s,h:H/view.s,where:lcWhere()}}); }catch(e){} };
+  const wait=Math.max(0,90-(Date.now()-(lc.vwLast||0))); lc.vwT=setTimeout(go,wait); }
+function lcRecvView(p){ if(!p||!lc.follow||p.id!==lc.follow||!cur||p.doc!==cur.id||drawEd) return; const w=+p.w, h=+p.h, x=+p.x, y=+p.y; if(!(w>0&&h>0&&isFinite(x)&&isFinite(y))) return;
+  const s=Math.max(5,Math.min(2000,Math.min(W/w,H/h))); if(!lc.vLast) lc.vLast={x:view.x,y:view.y,s:view.s}; lc.vt={x,y,s};
+  const o=lc.peers[p.id]; if(o&&o.where!==(p.where==='board'?'board':'plot')){ o.where=p.where==='board'?'board':'plot'; lcFollowUI(); } lcAnimKick(); }
+setInterval(()=>{ if(lc.ch&&lc.followers&&lc.followers.length){ lc.vwSig=''; lcViewSend(); } },3000);
 /* live object changes: whatever I hold (have selected) is broadcast as it changes, so the others see it move instead of jumping on save */
 function lcLiveSend(){ if(!lc.ch||!lc.ok||readOnly||!cur||!lc.mine.size||drawEd) return; const ids=[...lc.mine].slice(0,40);
   const items=ids.map(id=>cur.items.find(i=>String(i.id)===id)).filter(Boolean); if(!items.length) return; let sig; try{ sig=JSON.stringify(items); }catch(e){ return; }
@@ -9621,18 +9673,16 @@ function lcRecvMove(p){ if(!p||!p.id||!cur||p.doc!==cur.id||!Array.isArray(p.ite
 function lcGuard(){ if(!lc||!lc.ch||!cur) return; if(!readOnly&&sel.size&&Object.keys(lc.peers).length){ const lost=[];
     [...sel].forEach(id=>{ const p=lcHolder(id); if(p){ sel.delete(id); lost.push(p); if(drag&&drag.it&&String(drag.it.id)===String(id)){ drag=null; svg.classList.remove('grabbing'); } } });
     if(lost.length){ lcSay(lost); try{ renderInspector(); syncCardSel(); renderLayersSoon(); }catch(e){} } }
-  lcSelSync(); lcLiveSend(); }
+  lcSelSync(); lcLiveSend(); lcViewSend(); }
 /* a click on something another person holds goes nowhere, with a note who has it */
 ['pointerdown','mousedown','dblclick','contextmenu'].forEach(ev=>addEventListener(ev,e=>{ if(!lc.ch||readOnly||drawEd) return;
   const t=e.target.closest&&e.target.closest('#plot [data-id], #cards [data-cid]'); if(!t) return; const p=lcHolder(t.dataset.id||t.dataset.cid); if(!p) return;
   e.preventDefault(); e.stopPropagation(); if(ev==='pointerdown') lcSay([p]); },true));
 function lcPeople(){ const box=$('#lcPeople'); if(!box) return; const ppl=lc.online; box.hidden=!ppl.length; if(!ppl.length){ box.innerHTML=''; return; }
   const shown=ppl.slice(0,4);
-  box.innerHTML=shown.map(p=>`<button type="button" class="lc-av${p.where==='board'?' away':''}" data-lcgo="${esc(p.id)}" style="background:${p.color}" title="${esc(p.name)} · ${p.where==='board'?'working on the storyboard':'here on the plot, click to go to their cursor'}" aria-label="${esc(p.name)}">${esc(p.name.trim()[0]||'?').toUpperCase()}</button>`).join('')
-    +(ppl.length>4?`<span class="lc-av more" title="${esc(ppl.slice(4).map(p=>p.name).join(', '))}">+${ppl.length-4}</span>`:''); }
-document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('[data-lcgo]'); if(!b) return; const o=lc.peers[b.dataset.lcgo];
-  if(!o||o.off||o.x==null||drawEd){ toast(o&&!drawEd&&o.off?`${o.name} is working on the storyboard`:'Their cursor isn’t on the plot right now'); return; }
-  view.x=o.x; view.y=o.y; draw(); });
+  box.innerHTML=shown.map(p=>{ const f=lc.follow===p.id, me=sbUser&&lc.peers[p.id]&&lc.peers[p.id].follow===sbUser.id; return `<button type="button" class="lc-av${p.where==='board'?' away':''}${f?' following':''}" data-lcgo="${esc(p.id)}" style="background:${p.color};--c:${p.color}" title="${esc(p.name)}${p.where==='board'?' · on the storyboard':''}${me?' · following you':''} · ${f?'click to stop following':'click to follow'}" aria-label="${f?'Stop following':'Follow'} ${esc(p.name)}" aria-pressed="${f}">${esc(p.name.trim()[0]||'?').toUpperCase()}</button>`; }).join('')+(ppl.length>4?`<span class="lc-av more" title="${esc(ppl.slice(4).map(p=>p.name).join(', '))}">+${ppl.length-4}</span>`:''); }
+document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('[data-lcgo]'); if(!b) return; const id=b.dataset.lcgo; if(!lc.peers[id]) return;
+  if(drawEd){ toast('Close the storyboard editor to follow someone'); return; } if(lc.follow===id) lcUnfollow(); else lcFollow(id); });
 addEventListener('pointermove',e=>{ if(!lc.ch||!lc.ok||drawEd||e.pointerType==='touch') return; lcSend(toWorld(e.clientX,e.clientY)); },true);
 document.addEventListener('mouseout',e=>{ if(!e.relatedTarget&&lc.ch) lcSend(null,true); });
 addEventListener('blur',()=>{ if(lc.ch) lcSend(null,true); });
@@ -9725,7 +9775,7 @@ const ABOUT={
   crew:[['solo','Just me'],['2-5','2–5 people'],['6-20','6–20'],['20+','More than 20']],
   heard:[['friend','A friend or colleague'],['instagram','Instagram'],['youtube','YouTube'],['facebook','A Facebook group'],['search','Searching online'],['other','Somewhere else']]};
 /* ================= what's new ================= */
-const CHANGELOG=/*CHANGELOG*/[{"date":"2026-11-10","items":[["new","Sign in with Google","Create an account or sign in with your Google account in one click."],["new","Delete your account","Account → Delete account removes your account and your work. Shared projects you started are handed to another member, so your crew keeps them."],["changed","An account is now needed","Set Plot now asks you to sign in. Your setups are always saved to your account and follow you to every device."],["new","See others move things live","In shared setups you now see objects move, turn and change as your crew edits them, and their cursors glide smoothly."],["fixed","Setups stay with their account","Signing in to a different account in the same browser no longer shows the previous account's setups."],["new","Clearer sign-in and sign-up","Separate screens for signing in and creating an account, password reset, and a few quick questions about your work when you join."],["new","Edit locks","Whatever a collaborator has selected is outlined with their name, and nobody else can change it until they let go."],["new","Live cursors","See where everyone in a shared setup is pointing, with their name and colour, and who is online."]]},{"date":"2026-11-09","items":[["new","Shared projects","Invite your crew to a shoot. Choose who can view, edit or invite, and make others admin. The person who started the project always stays admin."],["new","AI voice-over","Generate a voice-over for each frame from text, hear voice samples first, and use tags like [laughs] or [whispers] for delivery."],["new","Record voice and add music","Record voice-over with your microphone and add music or sound-effect tracks that play with the animatic."],["new","Animatic","Play your storyboard as an animatic, set timing by tapping along, drag clip lengths on the timeline, add transitions, and present full screen."],["new","Storyboard rows","Organise frames in rows with titles, and drag frames between rows."],["new","Brand kit and palettes","Keep a brand's colours with the project and pull a palette straight from a photo."],["new","Cloud sync","Your setups, photos and audio sync to your account, stored in the EU."]]},{"date":"2026-11-08","items":[["new","Storyboard editor","Draw frames with pen, shapes and text, with layers and undo."],["new","Compass and camera follow","Turn the plot to match real north, and let the view follow a camera."]]},{"date":"2026-11-04","items":[["new","Setup details","Add shoot information to each setup."],["new","Embed a plot","Show a plot on another web page."]]},{"date":"2026-11-02","items":[["new","Rooms and presets","Start from ready-made rooms, and save your own setups as presets to reuse."],["new","Curtains and fabrics","Hang curtains and fabrics on windows and see how they shape the light."],["new","Dolly tracks and curved walks","Lay dolly tracks for the camera and bend talent walk paths into curves."],["improved","Light power","Set each light's output with a slider."]]},{"date":"2026-11-01","items":[["improved","Rich text notes","Bold, italics and lists in notes."]]},{"date":"2026-10-27","items":[["new","Welcome tour","A short guided tour of the basics for new users."]]},{"date":"2026-10-25","items":[["new","Light modifiers","Add softboxes, grids and other modifiers to lights."]]},{"date":"2026-10-24","items":[["new","Sun and shadows","See where the sun is and how shadows fall for a place, date and time."],["new","Mind map","Arrange notes as a mind map that tidies itself."],["improved","Snapping guides","Objects snap into line with each other as you move them."],["new","Palette from images","Pull a colour palette from a reference image."]]},{"date":"2026-10-23","items":[["new","Talent walks and marks","Draw where talent walks, place marks, and record takes."],["new","Presentation and 3D view","Present setups as slides, and switch to a tilted 3D view."],["improved","Exact wall lengths","Type a wall's length while drawing."],["new","Images","Drop reference images onto the plot."]]},{"date":"2026-10-21","items":[["new","Lock objects","Lock things in place so they can't be moved by accident."]]},{"date":"2026-10-20","items":[["new","Power planner","Plan circuits, cables and outlets, see the wattage per circuit, and export the list to Excel."]]},{"date":"2026-10-18","items":[["new","Window light and shadows","Windows let light in and walls cast shadows."],["new","Layers","Organise everything in layers and groups."],["improved","Rotate, rename and shortcuts","Rotate several things at once, rename items on the plot, and set your own keyboard shortcuts."]]},{"date":"2026-10-17","items":[["new","Set Plot is here","Draw the room, place lights and cameras and aim them, add notes, sketch with a pen, and keep all your setups on one board."]]}]/*END CHANGELOG*/;
+const CHANGELOG=/*CHANGELOG*/[{"date":"2026-11-10","items":[["improved","Selections show up instantly","When someone selects something in a shared setup, the others see the outline and lock straight away instead of after a few seconds."],["new","Follow a collaborator","Click someone's picture at the top of a shared setup to follow them: your view moves and zooms along with theirs. Pan or zoom yourself, or click Stop, to take back control."],["improved","Crew changes glide into place","When someone in a shared setup moves, turns or resizes something, it now glides smoothly to its new place instead of jumping, without a notice popping up every time."],["new","Sign in with Google","Create an account or sign in with your Google account in one click."],["new","Delete your account","Account → Delete account removes your account and your work. Shared projects you started are handed to another member, so your crew keeps them."],["changed","An account is now needed","Set Plot now asks you to sign in. Your setups are always saved to your account and follow you to every device."],["new","See others move things live","In shared setups you now see objects move, turn and change as your crew edits them, and their cursors glide smoothly."],["fixed","Setups stay with their account","Signing in to a different account in the same browser no longer shows the previous account's setups."],["new","Clearer sign-in and sign-up","Separate screens for signing in and creating an account, password reset, and a few quick questions about your work when you join."],["new","Edit locks","Whatever a collaborator has selected is outlined with their name, and nobody else can change it until they let go."],["new","Live cursors","See where everyone in a shared setup is pointing, with their name and colour, and who is online."]]},{"date":"2026-11-09","items":[["new","Shared projects","Invite your crew to a shoot. Choose who can view, edit or invite, and make others admin. The person who started the project always stays admin."],["new","AI voice-over","Generate a voice-over for each frame from text, hear voice samples first, and use tags like [laughs] or [whispers] for delivery."],["new","Record voice and add music","Record voice-over with your microphone and add music or sound-effect tracks that play with the animatic."],["new","Animatic","Play your storyboard as an animatic, set timing by tapping along, drag clip lengths on the timeline, add transitions, and present full screen."],["new","Storyboard rows","Organise frames in rows with titles, and drag frames between rows."],["new","Brand kit and palettes","Keep a brand's colours with the project and pull a palette straight from a photo."],["new","Cloud sync","Your setups, photos and audio sync to your account, stored in the EU."]]},{"date":"2026-11-08","items":[["new","Storyboard editor","Draw frames with pen, shapes and text, with layers and undo."],["new","Compass and camera follow","Turn the plot to match real north, and let the view follow a camera."]]},{"date":"2026-11-04","items":[["new","Setup details","Add shoot information to each setup."],["new","Embed a plot","Show a plot on another web page."]]},{"date":"2026-11-02","items":[["new","Rooms and presets","Start from ready-made rooms, and save your own setups as presets to reuse."],["new","Curtains and fabrics","Hang curtains and fabrics on windows and see how they shape the light."],["new","Dolly tracks and curved walks","Lay dolly tracks for the camera and bend talent walk paths into curves."],["improved","Light power","Set each light's output with a slider."]]},{"date":"2026-11-01","items":[["improved","Rich text notes","Bold, italics and lists in notes."]]},{"date":"2026-10-27","items":[["new","Welcome tour","A short guided tour of the basics for new users."]]},{"date":"2026-10-25","items":[["new","Light modifiers","Add softboxes, grids and other modifiers to lights."]]},{"date":"2026-10-24","items":[["new","Sun and shadows","See where the sun is and how shadows fall for a place, date and time."],["new","Mind map","Arrange notes as a mind map that tidies itself."],["improved","Snapping guides","Objects snap into line with each other as you move them."],["new","Palette from images","Pull a colour palette from a reference image."]]},{"date":"2026-10-23","items":[["new","Talent walks and marks","Draw where talent walks, place marks, and record takes."],["new","Presentation and 3D view","Present setups as slides, and switch to a tilted 3D view."],["improved","Exact wall lengths","Type a wall's length while drawing."],["new","Images","Drop reference images onto the plot."]]},{"date":"2026-10-21","items":[["new","Lock objects","Lock things in place so they can't be moved by accident."]]},{"date":"2026-10-20","items":[["new","Power planner","Plan circuits, cables and outlets, see the wattage per circuit, and export the list to Excel."]]},{"date":"2026-10-18","items":[["new","Window light and shadows","Windows let light in and walls cast shadows."],["new","Layers","Organise everything in layers and groups."],["improved","Rotate, rename and shortcuts","Rotate several things at once, rename items on the plot, and set your own keyboard shortcuts."]]},{"date":"2026-10-17","items":[["new","Set Plot is here","Draw the room, place lights and cameras and aim them, add notes, sketch with a pen, and keep all your setups on one board."]]}]/*END CHANGELOG*/;
 const NEWS_TAG={new:'New',improved:'Improved',changed:'Changed',fixed:'Fixed'};
 const newsId=()=>CHANGELOG.length?CHANGELOG[0].date+'#'+CHANGELOG[0].items.length:'';
 function newsDot(){ let seen=''; try{ seen=localStorage.getItem('setplot-news-seen')||''; }catch(e){} const d=$('#newsBtn .news-dot'); if(d) d.hidden=!CHANGELOG.length||seen===newsId(); }
