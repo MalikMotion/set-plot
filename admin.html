@@ -158,6 +158,8 @@ main.loading .grid{opacity:.55;transition:opacity .2s ease}
 .search{flex:1;min-width:180px;max-width:320px;height:34px;border-radius:8px;border:1px solid var(--ring);background:var(--surface);padding:0 12px}
 .search:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .tblwrap{overflow-x:auto;margin:0 -16px;padding:0 16px}
+.acct-h select,#fbRows select{height:30px;border:1px solid var(--ring);border-radius:8px;background:var(--page);padding:0 8px;font-size:13px}
+#fbRows td{vertical-align:top}
 table.acc{width:100%;border-collapse:collapse;font-size:13px;min-width:720px}
 table.acc th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:8px 10px;border-bottom:1px solid var(--grid);white-space:nowrap}
 table.acc td{padding:10px;border-bottom:1px solid var(--grid);white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -234,6 +236,12 @@ table.acc td.r,table.acc th.r{text-align:right}
       <section class="card" aria-label="Who uses Set Plot">
         <h2>Who uses Set Plot</h2><p class="sub" id="audSub">From the questions people answer when they join</p>
         <div class="aud" id="aud"></div>
+      </section>
+
+      <section class="card" aria-label="Feedback">
+        <div class="acct-h"><h2>Bugs and ideas</h2><span class="sp"></span><select id="fbKind" aria-label="Type"><option value="">All</option><option value="bug">Bugs</option><option value="idea">Ideas</option></select><select id="fbStat" aria-label="Status"><option value="open">Open</option><option value="">Everything</option><option value="done">Done</option></select></div>
+        <p class="sub" id="fbSub">Reports sent from What’s new</p>
+        <div class="tblwrap"><table class="acc"><thead><tr><th>Sent</th><th>Type</th><th>Message</th><th>From</th><th>Details</th><th>Status</th></tr></thead><tbody id="fbRows"></tbody></table></div>
       </section>
 
       <section class="card" aria-label="Deleted accounts">
@@ -341,9 +349,20 @@ $('#prev').onclick=()=>{ if(page>0){ page--; loadAccounts(); } };
 $('#next').onclick=()=>{ if((page+1)*PAGE<(data.accounts&&data.accounts.total||0)){ page++; loadAccounts(); } };
 
 async function rpc(fn,args){ const {data:d,error}=await sb.rpc(fn,args||{}); if(error) throw error; return d; }
+/* bugs and ideas people sent from What's new */
+const FB_ST=[['new','New'],['seen','Seen'],['planned','Planned'],['done','Done'],['wontfix','Won’t do']];
+async function loadFeedback(){ const body=$('#fbRows'); if(!body) return; const k=$('#fbKind').value, st=$('#fbStat').value; let q=sb.from('feedback').select('id,created_at,kind,message,email,page,ua,version,source,status').order('created_at',{ascending:false}).limit(300);
+  if(k) q=q.eq('kind',k); if(st==='open') q=q.in('status',['new','seen','planned']); else if(st==='done') q=q.in('status',['done','wontfix']);
+  const {data:rows,error}=await q; body.textContent=''; if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=6; tr.append(td); body.append(tr); return; }
+  const nNew=rows.filter(r=>r.status==='new').length; $('#fbSub').textContent=rows.length?`${rows.length} shown · ${nNew} new`:'Nothing here yet';
+  if(!rows.length){ const tr=el('tr'), td=el('td','sub','No reports yet'); td.colSpan=6; tr.append(td); body.append(tr); return; }
+  rows.forEach(r=>{ const tr=el('tr'); const d=el('td',null,dShort(r.created_at)); d.title=new Date(r.created_at).toLocaleString('en-GB'); const t=el('td',null,r.kind==='bug'?'Bug':'Idea'); t.style.fontWeight='600'; t.style.color=r.kind==='bug'?'#e5484d':'#8e4ec6';
+    const m=el('td'); m.style.whiteSpace='pre-wrap'; m.style.maxWidth='420px'; m.textContent=r.message; const f=el('td',null,r.email||'Anonymous'); const det=el('td','sub',[r.source,r.page,r.version].filter(Boolean).join(' · ')); det.title=r.ua||''; det.style.maxWidth='200px';
+    const s=el('td'), sel=document.createElement('select'); FB_ST.forEach(([v,n])=>{ const o=document.createElement('option'); o.value=v; o.textContent=n; if(v===r.status) o.selected=true; sel.append(o); });
+    sel.onchange=async()=>{ const {error:e2}=await sb.from('feedback').update({status:sel.value}).eq('id',r.id); if(e2) alert('Couldn’t update: '+e2.message); }; s.append(sel); tr.append(d,t,m,f,det,s); if(r.status==='new') tr.style.background='color-mix(in srgb,var(--accent,#4f7fff) 6%,transparent)'; body.append(tr); }); }
 async function load(){ const m=$('#main'); m.classList.add('loading');
   try{ const [ov,daily,ret,feat,st,aud,del]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status'),rpc('admin_audience').catch(()=>null),rpc('admin_deleted',{lim:200}).catch(()=>null)]);
-    Object.assign(data,{ov,daily,ret,feat,st,aud}); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
+    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
     $('#stamp').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
   catch(err){ $('#stamp').textContent='Couldn’t load: '+(err.message||err); }
   m.classList.remove('loading'); }
@@ -596,6 +615,7 @@ $('#wdlg').addEventListener('close',()=>{ if($('#wdlg').returnValue!=='ok'||!dra
 function showTab(t){ document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t)); $('#tabOverview').hidden=t!=='overview'; $('#tabInsights').hidden=t!=='insights';
   try{ localStorage.setItem('sp-admin-tab',t); }catch(e){} if(t==='insights') loadBoard(); }
 document.querySelectorAll('.tabs [data-tab]').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$('#fbKind').onchange=loadFeedback; $('#fbStat').onchange=loadFeedback;
 { let t0='overview'; try{ t0=localStorage.getItem('sp-admin-tab')||'overview'; }catch(e){} if(t0==='insights') setTimeout(()=>{ if(!$('#app').hidden) showTab('insights'); else { const iv=setInterval(()=>{ if(!$('#app').hidden){ clearInterval(iv); showTab('insights'); } },300); setTimeout(()=>clearInterval(iv),15000); } },50); }
 let rsT=0; addEventListener('resize',()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ if(!$('#tabInsights').hidden&&board) renderBoard(); },250); });
 })();
