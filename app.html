@@ -105,6 +105,7 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .lc svg{display:block;width:22px;height:22px;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
 .lc b{position:absolute;left:15px;top:17px;padding:2px 7px;border-radius:7px 7px 7px 2px;color:#fff;font:600 12px/16px var(--sans);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:opacity .4s}
 .lc.idle{opacity:.55}.lc.idle b{opacity:0}
+.lc.edge svg{transform:rotate(calc(var(--ang) + 135deg));transform-origin:50% 50%;opacity:.9}.lc.edge b{left:20px;top:-2px;opacity:.92}
 .lc-ed{position:absolute;left:0;top:0;border-radius:8px;background:color-mix(in srgb,var(--c) 7%,transparent);box-shadow:0 0 16px -3px color-mix(in srgb,var(--c) 70%,transparent);animation:lcGlow 1.8s ease-in-out infinite}
 .lc-ed>svg{position:absolute;left:0;top:0;overflow:visible}
 .lc-ed rect{fill:none;stroke:var(--c);stroke-width:2;stroke-dasharray:7 5;animation:lcAnts .7s linear infinite}
@@ -165,6 +166,45 @@ body.lc-following::before{content:"";position:fixed;inset:0;z-index:5;pointer-ev
 @keyframes acctQ{from{opacity:0;transform:translateX(10px)}}
 @media (prefers-reduced-motion:reduce){.acct.q .acct-qbody{animation:none}}
 .acct-mail{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}.acct-mail svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.chat-btn,.notif-btn{position:relative}.chat-btn svg,.notif-btn svg{width:18px;height:18px}
+.ib-badge{position:absolute;top:3px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#e5484d;color:#fff;font:700 10px/16px var(--sans);font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--card,#fff);box-sizing:border-box}
+/* chat */
+#chatPanel{position:fixed;top:64px;right:12px;bottom:12px;width:min(360px,calc(100vw - 24px));z-index:7;display:flex;flex-direction:column;background:var(--card,#fff);color:var(--ink);border-radius:16px;box-shadow:0 20px 60px -20px rgba(0,0,0,.45),0 0 0 1px var(--line);overflow:hidden;animation:chatIn .18s ease-out}
+@keyframes chatIn{from{opacity:0;transform:translateX(12px)}}
+#chatPanel[hidden]{display:none}
+body.chat-open .tour-btn,body.chat-open #tourBtn,body.chat-open .help-fab{display:none!important}
+.cp-h{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 16px;border-bottom:1px solid var(--line)}.cp-h b{font-size:14.5px}.cp-h small{display:block;color:var(--muted);font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}.cp-h .sp{flex:1}
+.cp-list{flex:1;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.cp-empty{margin:auto;text-align:center;color:var(--muted);font-size:13px;line-height:1.5;padding:20px}
+.cp-m{display:grid;grid-template-columns:28px 1fr;gap:8px}.cp-m.cont{margin-top:-6px}.cp-m.cont .cp-av,.cp-m.cont .cp-n{visibility:hidden;height:0}
+.cp-av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 12px/1 var(--sans)}
+.cp-n{font-size:12.5px;font-weight:700;display:flex;gap:6px;align-items:baseline}.cp-n time{color:var(--muted);font-weight:500;font-size:11.5px}
+.cp-b{font-size:13.5px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;color:var(--ink)}
+.cp-m.pending .cp-b{opacity:.55}.cp-m.failed .cp-b{color:#e5484d}
+.mention{color:var(--accent);font-weight:600;background:color-mix(in srgb,var(--accent) 12%,transparent);border-radius:4px;padding:0 2px}.mention.me{background:color-mix(in srgb,#e38a2b 22%,transparent);color:inherit}
+.cp-f{border-top:1px solid var(--line);padding:10px;display:flex;gap:8px;align-items:flex-end;position:relative}
+.cp-f textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:12px;padding:9px 12px;font:14px/1.4 var(--sans);background:var(--field,var(--bg));color:var(--ink);max-height:120px;min-height:40px;box-sizing:border-box}
+.cp-f textarea:focus{outline:none;border-color:var(--accent)}
+.cp-send{width:40px;height:40px;border-radius:12px;border:0;background:var(--accent);color:#fff;cursor:pointer;display:grid;place-items:center;flex:none}.cp-send svg{width:18px;height:18px}.cp-send:disabled{opacity:.4;cursor:default}
+.cp-hint{font-size:11.5px;color:var(--muted);padding:0 14px 8px}
+/* mention picker */
+#mentionPop{position:fixed;z-index:90;min-width:200px;max-width:280px;background:var(--card,#fff);color:var(--ink);border-radius:12px;box-shadow:0 14px 40px -12px rgba(0,0,0,.4),0 0 0 1px var(--line);padding:4px;font-size:13.5px}
+#mentionPop[hidden]{display:none}
+#mentionPop button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;color:inherit;text-align:left;padding:6px 8px;border-radius:8px;cursor:pointer;font:inherit}
+#mentionPop button.on,#mentionPop button:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+#mentionPop i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 10.5px/1 var(--sans);font-style:normal;flex:none}
+#mentionPop small{color:var(--muted);margin-left:auto;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
+/* notifications */
+#notifPanel{position:fixed;top:64px;right:12px;width:min(380px,calc(100vw - 24px));max-height:min(70vh,560px);z-index:8;display:flex;flex-direction:column;background:var(--card,#fff);color:var(--ink);border-radius:16px;box-shadow:0 20px 60px -20px rgba(0,0,0,.45),0 0 0 1px var(--line);overflow:hidden;animation:chatIn .15s ease-out}
+#notifPanel[hidden]{display:none}
+.np-h{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}.np-h b{flex:1;font-size:14.5px}
+.np-h button{border:0;background:none;color:var(--accent);font:600 12.5px var(--sans);cursor:pointer}
+.np-list{overflow:auto}.np-empty{padding:28px 18px;text-align:center;color:var(--muted);font-size:13px}
+.np-i{display:grid;grid-template-columns:30px 1fr 8px;gap:10px;align-items:start;width:100%;border:0;background:none;color:inherit;text-align:left;padding:11px 14px;cursor:pointer;font:inherit;border-bottom:1px solid var(--line)}
+.np-i:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.np-i .cp-av{width:30px;height:30px}.np-t{font-size:13px;line-height:1.4}.np-t b{font-weight:700}.np-t q{display:block;color:var(--muted);quotes:none;margin-top:2px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.np-t time{display:block;color:var(--muted);font-size:11.5px;margin-top:3px}
+.np-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px}.np-i.read .np-dot{visibility:hidden}.np-i.read{opacity:.75}
 .acct-msg{font-size:13px;color:var(--muted)}
 .news-btn{position:relative}.news-btn svg{width:18px;height:18px}.news-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--warm,#e38a2b);box-shadow:0 0 0 2px var(--card,#fff)}
 .acct.news{width:min(520px,calc(100vw - 32px));max-height:min(80vh,760px)}.news-list{overflow:auto;margin:0 -4px;padding:0 4px;display:flex;flex-direction:column;gap:18px}
@@ -1911,6 +1951,8 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
       <span class="vsep hide-s"></span>
       <button class="ib hide-s" id="detailsBtn" aria-pressed="false" aria-label="Setup details and gear list" title="Setup details &amp; gear"></button>
       <div class="lc-people" id="lcPeople" hidden></div>
+      <button class="ib chat-btn" id="chatBtn" aria-label="Chat" title="Chat with your crew" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17h-8l-4.5 3.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg><i class="ib-badge" hidden></i></button>
+      <button class="ib notif-btn" id="notifBtn" aria-label="Notifications" title="Notifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg><i class="ib-badge" hidden></i></button>
       <button class="ib news-btn" id="newsBtn" aria-label="What’s new" title="What’s new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4z"/><path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg><i class="news-dot" hidden></i></button>
       <button class="ib share-btn" id="shareBtn" aria-label="Share this shoot" title="Share this shoot with your crew" hidden></button>
       <button class="ib acct-btn" id="acctBtn" aria-label="Account"></button>
@@ -9561,34 +9603,45 @@ async function lcSync(){ const t=lcTopic();
   try{ const {data}=await sb.auth.getSession(), tok=data&&data.session&&data.session.access_token;
     if(lc.topic!==t) return; if(tok&&sb.realtime&&sb.realtime.setAuth) await sb.realtime.setAuth(tok); if(lc.topic!==t) return;
     const ch=sb.channel(t,{config:{private:true,broadcast:{self:false},presence:{key:sbUser.id}}}); lc.ch=ch;
-    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('broadcast',{event:'vw'},m=>lcRecvView(m&&m.payload)).on('broadcast',{event:'sel'},m=>lcRecvSel(m&&m.payload)).on('broadcast',{event:'mv'},m=>lcRecvMove(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
+    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('broadcast',{event:'vw'},m=>lcRecvView(m&&m.payload)).on('broadcast',{event:'sel'},m=>lcRecvSel(m&&m.payload)).on('broadcast',{event:'fol'},m=>lcRecvFol(m&&m.payload)).on('broadcast',{event:'mv'},m=>lcRecvMove(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
       .subscribe(st=>{ if(lc.ch!==ch) return; if(st==='SUBSCRIBED'){ lc.ok=true; lc.where=lcWhere(); try{ ch.track(lcMe()); }catch(e){} }
         else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ lc.ok=false; } });
   }catch(e){ lc.ch=null; } }
-function lcRecv(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={});
+function lcRecv(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={}); delete o.gone;
   o.name=String(p.name||o.name||'Someone').slice(0,40); o.color=LC_COL.includes(p.color)?p.color:lcColor(p.id);
   if(typeof p.x!=='number'||typeof p.y!=='number'||!isFinite(p.x)||!isFinite(p.y)){ o.off=true; o.hidden=true; } else { o.off=false; if(o.dx==null||o.hidden){ o.dx=p.x; o.dy=p.y; } o.x=p.x; o.y=p.y; o.ts=Date.now(); o.hidden=false; }
   lcAnimKick(); }
 function lcPresence(){ if(!lc.ch) return; let st={}; try{ st=lc.ch.presenceState()||{}; }catch(e){}
-  const seen={}, me=sbUser&&sbUser.id; lc.online=[];
+  const seen={}, me=sbUser&&sbUser.id, fresh=[];
   Object.keys(st).forEach(k=>{ const m=(st[k]||[])[0]; if(!m||k===me||seen[k]) return; seen[k]=1;
-    lc.online.push({id:k,name:String(m.name||'Someone').slice(0,40),color:LC_COL.includes(m.color)?m.color:lcColor(k),where:m.where==='board'?'board':'plot'});
-    const o=lc.peers[k]||(lc.peers[k]={off:true}); o.name=String(m.name||o.name||'Someone').slice(0,40); o.color=lcColor(k); if(m.where==='board') o.off=true;
+    if(!lc.peers[k]||lc.peers[k].gone) fresh.push(k);
+    const o=lc.peers[k]||(lc.peers[k]={off:true}); delete o.gone; o.name=String(m.name||o.name||'Someone').slice(0,40); o.color=lcColor(k); if(m.where==='board') o.off=true;
     o.where=m.where==='board'?'board':'plot'; if((+m.seq||0)>=(o.seq||0)){ o.seq=+m.seq||0; o.sel=Array.isArray(m.sel)?m.sel.slice(0,200).map(String):[]; o.at=+m.at||0; } o.follow=m.follow||null; });
-  Object.keys(lc.peers).forEach(k=>{ if(!seen[k]) delete lc.peers[k]; });
-  lcFollowPresence();
+  Object.keys(lc.peers).forEach(k=>{ if(!seen[k]&&!lc.peers[k].gone) lc.peers[k].gone=Date.now(); });
+  lcOnline(); lcFollowPresence();
+  if(fresh.length) lcHello();
   lcPeople(); if(typeof draw==='function') draw(); lcPaint(); }
-function lcSend(pt,now){ if(!lc.ch||!lc.ok||!sbUser) return; lc.pend=pt; const go=()=>{ lc.pt=0; lc.sent=Date.now(); const q=lc.pend;
+/* who's here: presence can blink (a person drops out for a moment while their status updates), so someone only leaves after 10 s missing */
+const LC_GRACE=10000;
+function lcOnline(){ lc.online=Object.keys(lc.peers).filter(k=>{ const o=lc.peers[k]; return o.name&&(!o.gone||Date.now()-o.gone<LC_GRACE); }).map(k=>{ const o=lc.peers[k]; return {id:k,name:o.name,color:o.color||lcColor(k),where:o.where||'plot'}; }); }
+function lcPrune(){ let ch=false; Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(o.gone&&Date.now()-o.gone>=LC_GRACE){ delete lc.peers[k]; ch=true; } }); if(ch){ lcOnline(); lcPeople(); lcFollowPresence(); draw(); lcPaint(); } }
+/* someone new arrived: show them where I am and what I hold right away, instead of waiting until I move */
+function lcHello(){ if(!lc.ch||!lc.ok||!sbUser) return; setTimeout(()=>{ if(!lc.ch||!lc.ok) return; if(lc.lastPt&&!drawEd) lcSend(lc.lastPt,true);
+  try{ lc.ch.send({type:'broadcast',event:'sel',payload:{id:sbUser.id,sel:[...lc.mine],at:lc.at,seq:lc.seq||0,where:lcWhere()}}); }catch(e){} lc.vwSig=''; lcViewSend(); },300); }
+function lcSend(pt,now){ if(!lc.ch||!lc.ok||!sbUser) return; lc.pend=pt; lc.lastPt=pt; const go=()=>{ lc.pt=0; lc.sent=Date.now(); const q=lc.pend;
     try{ lc.ch.send({type:'broadcast',event:'cur',payload:Object.assign({id:sbUser.id,name:lcName(),color:lcColor(sbUser.id)},q?{x:+q.x.toFixed(3),y:+q.y.toFixed(3)}:{})}); }catch(e){} };
   if(now){ clearTimeout(lc.pt); go(); return; } if(lc.pt) return; const wait=Math.max(0,40-(Date.now()-lc.sent)); lc.pt=setTimeout(go,wait); }
 function lcPaint(){ if(!lc.lay){ if(!lc.ch) return; lc.lay=document.createElement('div'); lc.lay.id='lcLayer'; lc.lay.setAttribute('aria-hidden','true'); ($('#inkOv')||svg).after(lc.lay); }
   const L=lc.lay, now=Date.now(), show=!drawEd; const keep={};
-  Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(!show||o.off||o.x==null||now-(o.ts||0)>60000) return; keep[k]=1;
+  Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(!show||o.off||o.x==null||(o.gone&&now-o.gone>2500)) return; keep[k]=1;
     let el=L.querySelector(`[data-lc="${CSS.escape(k)}"]`);
     if(!el){ el=document.createElement('div'); el.className='lc'; el.dataset.lc=k; el.innerHTML='<svg viewBox="0 0 20 20"><path d="M3 2.2 16.6 9.4 10.2 10.8 7.4 17Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg><b></b>'; L.appendChild(el); }
     el.querySelector('path').setAttribute('fill',o.color); const b=el.querySelector('b'); b.style.background=o.color; if(b.textContent!==o.name) b.textContent=o.name;
-    const cx=o.dx!=null?o.dx:o.x, cy=o.dy!=null?o.dy:o.y, sx=W/2+(cx-view.x)*view.s, sy=H/2+(cy-view.y)*view.s; el.style.transform=`translate(${(sx-3).toFixed(1)}px,${(sy-2).toFixed(1)}px)`;
-    el.classList.toggle('idle',now-(o.ts||0)>8000); });
+    const cx=o.dx!=null?o.dx:o.x, cy=o.dy!=null?o.dy:o.y, sx=W/2+(cx-view.x)*view.s, sy=H/2+(cy-view.y)*view.s, m=18, top=64, bot=56;
+    const side=W>700?100:m, out=sx<side||sx>W-side||sy<top||sy>H-bot;
+    if(out){ const ex=Math.max(side,Math.min(W-side-70,sx)), ey=Math.max(top,Math.min(H-bot,sy)), ang=Math.atan2(sy-ey,sx-ex)*180/Math.PI; el.style.transform=`translate(${ex.toFixed(1)}px,${ey.toFixed(1)}px)`; el.style.setProperty('--ang',ang.toFixed(0)+'deg'); }
+    else el.style.transform=`translate(${(sx-3).toFixed(1)}px,${(sy-2).toFixed(1)}px)`;
+    el.classList.toggle('edge',out); el.classList.toggle('idle',!out&&now-(o.ts||0)>8000); });
   L.querySelectorAll('.lc').forEach(el=>{ if(!keep[el.dataset.lc]) el.remove(); });
   /* what the others have selected: a box in their colour with marching ants and their name */
   const ek={}, rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9636,9 +9689,12 @@ function lcAnimStep(now){ lc.anim=0; const dt=Math.min(64,now-(lc.at0||now)); lc
   if(moved) draw(); else lcPaint();
   if(busy) lc.anim=requestAnimationFrame(lcAnimStep); }
 /* follow a person: your view glides along with theirs until you pan or zoom yourself */
-function lcFollow(id){ const o=lc.peers[id]; if(!o||!lc.ch) return; lc.follow=id; lc.vt=null; lc.vLast=null; lcTrack(); lcFollowUI(); toast(`Following ${o.name}. Pan or zoom to stop`); }
-function lcUnfollow(why){ const o=lc.peers[lc.follow]; lc.follow=null; lc.vt=null; lc.vLast=null; try{ lcTrack(); }catch(e){} lcFollowUI();
+function lcFollow(id){ const o=lc.peers[id]; if(!o||!lc.ch) return; lc.follow=id; lc.vt=null; lc.vLast=null; lcFolSend(); lcTrack(); lcFollowUI(); toast(`Following ${o.name}. Pan or zoom to stop`); }
+function lcUnfollow(why){ const o=lc.peers[lc.follow]; lc.follow=null; lc.vt=null; lc.vLast=null; lcFolSend(); try{ lcTrack(); }catch(e){} lcFollowUI();
   if(why==='left') toast(`${o?o.name:'They'} left this setup`); else if(why==='took') toast('Stopped following'); }
+/* tell the person I follow straight away (presence is too slow), so they start sending their view at once */
+function lcFolSend(){ if(!lc.ch||!lc.ok||!sbUser) return; try{ lc.ch.send({type:'broadcast',event:'fol',payload:{id:sbUser.id,to:lc.follow||null}}); }catch(e){} }
+function lcRecvFol(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]; if(!o) return; o.follow=p.to||null; lcFollowPresence(); if(p.to===sbUser.id){ lc.vwSig=''; lcViewSend(true); } }
 function lcFollowPresence(){ const me=sbUser&&sbUser.id; const fol=Object.keys(lc.peers).filter(k=>lc.peers[k].follow===me);
   fol.filter(k=>!(lc.followers||[]).includes(k)).forEach(k=>{ toast(`${lc.peers[k].name} is following you`); lc.vwSig=''; });
   lc.followers=fol; if(lc.follow&&!lc.peers[lc.follow]) lcUnfollow('left'); else lcFollowUI(); }
@@ -9648,12 +9704,12 @@ function lcFollowUI(){ let el=$('#lcFollow'); const o=lc.follow&&lc.peers[lc.fol
   el.style.setProperty('--c',o.color); document.body.style.setProperty('--lc-follow',o.color); document.body.classList.add('lc-following');
   el.querySelector('.lc-ft').textContent=o.where==='board'?`${o.name} is on the storyboard`:`Following ${o.name}`; lcPeople(); }
 document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('[data-lcstop]')) lcUnfollow(); });
-function lcViewSend(){ if(!lc.ch||!lc.ok||!cur||!(lc.followers&&lc.followers.length)) return; const sig=[view.x.toFixed(3),view.y.toFixed(3),view.s.toFixed(3),W,H,lcWhere()].join(',');
-  if(sig===lc.vwSig) return; lc.vwSig=sig; if(lc.vwT) return; const go=()=>{ lc.vwT=0; lc.vwLast=Date.now();
+function lcViewSend(now){ if(!lc.ch||!lc.ok||!cur||!(lc.followers&&lc.followers.length)) return; const sig=[view.x.toFixed(3),view.y.toFixed(3),view.s.toFixed(3),W,H,lcWhere()].join(',');
+  if(sig===lc.vwSig) return; lc.vwSig=sig; const go=()=>{ lc.vwT=0; lc.vwLast=Date.now();
     try{ lc.ch.send({type:'broadcast',event:'vw',payload:{id:sbUser.id,doc:cur.id,x:view.x,y:view.y,w:W/view.s,h:H/view.s,where:lcWhere()}}); }catch(e){} };
-  const wait=Math.max(0,90-(Date.now()-(lc.vwLast||0))); lc.vwT=setTimeout(go,wait); }
+  if(now){ clearTimeout(lc.vwT); go(); return; } if(lc.vwT) return; const wait=Math.max(0,90-(Date.now()-(lc.vwLast||0))); lc.vwT=setTimeout(go,wait); }
 function lcRecvView(p){ if(!p||!lc.follow||p.id!==lc.follow||!cur||p.doc!==cur.id||drawEd) return; const w=+p.w, h=+p.h, x=+p.x, y=+p.y; if(!(w>0&&h>0&&isFinite(x)&&isFinite(y))) return;
-  const s=Math.max(5,Math.min(2000,Math.min(W/w,H/h))); if(!lc.vLast) lc.vLast={x:view.x,y:view.y,s:view.s}; lc.vt={x,y,s};
+  const side=W>700?96:8, fw=Math.max(200,W-2*side), fh=Math.max(200,H-120), s=Math.max(5,Math.min(2000,Math.min(fw/w,fh/h)));   /* their whole screen fits inside my free area, between my toolbars */ if(!lc.vLast) lc.vLast={x:view.x,y:view.y,s:view.s}; lc.vt={x,y,s};
   const o=lc.peers[p.id]; if(o&&o.where!==(p.where==='board'?'board':'plot')){ o.where=p.where==='board'?'board':'plot'; lcFollowUI(); } lcAnimKick(); }
 setInterval(()=>{ if(lc.ch&&lc.followers&&lc.followers.length){ lc.vwSig=''; lcViewSend(); } },3000);
 /* live object changes: whatever I hold (have selected) is broadcast as it changes, so the others see it move instead of jumping on save */
@@ -9688,7 +9744,124 @@ document.addEventListener('mouseout',e=>{ if(!e.relatedTarget&&lc.ch) lcSend(nul
 addEventListener('blur',()=>{ if(lc.ch) lcSend(null,true); });
 document.addEventListener('visibilitychange',()=>lcSync());
 addEventListener('pagehide',()=>{ if(lc.ch) lcLeave(); });
-setInterval(()=>{ lcSync(); lcSelSync(); if(lc.ch&&Object.keys(lc.peers).length) lcPaint(); },1500);
+setInterval(()=>{ lcSync(); lcSelSync(); if(lc.ch&&Object.keys(lc.peers).length){ lcPrune(); lcPaint(); } },1500);
+/* ================= chat, @mentions and notifications ================= */
+const PEOPLE={};   /* project id → {t, list:[{id,name,email}]} */
+async function peopleFor(pid){ if(!pid||!sb||!sbUser) return []; const c=PEOPLE[pid]; if(c&&Date.now()-c.t<60000) return c.list; if(c&&c.p) return c.p;
+  const p=(async()=>{ try{ const {data,error}=await sb.rpc('project_people',{pid}); if(error||!data) return (c&&c.list)||[];
+      const list=(data.members||[]).map(m=>({id:m.user_id,name:String(m.name||(m.email||'').split('@')[0]||'Someone').trim(),email:m.email||'',me:!!m.is_me})); PEOPLE[pid]={t:Date.now(),list}; return list; }catch(e){ return (c&&c.list)||[]; } })();
+  PEOPLE[pid]=Object.assign(c||{t:0,list:[]},{p}); const r=await p; if(PEOPLE[pid]) delete PEOPLE[pid].p; return r; }
+const peopleNow=pid=>(PEOPLE[pid]&&PEOPLE[pid].list)||[];
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function mentionKeys(list){ const first={}; list.forEach(p=>{ const f=p.name.split(/\s+/)[0].toLowerCase(); first[f]=(first[f]||0)+1; });
+  const keys=[]; list.forEach(p=>{ keys.push([p.name,p]); const f=p.name.split(/\s+/)[0]; if(f!==p.name&&first[f.toLowerCase()]===1) keys.push([f,p]); }); return keys.sort((a,b)=>b[0].length-a[0].length); }
+function findMentions(text,list){ const ids=new Set(); mentionKeys(list).forEach(([k,p])=>{ if(new RegExp('@'+reEsc(k)+'(?![\\p{L}\\p{N}])','iu').test(text)) ids.add(p.id); }); return [...ids]; }
+function mentionHTML(text,list){ let h=esc(text); const keys=mentionKeys(list); if(!keys.length) return h;
+  const re=new RegExp('@('+keys.map(k=>reEsc(esc(k[0]))).join('|')+')(?![\\p{L}\\p{N}])','giu');
+  return h.replace(re,(m,n)=>{ const k=keys.find(x=>esc(x[0]).toLowerCase()===n.toLowerCase()); const me=k&&sbUser&&k[1].id===sbUser.id; return `<span class="mention${me?' me':''}">${m}</span>`; }); }
+/* @ picker for a textarea or a rich text field */
+const MP={el:null,list:[],i:0,start:0,node:null,q:''};
+function mpBox(){ let b=$('#mentionPop'); if(!b){ b=document.createElement('div'); b.id='mentionPop'; b.hidden=true; b.setAttribute('role','listbox'); document.body.append(b);
+    b.addEventListener('mousedown',e=>{ const x=e.target.closest('button'); if(!x) return; e.preventDefault(); MP.i=+x.dataset.i; mpPick(); }); } return b; }
+function mpClose(){ const b=$('#mentionPop'); if(b) b.hidden=true; MP.el=null; }
+function mpQuery(el){ if(el.isContentEditable){ const s=getSelection(); if(!s.rangeCount||!s.isCollapsed) return null; const n=s.anchorNode; if(!n||n.nodeType!==3||!el.contains(n)) return null;
+    const before=n.data.slice(0,s.anchorOffset), m=before.match(/(^|[\s(])@([\p{L}\p{N}._-]{0,30})$/u); if(!m) return null; return {q:m[2],start:s.anchorOffset-m[2].length-1,node:n}; }
+  const v=el.value.slice(0,el.selectionStart), m=v.match(/(^|[\s(])@([\p{L}\p{N}._-]{0,30})$/u); if(!m) return null; return {q:m[2],start:el.selectionStart-m[2].length-1}; }
+function mpCaretRect(el){ if(el.isContentEditable){ const s=getSelection(); if(s.rangeCount){ const r=s.getRangeAt(0).getBoundingClientRect(); if(r.width||r.height||r.left) return r; } } const b=el.getBoundingClientRect(); return {left:b.left+10,top:b.top,bottom:b.top+22}; }
+function mpUpdate(el,pid,again){ const q=pid&&mpQuery(el); if(!q){ mpClose(); return; } const all=peopleNow(pid).filter(p=>!p.me); if(!all.length){ mpClose(); if(!again) peopleFor(pid).then(()=>{ if(document.activeElement===el) mpUpdate(el,pid,true); }); return; }
+  const ql=q.q.toLowerCase(), list=all.filter(p=>!ql||p.name.toLowerCase().split(/\s+/).some(w=>w.startsWith(ql))||p.name.toLowerCase().startsWith(ql)||p.email.toLowerCase().startsWith(ql)).slice(0,6);
+  if(!list.length){ mpClose(); return; } Object.assign(MP,{el,list,start:q.start,node:q.node||null,q:q.q}); if(MP.i>=list.length) MP.i=0;
+  const b=mpBox(); b.innerHTML=list.map((p,i)=>`<button type="button" role="option" data-i="${i}" class="${i===MP.i?'on':''}" aria-selected="${i===MP.i}"><i style="background:${lcColor(p.id)}">${esc((p.name[0]||'?').toUpperCase())}</i>${esc(p.name)}<small>${esc(p.email)}</small></button>`).join('');
+  b.hidden=false; const r=mpCaretRect(el), bh=b.offsetHeight, bw=b.offsetWidth; let top=r.bottom+6; if(top+bh>innerHeight-8) top=r.top-bh-6; b.style.top=Math.max(8,top)+'px'; b.style.left=Math.max(8,Math.min(innerWidth-bw-8,r.left))+'px'; }
+function mpPick(){ const el=MP.el, p=MP.list[MP.i]; if(!el||!p) return mpClose(); const ins='@'+p.name+' ';
+  if(el.isContentEditable&&MP.node){ const n=MP.node, end=MP.start+1+MP.q.length; n.data=n.data.slice(0,MP.start)+ins+n.data.slice(end); const s=getSelection(), r=document.createRange(); r.setStart(n,MP.start+ins.length); r.collapse(true); s.removeAllRanges(); s.addRange(r); }
+  else { const v=el.value, end=MP.start+1+MP.q.length; el.value=v.slice(0,MP.start)+ins+v.slice(end); const c=MP.start+ins.length; el.setSelectionRange(c,c); }
+  mpClose(); el.dispatchEvent(new Event('input',{bubbles:true})); el.focus(); }
+function mpKey(e){ if(!MP.el||$('#mentionPop').hidden) return false; if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); MP.i=(MP.i+(e.key==='ArrowDown'?1:-1)+MP.list.length)%MP.list.length; mpUpdate(MP.el,MP.pid); return true; }
+  if(e.key==='Enter'||e.key==='Tab'){ e.preventDefault(); e.stopPropagation(); mpPick(); return true; } if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); mpClose(); return true; } return false; }
+function mentionsOn(el,pid){ MP.pid=pid; el.addEventListener('input',()=>{ MP.pid=pid; mpUpdate(el,pid); }); el.addEventListener('keydown',e=>{ mpKey(e); },true); el.addEventListener('blur',()=>setTimeout(()=>{ if(MP.el===el) mpClose(); },120)); }
+const chatOK=()=>mode==='local'&&sb&&sbUser&&cur&&cur.pid&&sbProj[cur.pid]&&((sbProj[cur.pid].members!=null?sbProj[cur.pid].members:2)>1);
+const CH={pid:null,sub:null,msgs:[],setup:null,open:false,unread:{}};
+const fmtClock=t=>{ const d=new Date(t), now=new Date(); return d.toDateString()===now.toDateString()?d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); };
+const agoTxt=t=>{ const s=Math.round((Date.now()-new Date(t))/1000); return s<60?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':new Date(t).toLocaleDateString('en-GB',{day:'numeric',month:'short'}); };
+function chatReadKey(sid){ return 'setplot-chat-read:'+sid; }
+function chatSync(){ const ok=chatOK(), btn=$('#chatBtn'); if(btn) btn.hidden=!ok; if(!ok){ if(CH.open) chatClose(); if(CH.sub){ try{ sb.removeChannel(CH.sub); }catch(e){} CH.sub=null; CH.pid=null; } chatBadge(); return; }
+  if(CH.pid!==cur.pid){ if(CH.sub){ try{ sb.removeChannel(CH.sub); }catch(e){} } CH.pid=cur.pid; CH.msgs=[]; CH.setup=null; peopleFor(cur.pid);
+    CH.sub=sb.channel('chat:'+cur.pid).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:'project_id=eq.'+cur.pid},pl=>chatIncoming(pl&&pl.new)).subscribe(); }
+  if(CH.setup!==cur.id){ CH.setup=cur.id; CH.msgs=[]; chatLoad(); } }
+async function chatLoad(){ const pid=CH.pid, sid=CH.setup; try{ const {data,error}=await sb.from('chat_messages').select('id,user_id,body,mentions,created_at').eq('project_id',pid).eq('setup_id',sid).order('created_at',{ascending:false}).limit(150);
+    if(error||CH.setup!==sid) return; CH.msgs=(data||[]).reverse(); }catch(e){ return; }
+  let read=0; try{ read=+localStorage.getItem(chatReadKey(sid))||0; }catch(e){} CH.unread[sid]=CH.msgs.filter(m=>m.user_id!==sbUser.id&&new Date(m.created_at)>read).length;
+  if(CH.open) chatRender(true); chatBadge(); }
+function chatIncoming(m){ if(!m||m.project_id!==CH.pid) return; if(m.setup_id!==CH.setup){ return; } if(CH.msgs.some(x=>x.id===m.id)) return;
+  const pend=CH.msgs.findIndex(x=>x.pending&&x.user_id===m.user_id&&x.body===m.body); if(pend>=0) CH.msgs.splice(pend,1);
+  CH.msgs.push(m); if(!CH.open&&m.user_id!==sbUser.id){ CH.unread[m.setup_id]=(CH.unread[m.setup_id]||0)+1; } if(CH.open){ chatRender(); chatMarkRead(); } chatBadge(); }
+function chatBadge(){ const b=$('#chatBtn .ib-badge'); if(!b) return; const n=CH.setup?(CH.unread[CH.setup]||0):0; b.hidden=!n||CH.open; b.textContent=n>9?'9+':n; }
+function chatMarkRead(){ if(!CH.setup) return; try{ localStorage.setItem(chatReadKey(CH.setup),Date.now()); }catch(e){} CH.unread[CH.setup]=0; chatBadge(); }
+function chatPanel(){ let p=$('#chatPanel'); if(p) return p; p=document.createElement('section'); p.id='chatPanel'; p.hidden=true; p.setAttribute('aria-label','Chat');
+  p.innerHTML=`<div class="cp-h"><div><b>Chat</b><small class="cp-sub"></small></div><span class="sp"></span><button class="ib" data-cp="close" aria-label="Close chat">${ic('close')}</button></div>
+    <div class="cp-list" role="log" aria-live="polite"></div>
+    <div class="cp-f"><textarea rows="1" maxlength="2000" placeholder="Message your crew… type @ to mention someone" aria-label="Message"></textarea><button class="cp-send" data-cp="send" aria-label="Send" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-7-6 16-3-7z"/></svg></button></div>`;
+  document.body.append(p); const ta=p.querySelector('textarea');
+  ta.addEventListener('input',()=>{ ta.style.height='auto'; ta.style.height=Math.min(120,ta.scrollHeight)+'px'; p.querySelector('.cp-send').disabled=!ta.value.trim(); });
+  ta.addEventListener('keydown',e=>{ if(e.defaultPrevented) return; if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); chatSend(); } e.stopPropagation(); });
+  ta.addEventListener('keydown',e=>{ mpKey(e); },true); ta.addEventListener('blur',()=>setTimeout(()=>{ if(MP.el===ta) mpClose(); },120));
+  ta.addEventListener('input',()=>{ MP.pid=CH.pid; mpUpdate(ta,CH.pid); });
+  p.addEventListener('click',e=>{ const b=e.target.closest('[data-cp]'); if(!b) return; if(b.dataset.cp==='close') chatClose(); if(b.dataset.cp==='send') chatSend(); });
+  p.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!MP.el){ chatClose(); } });
+  return p; }
+function chatRender(toEnd){ const p=chatPanel(), L=p.querySelector('.cp-list'), near=L.scrollHeight-L.scrollTop-L.clientHeight<80; p.querySelector('.cp-sub').textContent=(cur&&cur.title)||'This setup';
+  const ppl=peopleNow(CH.pid), byId=Object.fromEntries(ppl.map(x=>[x.id,x]));
+  if(!CH.msgs.length){ L.innerHTML=`<div class="cp-empty">No messages yet.<br>Talk about this setup with your crew, and type @ to get someone’s attention.</div>`; return; }
+  let prev=null; L.innerHTML=CH.msgs.map(m=>{ const who=byId[m.user_id], name=m.user_id===sbUser.id?'You':(who?who.name:'Former member'), t=new Date(m.created_at).getTime(), cont=prev&&prev.user_id===m.user_id&&t-new Date(prev.created_at).getTime()<5*60000; prev=m;
+    return `<div class="cp-m${cont?' cont':''}${m.pending?' pending':''}${m.failed?' failed':''}"><div class="cp-av" style="background:${lcColor(m.user_id||'x')}">${esc((name[0]||'?').toUpperCase())}</div><div><div class="cp-n">${esc(name)}<time datetime="${esc(m.created_at)}">${fmtClock(m.created_at)}</time></div><div class="cp-b">${mentionHTML(m.body,ppl)}${m.failed?' · not sent':''}</div></div></div>`; }).join('');
+  if(toEnd||near) L.scrollTop=L.scrollHeight; }
+async function chatOpen(){ if(!chatOK()) return; chatSync(); notifClose(); const p=chatPanel(); CH.open=true; p.hidden=false; document.body.classList.add('chat-open'); await peopleFor(CH.pid); chatRender(true); chatMarkRead(); setTimeout(()=>p.querySelector('textarea').focus(),30); }
+function chatClose(){ const p=$('#chatPanel'); if(p) p.hidden=true; CH.open=false; document.body.classList.remove('chat-open'); mpClose(); chatBadge(); }
+async function chatSend(){ const p=chatPanel(), ta=p.querySelector('textarea'), body=ta.value.trim(); if(!body||!CH.pid||!CH.setup) return; ta.value=''; ta.dispatchEvent(new Event('input'));
+  const ppl=await peopleFor(CH.pid), mentions=findMentions(body,ppl).filter(id=>id!==sbUser.id), tmp={id:'tmp'+Date.now(),user_id:sbUser.id,body,mentions,created_at:new Date().toISOString(),pending:true};
+  CH.msgs.push(tmp); chatRender(true); const pid=CH.pid, sid=CH.setup;
+  try{ const {data,error}=await sb.from('chat_messages').insert({project_id:pid,setup_id:sid,body,mentions}).select('id,user_id,body,mentions,created_at').single(); if(error) throw error;
+    const i=CH.msgs.indexOf(tmp); if(i>=0){ if(CH.msgs.some(x=>x.id===data.id)) CH.msgs.splice(i,1); else CH.msgs[i]=data; } chatRender(); chatMarkRead();
+    if(mentions.length) sb.rpc('notify_mentions',{p_project:pid,p_setup:sid,p_item:null,p_kind:'chat',p_snippet:body.slice(0,300),p_users:mentions}).then(()=>{},()=>{});
+    track('chat_message',{mentions:mentions.length}); }
+  catch(err){ tmp.pending=false; tmp.failed=true; chatRender(); toast('Couldn’t send the message: '+(err.message||err)); } }
+$('#chatBtn').addEventListener('click',()=>{ if(CH.open) chatClose(); else chatOpen(); });
+/* comments: @ picker while writing, and a notification for each new person mentioned */
+cardsEl.addEventListener('focusin',e=>{ const t=e.target; if(!t.dataset||t.dataset.f!=='text'||t._mn) return; const it=cardItem(t); if(!it||it.type!=='comment'||!cur||!cur.pid||mode!=='local'||!sbUser) return;
+  t._mn=1; peopleFor(cur.pid); t.addEventListener('input',()=>{ MP.pid=cur&&cur.pid; mpUpdate(t,cur&&cur.pid); }); t.addEventListener('keydown',e2=>{ mpKey(e2); },true); t.addEventListener('blur',()=>setTimeout(()=>{ if(MP.el===t) mpClose(); },120)); });
+cardsEl.addEventListener('focusout',e=>{ const t=e.target; if(!t.dataset||t.dataset.f!=='text') return; const it=cardItem(t); if(!it||it.type!=='comment'||!cur||!cur.pid||readOnly||mode!=='local'||!sbUser) return;
+  const pid=cur.pid, sid=cur.id; setTimeout(async()=>{ const ppl=await peopleFor(pid), text=it.p.text||'', ids=findMentions(text,ppl).filter(id=>id!==sbUser.id), done=it.p.mn||[], fresh=ids.filter(id=>!done.includes(id)); if(!fresh.length) return;
+    it.p.mn=[...new Set([...done,...fresh])]; if(cur&&cur.id===sid) touch();
+    sb.rpc('notify_mentions',{p_project:pid,p_setup:sid,p_item:String(it.id),p_kind:'comment',p_snippet:text.slice(0,300),p_users:fresh}).then(r=>{ if(!r.error) toast(fresh.length===1?`${(ppl.find(p=>p.id===fresh[0])||{}).name||'They'} will get a notification`:`${fresh.length} people will get a notification`); },()=>{}); },50); });
+/* notifications: the bell, top right */
+const NT={list:[],sub:null,uid:null};
+async function notifInit(){ const btn=$('#notifBtn'); if(!btn) return; const on=mode==='local'&&sb&&sbUser; btn.hidden=!on;
+  if(!on){ if(NT.sub){ try{ sb.removeChannel(NT.sub); }catch(e){} NT.sub=null; } NT.list=[]; NT.uid=null; notifBadge(); return; } if(NT.uid===sbUser.id) return; NT.uid=sbUser.id;
+  try{ const {data}=await sb.from('notifications').select('*').order('created_at',{ascending:false}).limit(50); NT.list=data||[]; }catch(e){ NT.list=[]; } notifBadge();
+  if(NT.sub){ try{ sb.removeChannel(NT.sub); }catch(e){} }
+  NT.sub=sb.channel('notif:'+sbUser.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+sbUser.id},async pl=>{ const n=pl&&pl.new; if(!n||NT.list.some(x=>x.id===n.id)) return; NT.list.unshift(n); notifBadge();
+      if(!$('#notifPanel')||$('#notifPanel').hidden){ const who=(await peopleFor(n.project_id)).find(p=>p.id===n.actor_id); if(!(n.kind==='chat'&&CH.open&&CH.setup===n.setup_id)) toast(`${who?who.name:'Someone'} mentioned you${n.kind==='chat'?' in the chat':' in a comment'}`); }
+      else notifRender(); }).subscribe(); }
+function notifBadge(){ const b=$('#notifBtn .ib-badge'); if(!b) return; const n=NT.list.filter(x=>!x.read_at).length; b.hidden=!n; b.textContent=n>9?'9+':n; }
+function notifPanel(){ let p=$('#notifPanel'); if(p) return p; p=document.createElement('section'); p.id='notifPanel'; p.hidden=true; p.setAttribute('aria-label','Notifications');
+  p.innerHTML='<div class="np-h"><b>Notifications</b><button type="button" data-np="all">Mark all as read</button></div><div class="np-list"></div>'; document.body.append(p);
+  p.addEventListener('click',e=>{ const a=e.target.closest('[data-np]'); if(a){ notifReadAll(); return; } const i=e.target.closest('[data-nid]'); if(i) notifGo(+i.dataset.nid); });
+  document.addEventListener('pointerdown',e=>{ if(!p.hidden&&!p.contains(e.target)&&!e.target.closest('#notifBtn')) notifClose(); });
+  return p; }
+async function notifRender(){ const p=notifPanel(), L=p.querySelector('.np-list'); if(!NT.list.length){ L.innerHTML='<div class="np-empty">Nothing yet. When someone mentions you with @ in a chat or a comment, it shows up here.</div>'; return; }
+  const pids=[...new Set(NT.list.map(n=>n.project_id).filter(Boolean))]; await Promise.all(pids.map(peopleFor));
+  L.innerHTML=NT.list.map(n=>{ const who=peopleNow(n.project_id).find(x=>x.id===n.actor_id), name=who?who.name:'Someone', d=all[n.setup_id], where=d?(d.title||d.shoot||'a setup'):'a setup';
+    return `<button type="button" class="np-i${n.read_at?' read':''}" data-nid="${n.id}"><div class="cp-av" style="background:${lcColor(n.actor_id||'x')}">${esc((name[0]||'?').toUpperCase())}</div><div class="np-t"><b>${esc(name)}</b> mentioned you ${n.kind==='chat'?'in the chat':'in a comment'} in <b>${esc(where)}</b>${n.snippet?`<q>${mentionHTML(n.snippet,peopleNow(n.project_id))}</q>`:''}<time>${agoTxt(n.created_at)}</time></div><i class="np-dot"></i></button>`; }).join(''); }
+function notifOpen(){ chatClose(); const p=notifPanel(); p.hidden=false; notifRender(); }
+function notifClose(){ const p=$('#notifPanel'); if(p) p.hidden=true; }
+async function notifReadAll(){ NT.list.forEach(n=>{ if(!n.read_at) n.read_at=new Date().toISOString(); }); notifBadge(); notifRender(); try{ await sb.rpc('notifications_read',{p_ids:null}); }catch(e){} }
+async function notifGo(id){ const n=NT.list.find(x=>x.id===id); if(!n) return; if(!n.read_at){ n.read_at=new Date().toISOString(); notifBadge(); sb.rpc('notifications_read',{p_ids:[id]}).then(()=>{},()=>{}); } notifClose();
+  if(!all[n.setup_id]){ await cloudSync(false,true); if(!all[n.setup_id]){ toast('That setup isn’t available any more'); return; } }
+  if(drawEd) await closeDraw(true); if(!cur||cur.id!==n.setup_id) openDiagram(n.setup_id);
+  setTimeout(()=>{ if(n.kind==='chat') chatOpen(); else if(n.item_id){ const it=itemById(n.item_id)||(cur&&cur.items.find(i=>String(i.id)===String(n.item_id))); if(it){ sel=new Set([it.id]); glideView({x:it.x+(it.w||2)/2,y:it.y+1,s:Math.max(view.s,90)}); renderInspector(); syncCardSel(); draw(); } else toast('That comment has been removed'); } },150); }
+$('#notifBtn').addEventListener('click',()=>{ const p=$('#notifPanel'); if(p&&!p.hidden) notifClose(); else notifOpen(); });
+setInterval(()=>{ chatSync(); notifInit(); },1500);
 /* usage events: which features get used. Only when signed in, name + time + account, never any content. Sent in small batches */
 var sbQ=[], sbQT=0;
 function track(name,meta){ try{ if(!sb||!sbUser) return; sbQ.push({name,meta:meta||null}); if(sbQ.length>60) sbQ.splice(0,sbQ.length-60); clearTimeout(sbQT); sbQT=setTimeout(trackFlush,8000); }catch(e){} }
@@ -9775,7 +9948,7 @@ const ABOUT={
   crew:[['solo','Just me'],['2-5','2–5 people'],['6-20','6–20'],['20+','More than 20']],
   heard:[['friend','A friend or colleague'],['instagram','Instagram'],['youtube','YouTube'],['facebook','A Facebook group'],['search','Searching online'],['other','Somewhere else']]};
 /* ================= what's new ================= */
-const CHANGELOG=/*CHANGELOG*/[{"date":"2026-11-10","items":[["improved","Selections show up instantly","When someone selects something in a shared setup, the others see the outline and lock straight away instead of after a few seconds."],["new","Follow a collaborator","Click someone's picture at the top of a shared setup to follow them: your view moves and zooms along with theirs. Pan or zoom yourself, or click Stop, to take back control."],["improved","Crew changes glide into place","When someone in a shared setup moves, turns or resizes something, it now glides smoothly to its new place instead of jumping, without a notice popping up every time."],["new","Sign in with Google","Create an account or sign in with your Google account in one click."],["new","Delete your account","Account → Delete account removes your account and your work. Shared projects you started are handed to another member, so your crew keeps them."],["changed","An account is now needed","Set Plot now asks you to sign in. Your setups are always saved to your account and follow you to every device."],["new","See others move things live","In shared setups you now see objects move, turn and change as your crew edits them, and their cursors glide smoothly."],["fixed","Setups stay with their account","Signing in to a different account in the same browser no longer shows the previous account's setups."],["new","Clearer sign-in and sign-up","Separate screens for signing in and creating an account, password reset, and a few quick questions about your work when you join."],["new","Edit locks","Whatever a collaborator has selected is outlined with their name, and nobody else can change it until they let go."],["new","Live cursors","See where everyone in a shared setup is pointing, with their name and colour, and who is online."]]},{"date":"2026-11-09","items":[["new","Shared projects","Invite your crew to a shoot. Choose who can view, edit or invite, and make others admin. The person who started the project always stays admin."],["new","AI voice-over","Generate a voice-over for each frame from text, hear voice samples first, and use tags like [laughs] or [whispers] for delivery."],["new","Record voice and add music","Record voice-over with your microphone and add music or sound-effect tracks that play with the animatic."],["new","Animatic","Play your storyboard as an animatic, set timing by tapping along, drag clip lengths on the timeline, add transitions, and present full screen."],["new","Storyboard rows","Organise frames in rows with titles, and drag frames between rows."],["new","Brand kit and palettes","Keep a brand's colours with the project and pull a palette straight from a photo."],["new","Cloud sync","Your setups, photos and audio sync to your account, stored in the EU."]]},{"date":"2026-11-08","items":[["new","Storyboard editor","Draw frames with pen, shapes and text, with layers and undo."],["new","Compass and camera follow","Turn the plot to match real north, and let the view follow a camera."]]},{"date":"2026-11-04","items":[["new","Setup details","Add shoot information to each setup."],["new","Embed a plot","Show a plot on another web page."]]},{"date":"2026-11-02","items":[["new","Rooms and presets","Start from ready-made rooms, and save your own setups as presets to reuse."],["new","Curtains and fabrics","Hang curtains and fabrics on windows and see how they shape the light."],["new","Dolly tracks and curved walks","Lay dolly tracks for the camera and bend talent walk paths into curves."],["improved","Light power","Set each light's output with a slider."]]},{"date":"2026-11-01","items":[["improved","Rich text notes","Bold, italics and lists in notes."]]},{"date":"2026-10-27","items":[["new","Welcome tour","A short guided tour of the basics for new users."]]},{"date":"2026-10-25","items":[["new","Light modifiers","Add softboxes, grids and other modifiers to lights."]]},{"date":"2026-10-24","items":[["new","Sun and shadows","See where the sun is and how shadows fall for a place, date and time."],["new","Mind map","Arrange notes as a mind map that tidies itself."],["improved","Snapping guides","Objects snap into line with each other as you move them."],["new","Palette from images","Pull a colour palette from a reference image."]]},{"date":"2026-10-23","items":[["new","Talent walks and marks","Draw where talent walks, place marks, and record takes."],["new","Presentation and 3D view","Present setups as slides, and switch to a tilted 3D view."],["improved","Exact wall lengths","Type a wall's length while drawing."],["new","Images","Drop reference images onto the plot."]]},{"date":"2026-10-21","items":[["new","Lock objects","Lock things in place so they can't be moved by accident."]]},{"date":"2026-10-20","items":[["new","Power planner","Plan circuits, cables and outlets, see the wattage per circuit, and export the list to Excel."]]},{"date":"2026-10-18","items":[["new","Window light and shadows","Windows let light in and walls cast shadows."],["new","Layers","Organise everything in layers and groups."],["improved","Rotate, rename and shortcuts","Rotate several things at once, rename items on the plot, and set your own keyboard shortcuts."]]},{"date":"2026-10-17","items":[["new","Set Plot is here","Draw the room, place lights and cameras and aim them, add notes, sketch with a pen, and keep all your setups on one board."]]}]/*END CHANGELOG*/;
+const CHANGELOG=/*CHANGELOG*/[{"date":"2026-11-10","items":[["new","Chat with your crew","Shared setups now have a chat. Open it from the speech bubble at the top. Messages are saved with the setup and arrive live."],["new","@mentions and notifications","Type @ in the chat or in a comment to mention someone. They get a notification in the new bell at the top right, and clicking it takes them straight to the message or comment."],["fixed","Cursors no longer disappear","Collaborators' cursors stay visible when they hold still or their connection blinks, show up as soon as you open a setup, and point from the edge of the screen when they're outside your view."],["improved","Selections show up instantly","When someone selects something in a shared setup, the others see the outline and lock straight away instead of after a few seconds."],["new","Follow a collaborator","Click someone's picture at the top of a shared setup to follow them. Your view moves along with theirs and zooms so you see everything on their screen, even if yours is smaller. Pan or zoom yourself, or click Stop, to take back control."],["improved","Crew changes glide into place","When someone in a shared setup moves, turns or resizes something, it now glides smoothly to its new place instead of jumping, without a notice popping up every time."],["new","Sign in with Google","Create an account or sign in with your Google account in one click."],["new","Delete your account","Account → Delete account removes your account and your work. Shared projects you started are handed to another member, so your crew keeps them."],["changed","An account is now needed","Set Plot now asks you to sign in. Your setups are always saved to your account and follow you to every device."],["new","See others move things live","In shared setups you now see objects move, turn and change as your crew edits them, and their cursors glide smoothly."],["fixed","Setups stay with their account","Signing in to a different account in the same browser no longer shows the previous account's setups."],["new","Clearer sign-in and sign-up","Separate screens for signing in and creating an account, password reset, and a few quick questions about your work when you join."],["new","Edit locks","Whatever a collaborator has selected is outlined with their name, and nobody else can change it until they let go."],["new","Live cursors","See where everyone in a shared setup is pointing, with their name and colour, and who is online."]]},{"date":"2026-11-09","items":[["new","Shared projects","Invite your crew to a shoot. Choose who can view, edit or invite, and make others admin. The person who started the project always stays admin."],["new","AI voice-over","Generate a voice-over for each frame from text, hear voice samples first, and use tags like [laughs] or [whispers] for delivery."],["new","Record voice and add music","Record voice-over with your microphone and add music or sound-effect tracks that play with the animatic."],["new","Animatic","Play your storyboard as an animatic, set timing by tapping along, drag clip lengths on the timeline, add transitions, and present full screen."],["new","Storyboard rows","Organise frames in rows with titles, and drag frames between rows."],["new","Brand kit and palettes","Keep a brand's colours with the project and pull a palette straight from a photo."],["new","Cloud sync","Your setups, photos and audio sync to your account, stored in the EU."]]},{"date":"2026-11-08","items":[["new","Storyboard editor","Draw frames with pen, shapes and text, with layers and undo."],["new","Compass and camera follow","Turn the plot to match real north, and let the view follow a camera."]]},{"date":"2026-11-04","items":[["new","Setup details","Add shoot information to each setup."],["new","Embed a plot","Show a plot on another web page."]]},{"date":"2026-11-02","items":[["new","Rooms and presets","Start from ready-made rooms, and save your own setups as presets to reuse."],["new","Curtains and fabrics","Hang curtains and fabrics on windows and see how they shape the light."],["new","Dolly tracks and curved walks","Lay dolly tracks for the camera and bend talent walk paths into curves."],["improved","Light power","Set each light's output with a slider."]]},{"date":"2026-11-01","items":[["improved","Rich text notes","Bold, italics and lists in notes."]]},{"date":"2026-10-27","items":[["new","Welcome tour","A short guided tour of the basics for new users."]]},{"date":"2026-10-25","items":[["new","Light modifiers","Add softboxes, grids and other modifiers to lights."]]},{"date":"2026-10-24","items":[["new","Sun and shadows","See where the sun is and how shadows fall for a place, date and time."],["new","Mind map","Arrange notes as a mind map that tidies itself."],["improved","Snapping guides","Objects snap into line with each other as you move them."],["new","Palette from images","Pull a colour palette from a reference image."]]},{"date":"2026-10-23","items":[["new","Talent walks and marks","Draw where talent walks, place marks, and record takes."],["new","Presentation and 3D view","Present setups as slides, and switch to a tilted 3D view."],["improved","Exact wall lengths","Type a wall's length while drawing."],["new","Images","Drop reference images onto the plot."]]},{"date":"2026-10-21","items":[["new","Lock objects","Lock things in place so they can't be moved by accident."]]},{"date":"2026-10-20","items":[["new","Power planner","Plan circuits, cables and outlets, see the wattage per circuit, and export the list to Excel."]]},{"date":"2026-10-18","items":[["new","Window light and shadows","Windows let light in and walls cast shadows."],["new","Layers","Organise everything in layers and groups."],["improved","Rotate, rename and shortcuts","Rotate several things at once, rename items on the plot, and set your own keyboard shortcuts."]]},{"date":"2026-10-17","items":[["new","Set Plot is here","Draw the room, place lights and cameras and aim them, add notes, sketch with a pen, and keep all your setups on one board."]]}]/*END CHANGELOG*/;
 const NEWS_TAG={new:'New',improved:'Improved',changed:'Changed',fixed:'Fixed'};
 const newsId=()=>CHANGELOG.length?CHANGELOG[0].date+'#'+CHANGELOG[0].items.length:'';
 function newsDot(){ let seen=''; try{ seen=localStorage.getItem('setplot-news-seen')||''; }catch(e){} const d=$('#newsBtn .news-dot'); if(d) d.hidden=!CHANGELOG.length||seen===newsId(); }
