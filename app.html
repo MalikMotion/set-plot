@@ -153,6 +153,11 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .acct-chip{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13px/1.2 var(--sans);cursor:pointer}
 .acct-chip:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
 .acct-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.acct-dots{display:flex;gap:5px;margin-top:-4px}.acct-dots i{flex:1;height:3px;border-radius:2px;background:var(--line);transition:background .25s}.acct-dots i.on{background:var(--accent)}
+.acct.q{min-height:300px}.acct.q .acct-qbody{flex:1;animation:acctQ .22s ease-out}
+.acct.q .acct-chip{padding:9px 14px;font-size:14px}
+@keyframes acctQ{from{opacity:0;transform:translateX(10px)}}
+@media (prefers-reduced-motion:reduce){.acct.q .acct-qbody{animation:none}}
 .acct-mail{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}.acct-mail svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .acct-msg{font-size:13px;color:var(--muted)}
 @media (max-height:760px){.acct.auth{max-height:calc(100vh - 40px);overflow:auto}}
@@ -9652,7 +9657,7 @@ const ABOUT={
   work:[['commercials','Commercials'],['music','Music videos'],['film','Film & series'],['docs','Documentary'],['corporate','Corporate & events'],['weddings','Weddings'],['social','Social content'],['stills','Stills']],
   crew:[['solo','Just me'],['2-5','2–5 people'],['6-20','6–20'],['20+','More than 20']],
   heard:[['friend','A friend or colleague'],['instagram','Instagram'],['youtube','YouTube'],['facebook','A Facebook group'],['search','Searching online'],['other','Somewhere else']]};
-var sbProfile=null;
+var sbProfile=null; let ACCT_Q=['role','work','crew','heard'];
 var acct={view:'signin',email:'',name:'',about:{role:'',work:[],crew:'',heard:''},msg:'',bad:false,back:'',must:false};
 const acctClose=()=>`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`;
 const acctField=(label,attrs,extra)=>`<label class="acct-f"><span class="acct-fl">${label}${extra||''}</span>${attrs}</label>`;
@@ -9669,17 +9674,20 @@ function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
     <label class="acct-f">Project URL<input class="fi" data-sb="url" placeholder="https://xxxx.supabase.co" value="${esc((c&&c.url)||'')}"></label>
     <label class="acct-f">Anon public key<input class="fi" data-sb="key" placeholder="eyJhbGciOi…" value="${esc((c&&c.key)||'')}"></label>
     <div class="acct-row"><button class="btn primary" data-acc="savecfg">Connect</button>${c?'<button class="btn ghost" data-acc="clearcfg">Disconnect</button>':''}</div></div>`;
-  if(v==='about'){ const signup=!sbUser, A=acct.about;
-    return `<div class="acct auth${acct.must?' must':''}"><div class="acct-h"><div>${signup?'<span class="acct-step">Step 2 of 2</span>':''}<h3>${signup?'A bit about you':sbProfile&&sbProfile.role?'Your profile':'One more thing'}</h3></div>${acct.must?'':close}</div>
-      <p class="muted">${signup||acct.must?'Three quick questions, so we can shape Set Plot around the way you work.':'Your name and the answers you gave when you joined.'}</p>
-      ${!signup?acctField('Your name',`<input class="fi" data-a="name" autocomplete="name" maxlength="80" value="${esc(acct.name)}" placeholder="First and last name">`):''}
-      <div class="acct-q"><b>What describes you best?</b>${acctChips('role')}</div>
-      <div class="acct-q"><b>What do you mostly shoot? <span class="muted">Pick any</span></b>${acctChips('work',true)}</div>
-      <div class="acct-q"><b>How big is your usual crew?</b>${acctChips('crew')}</div>
-      <label class="acct-f"><span class="acct-fl">How did you hear about Set Plot? <span class="muted">Optional</span></span><select class="fi" data-a="heard"><option value="">Choose…</option>${ABOUT.heard.map(([k,l])=>`<option value="${k}"${A.heard===k?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+  if(v==='about'){ const signup=!sbUser, A=acct.about, qi=acct.qi||0, last=qi===ACCT_Q.length-1, Q=ACCT_Q[qi], total=ACCT_Q.length+(signup?1:0), step=qi+(signup?2:1);
+    const body=Q==='name'?acctField('Your name',`<input class="fi" data-a="name" autocomplete="name" maxlength="80" value="${esc(acct.name)}" placeholder="First and last name">`)
+      :Q==='role'?acctChips('role'):Q==='work'?acctChips('work',true):Q==='crew'?acctChips('crew')
+      :acctChips('heard');
+    const title={name:'What should we call you?',role:'What describes you best?',work:'What do you mostly shoot?',crew:'How big is your usual crew?',heard:'How did you hear about Set Plot?'}[Q];
+    const hint={name:'Shown to the people you share shoots with.',role:'Pick the one closest to what you do.',work:'Pick as many as you like.',crew:'On a typical shoot.',heard:'Optional, so skip it if you like. It helps us find more people like you.'}[Q];
+    const dots=Array.from({length:total},(_,k)=>`<i class="${k<step?'on':''}"></i>`).join('');
+    return `<div class="acct auth q${acct.must?' must':''}"><div class="acct-h"><div><span class="acct-step">Step ${step} of ${total}</span><h3>${title}</h3></div>${acct.must?'':acctClose()}</div>
+      <div class="acct-dots" aria-hidden="true">${dots}</div>
+      <p class="muted">${hint}</p>
+      <div class="acct-qbody">${body}</div>
       ${acctMsgHTML()}
-      <div class="acct-row end">${signup?'<button class="btn ghost" data-acc="go" data-v="signup">Back</button>':''}<button class="btn primary acct-main" data-acc="${signup?'signup':'saveprofile'}">${signup?'Create account':'Save'}</button></div>
-      ${signup?acctLegal:''}</div>`; }
+      <div class="acct-row end">${signup||qi>0?'<button class="btn ghost" data-acc="qback">Back</button>':''}<button class="btn primary acct-main" data-acc="qnext">${!last?'Continue':signup?'Create account':'Save'}</button></div>
+      ${signup&&last?acctLegal:''}</div>`; }
   if(sbUser&&v==='newpass') return `<div class="acct auth"><div class="acct-h"><h3>Choose a new password</h3>${close}</div><p class="muted">For ${esc(sbUser.email||'your account')}.</p>
       ${acctField('New password',acctPw('new-password','At least 8 characters'))}${acctMsgHTML()}<button class="btn primary acct-main" data-acc="newpass">Save password</button></div>`;
   if(sbUser){ const P=sbProfile, rl=P&&P.role&&(ABOUT.role.find(r=>r[0]===P.role)||[])[1];
@@ -9717,7 +9725,7 @@ function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
     <div class="acct-switch">New to Set Plot? <button class="acct-link" data-acc="go" data-v="signup">Create an account</button></div></div>`; }
 function acctGrab(){ const m=$('#modal'); if(!m) return; const g=k=>m.querySelector(`[data-a="${k}"]`);
   if(g('email')) acct.email=g('email').value.trim(); if(g('name')) acct.name=g('name').value.trim(); if(g('heard')) acct.about.heard=g('heard').value; }
-function openAccount(view){ if(typeof view!=='string') view=sbUser?'me':'signin'; acct.view=view; acct.msg=''; acct.bad=false;
+function openAccount(view,keepQ){ if(typeof view!=='string') view=sbUser?'me':'signin'; if(view==='about'&&!keepQ){ acct.qi=0; ACCT_Q=sbUser?['name','role','work','crew','heard']:['role','work','crew','heard']; } acct.view=view; acct.msg=''; acct.bad=false;
   if(view!=='about') acct.must=false; showModal(accountHTML()); const f=$('#modal [data-a]:not([value]), #modal [data-a=""]')||$('#modal input[data-a]'); if(f&&matchMedia('(pointer:fine)').matches) setTimeout(()=>{ try{ (([...$('#modal').querySelectorAll('input[data-a]')].find(x=>!x.value))||f).focus(); }catch(e){} },30); }
 const acctMsg=(t,bad)=>{ acct.msg=t||''; acct.bad=!!bad; const m=$('#acctMsg'); if(m){ m.textContent=acct.msg; m.classList.toggle('bad',acct.bad); } };
 function acctErr(e){ const m=String(e&&(e.message||e)||'');
@@ -9732,7 +9740,7 @@ const sbRedirect=()=>location.origin+location.pathname;
 const okEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
 async function profileCheck(){ if(!sb||!sbUser) return; try{ const {data,error}=await sb.from('profiles').select('name,role,work,crew,heard').eq('user_id',sbUser.id).maybeSingle(); if(error) return;
     sbProfile=data||null; if(sbProfile&&sbProfile.name&&sbProfile.name!==(sbUser.user_metadata||{}).full_name){ sbUser.user_metadata=Object.assign({},sbUser.user_metadata,{full_name:sbProfile.name}); renderAccount(); }
-    if(!sbProfile||!sbProfile.role){ const md=sbUser.user_metadata||{}; acct.name=(sbProfile&&sbProfile.name)||md.full_name||md.name||''; acct.about={role:'',work:[],crew:'',heard:''}; acct.must=true; acct.view='about'; acct.msg=''; showModal(accountHTML()); }
+    if(!sbProfile||!sbProfile.role){ const md=sbUser.user_metadata||{}; acct.name=(sbProfile&&sbProfile.name)||md.full_name||md.name||''; acct.about={role:'',work:[],crew:'',heard:''}; acct.must=true; acct.view='about'; acct.qi=0; ACCT_Q=acct.name?['role','work','crew','heard']:['name','role','work','crew','heard']; acct.msg=''; showModal(accountHTML()); }
   }catch(e){} }
 function acctAboutOk(needName){ const A=acct.about; if(needName&&acct.name.length<2) return 'Type your name'; if(!A.role) return 'Pick what describes you best'; if(!A.work.length) return 'Pick at least one kind of work'; if(!A.crew) return 'Pick your usual crew size'; return ''; }
 $('#modal').addEventListener('click',e=>{ if(e.target.id==='modal'&&$('#modal .acct.must')) e.stopImmediatePropagation(); },true);
@@ -9742,7 +9750,7 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
     try{ localStorage.setItem('setplot-sb',JSON.stringify({url,key})); }catch(err){} b.disabled=true; await sbInit(); openAccount(); return; }
   if(a==='clearcfg'){ try{ localStorage.removeItem('setplot-sb'); }catch(err){} if(sb) await sb.auth.signOut().catch(()=>{}); sb=null; sbUser=null; renderAccount(); openAccount(); return; }
   if(a==='eye'){ const i=b.previousElementSibling, sh=i.type==='password'; i.type=sh?'text':'password'; b.textContent=sh?'Hide':'Show'; b.setAttribute('aria-label',sh?'Hide password':'Show password'); return; }
-  if(a==='chip'){ const q=b.dataset.q, k=b.dataset.k; acctGrab(); if(q==='work'){ const w=acct.about.work, i=w.indexOf(k); i<0?w.push(k):w.splice(i,1); } else acct.about[q]=k;
+  if(a==='chip'){ const q=b.dataset.q, k=b.dataset.k; acctGrab(); if(q==='work'){ const w=acct.about.work, i=w.indexOf(k); i<0?w.push(k):w.splice(i,1); } else acct.about[q]=(q==='heard'&&acct.about[q]===k)?'':k;
     b.parentElement.querySelectorAll('.acct-chip').forEach(c=>{ const on=q==='work'?acct.about.work.includes(c.dataset.k):acct.about[q]===c.dataset.k; c.classList.toggle('on',on); c.setAttribute('aria-checked',on); }); if(acct.bad) acctMsg(''); return; }
   if(!sb) return;
   const pwEl=$('#modal [data-a=pass]'), pass=pwEl?pwEl.value:''; acctGrab();
@@ -9752,6 +9760,12 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
   if(a==='signout'){ await sb.auth.signOut(); $('#modal').hidden=true; toast('Signed out · your plots stay in this browser'); return; }
   if(a==='editprofile'){ const P=sbProfile||{}; acct.name=P.name||sbName(sbUser); acct.about={role:P.role||'',work:(P.work||[]).slice(),crew:P.crew||'',heard:P.heard||''}; openAccount('about'); return; }
   const busy=async fn=>{ b.disabled=true; b.classList.add('busy'); try{ await fn(); }catch(err){ acctMsg(acctErr(err),true); } finally{ b.disabled=false; b.classList.remove('busy'); } };
+  if(a==='qback'){ if((acct.qi||0)>0){ acct.qi--; openAccount('about',true); } else { openAccount('signup'); const p2=$('#modal [data-a=pass]'); if(p2&&acct.pass) p2.value=acct.pass; } return; }
+  if(a==='qnext'){ const Q=ACCT_Q[acct.qi||0], A=acct.about;
+    const bad=Q==='name'&&acct.name.length<2?'Type your name':Q==='role'&&!A.role?'Pick the one closest to what you do':Q==='work'&&!A.work.length?'Pick at least one':Q==='crew'&&!A.crew?'Pick your usual crew size':'';
+    if(bad){ acctMsg(bad,true); return; }
+    if((acct.qi||0)<ACCT_Q.length-1){ acct.qi=(acct.qi||0)+1; openAccount('about',true); return; }
+    b.dataset.acc=sbUser?'saveprofile':'signup'; b.click(); b.dataset.acc='qnext'; return; }
   if(a==='next'){ if(acct.name.length<2){ acctMsg('Type your name',true); return; } if(!okEmail(acct.email)){ acctMsg('Type a valid email address',true); return; } if(pass.length<8){ acctMsg('Pick a password of at least 8 characters',true); return; }
     acct.pass=pass; openAccount('about'); return; }
   if(a==='signup'){ const bad=acctAboutOk(false); if(bad){ acctMsg(bad,true); return; } const A=acct.about;
