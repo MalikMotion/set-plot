@@ -77,6 +77,9 @@ main.loading .grid{opacity:.55;transition:opacity .2s ease}
 .retwrap{overflow-x:auto}
 /* features */
 .bars{display:grid;gap:8px}
+.aud{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:22px 32px;margin-top:6px}
+.aud h3{margin:0 0 10px;font-size:13.5px;font-weight:650;color:var(--ink)}
+.aud .bar{grid-template-columns:minmax(120px,44%) minmax(0,1fr) auto}.e .mail{font-weight:500;color:var(--ink2)}.e .who{display:block;font-weight:650;color:var(--ink)}.e .role{display:block;color:var(--muted);font-size:12px}
 .bar{display:grid;grid-template-columns:minmax(90px,30%) minmax(0,1fr) auto;align-items:center;gap:10px;font-size:13px}
 .bar .n{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar .t{height:14px;border-radius:0 4px 4px 0;background:var(--grid);position:relative}
@@ -176,8 +179,13 @@ table.acc td.r,table.acc th.r{text-align:right}
         <div class="card"><h2>Features used</h2><p class="sub" id="featSub">Times used, and by how many people</p><div class="bars" id="feat"></div></div>
       </section>
 
+      <section class="card" aria-label="Who uses Set Plot">
+        <h2>Who uses Set Plot</h2><p class="sub" id="audSub">From the questions people answer when they join</p>
+        <div class="aud" id="aud"></div>
+      </section>
+
       <section class="card" aria-label="Accounts">
-        <div class="acct-h"><h2>Accounts</h2><input class="search" id="q" type="search" placeholder="Search by email" aria-label="Search accounts by email"><span class="sp"></span><span class="note" id="accN"></span></div>
+        <div class="acct-h"><h2>Accounts</h2><input class="search" id="q" type="search" placeholder="Search by name or email" aria-label="Search accounts by name or email"><span class="sp"></span><span class="note" id="accN"></span></div>
         <div class="tblwrap"><table class="acc"><thead><tr><th>Account</th><th>Status</th><th>Joined</th><th>Last active</th><th class="r">Plots</th><th class="r">Storage</th><th class="r">Actions, 30 days</th><th>Sign-in</th></tr></thead><tbody id="accRows"></tbody></table></div>
         <div class="pager"><button class="btn" id="prev" type="button">Previous</button><span id="pageInfo"></span><button class="btn" id="next" type="button">Next</button></div>
       </section>
@@ -206,7 +214,11 @@ const bytes=b=>{ b=+b||0; if(b<1024) return b+' B'; const u=['KB','MB','GB','TB'
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const dShort=s=>new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
 const ago=s=>{ if(!s) return '–'; const m=(Date.now()-new Date(s))/60000; if(m<2) return 'just now'; if(m<60) return Math.round(m)+' min ago'; const h=m/60; if(h<24) return Math.round(h)+' h ago'; const d=h/24; if(d<14){ const n=Math.round(d); return n===1?'yesterday':n+' days ago'; } if(d<60) return Math.round(d/7)+' weeks ago'; return dShort(s); };
-const FEAT={open:'Opened the app',sign_in:'Signed in',setup_create:'New setup',draw_open:'Opened the drawing editor',frame_add:'Added a frame',frame_duplicate:'Duplicated a frame',row_add:'Added a row',drawing_save:'Saved a drawing / storyboard',animatic_play:'Played the animatic',present:'Presented full screen',tap_timing:'Used tap timing',voice_open:'Opened voice recording',voice_record:'Recorded a voice-over',audio_add:'Added music or SFX',export:'Exported',palette_photo:'Palette from a photo',ai_voice:'Generated an AI voice clip',ai_voice_add:'Added an AI voice clip',ai_voice_batch:'Voiced all frames with AI',project_share:'Shared a shoot',project_add:'Added a person to a project',project_rights:'Changed someone’s rights'};
+const FEAT={open:'Opened the app',sign_up:'Created an account',profile_done:'Answered the joining questions',profile_edit:'Edited their profile',sign_in:'Signed in',setup_create:'New setup',draw_open:'Opened the drawing editor',frame_add:'Added a frame',frame_duplicate:'Duplicated a frame',row_add:'Added a row',drawing_save:'Saved a drawing / storyboard',animatic_play:'Played the animatic',present:'Presented full screen',tap_timing:'Used tap timing',voice_open:'Opened voice recording',voice_record:'Recorded a voice-over',audio_add:'Added music or SFX',export:'Exported',palette_photo:'Palette from a photo',ai_voice:'Generated an AI voice clip',ai_voice_add:'Added an AI voice clip',ai_voice_batch:'Voiced all frames with AI',project_share:'Shared a shoot',project_add:'Added a person to a project',project_rights:'Changed someone’s rights'};
+const ABOUT={role:{dop:'Cinematographer / DoP',gaffer:'Gaffer or lighting crew',videographer:'Videographer',photographer:'Photographer',director:'Director',producer:'Producer or PM',creator:'Content creator',student:'Student or teacher',other:'Something else'},
+  work:{commercials:'Commercials',music:'Music videos',film:'Film & series',docs:'Documentary',corporate:'Corporate & events',weddings:'Weddings',social:'Social content',stills:'Stills'},
+  crew:{solo:'Just me','2-5':'2–5 people','6-20':'6–20','20+':'More than 20'},
+  heard:{friend:'A friend or colleague',instagram:'Instagram',youtube:'YouTube',facebook:'A Facebook group',search:'Searching online',other:'Somewhere else'}};
 const ICON={good:'<path d="M3.5 8.4 6.6 11.4 12.5 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   warning:'<path d="M8 2.5 14 13H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6.5v3M8 11.2v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
   critical:'<circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.8 5.8l4.4 4.4M10.2 5.8l-4.4 4.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
@@ -240,8 +252,8 @@ $('#next').onclick=()=>{ if((page+1)*PAGE<(data.accounts&&data.accounts.total||0
 
 async function rpc(fn,args){ const {data:d,error}=await sb.rpc(fn,args||{}); if(error) throw error; return d; }
 async function load(){ const m=$('#main'); m.classList.add('loading');
-  try{ const [ov,daily,ret,feat,st]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status')]);
-    Object.assign(data,{ov,daily,ret,feat,st}); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); await loadAccounts();
+  try{ const [ov,daily,ret,feat,st,aud]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status'),rpc('admin_audience').catch(()=>null)]);
+    Object.assign(data,{ov,daily,ret,feat,st,aud}); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); await loadAccounts();
     $('#stamp').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
   catch(err){ $('#stamp').textContent='Couldn’t load: '+(err.message||err); }
   m.classList.remove('loading'); }
@@ -307,6 +319,15 @@ function renderFeatures(rows){ const box=$('#feat'); box.textContent=''; $('#fea
     const t=el('div','t'); const i=el('i'); i.style.width=Math.max(2,r.count/max*100)+'%'; t.append(i);
     const v=el('div','v',fmt(r.count)+' '); v.append(el('small',null,`· ${fmt(r.users)} ${r.users===1?'person':'people'}`)); b.append(el('div','n',FEAT[r.name]||r.name),t,v); box.append(b); }); }
 
+function renderAudience(a){ const box=$('#aud'); box.textContent=''; if(!a){ box.append(el('div','empty','Couldn’t load the answers')); return; }
+  const n=a.answered||0; $('#audSub').textContent=n?`${fmt(n)} of ${fmt(a.users)} accounts have answered · share of those who answered`:'From the questions people answer when they join';
+  if(!n){ const e=el('div','empty','No answers yet. New accounts answer three quick questions when they sign up, existing ones the next time they sign in'); e.style.height='120px'; box.append(e); return; }
+  [['What describes them best','role'],['What they mostly shoot','work'],['Usual crew size','crew'],['How they heard about Set Plot','heard']].forEach(([h,k])=>{ const g=el('div'), bars=el('div','bars'); g.append(el('h3',null,h),bars);
+    const rows=a[k]||[]; if(!rows.length){ bars.append(el('div','sub',k==='heard'?'Nobody has said yet (optional question)':'No answers yet')); }
+    const max=Math.max(1,...rows.map(r=>r.n)); rows.forEach(r=>{ const b=el('div','bar'), lbl=ABOUT[k][r.k]||r.k, pc=Math.round(r.n/n*100); b.title=`${lbl}: ${r.n} ${r.n===1?'person':'people'}${k==='work'?' (people can pick several)':''}`;
+      const t=el('div','t'), i=el('i'); i.style.width=Math.max(2,r.n/max*100)+'%'; t.append(i); const v=el('div','v',pc+'% '); v.append(el('small',null,'· '+fmt(r.n))); b.append(el('div','n',lbl),t,v); bars.append(b); });
+    box.append(g); }); }
+
 function level(p){ return p>=90?['critical','Near the limit','--critical']:p>=70?['warning','Getting full','--warning']:['good','Plenty of room','--good']; }
 function renderStatus(s){ const m=$('#meters'); m.textContent='';
   [['Database',s.db_bytes,s.db_limit],['Photo & audio storage',s.storage_bytes,s.storage_limit]].forEach(([n,v,lim])=>{ const p=Math.min(100,v/lim*100), [k,lbl,c]=level(p);
@@ -321,7 +342,7 @@ function status(last){ const d=(Date.now()-new Date(last))/864e5; return d<=7?['
 function renderAccounts(a){ const tb=$('#accRows'); tb.textContent=''; const rows=a&&a.rows||[];
   $('#accN').textContent=q?`${fmt(a.total)} matching`:`${fmt(a.total)} accounts`;
   if(!rows.length){ const tr=el('tr'), td=el('td',null,q?'No accounts match that search':'No accounts yet'); td.colSpan=8; td.style.color=css('--muted'); td.style.textAlign='center'; td.style.padding='24px'; tr.append(td); tb.append(tr); }
-  rows.forEach(r=>{ const tr=el('tr'), e=el('td','e'); e.append(document.createTextNode(r.email||'(no email)')); if(r.is_admin) e.append(el('span','adm','ADMIN')); if(!r.confirmed) e.append(el('small',null,'Email not confirmed yet'));
+  rows.forEach(r=>{ const tr=el('tr'), e=el('td','e'); if(r.name){ e.append(el('span','who',r.name),el('span','mail',r.email||'(no email)')); } else e.append(document.createTextNode(r.email||'(no email)')); if(r.role) e.append(el('span','role',(ABOUT.role[r.role]||r.role)+(r.crew?' · '+({solo:'works solo','2-5':'crew of 2–5','6-20':'crew of 6–20','20+':'crew of 20+'}[r.crew]||r.crew):''))); if(r.is_admin) e.append(el('span','adm','ADMIN')); if(!r.confirmed) e.append(el('small',null,'Email not confirmed yet'));
     const [k,l,c]=status(r.last_active), st=el('td'); st.append(pill(k,l,css(c)));
     const lj=el('td',null,dShort(r.created_at)); lj.title=new Date(r.created_at).toLocaleString('en-GB');
     const la=el('td',null,ago(r.last_active)); la.title=r.last_active?new Date(r.last_active).toLocaleString('en-GB'):'';

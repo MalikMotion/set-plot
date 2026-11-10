@@ -100,6 +100,27 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .extopts button{border:0;background:var(--field);border-radius:10px;width:74px;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer}
 .extopts button:hover{background:var(--hover);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .extopts svg{width:46px;height:30px;display:block}
+#lcLayer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:4}
+.lc{position:absolute;left:0;top:0;transition:transform .09s linear,opacity .4s;will-change:transform}
+.lc svg{display:block;width:22px;height:22px;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
+.lc b{position:absolute;left:15px;top:17px;padding:2px 7px;border-radius:7px 7px 7px 2px;color:#fff;font:600 12px/16px var(--sans);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:opacity .4s}
+.lc.idle{opacity:.55}.lc.idle b{opacity:0}
+.lc-ed{position:absolute;left:0;top:0;border-radius:8px;background:color-mix(in srgb,var(--c) 7%,transparent);box-shadow:0 0 16px -3px color-mix(in srgb,var(--c) 70%,transparent);animation:lcGlow 1.8s ease-in-out infinite}
+.lc-ed>svg{position:absolute;left:0;top:0;overflow:visible}
+.lc-ed rect{fill:none;stroke:var(--c);stroke-width:2;stroke-dasharray:7 5;animation:lcAnts .7s linear infinite}
+.lc-ed>b{position:absolute;left:-1px;bottom:100%;margin-bottom:4px;display:flex;align-items:center;gap:4px;padding:2px 7px 2px 5px;border-radius:7px;background:var(--c);color:#fff;font:600 11.5px/16px var(--sans);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.lc-ed .pen{width:11px;height:11px;fill:#fff;animation:lcPen 1.1s ease-in-out infinite;transform-origin:20% 80%}
+.lc-ed i{width:3px;height:3px;border-radius:50%;background:#fff;opacity:.35;animation:lcDot 1.2s infinite}.lc-ed i:nth-of-type(2){animation-delay:.2s}.lc-ed i:nth-of-type(3){animation-delay:.4s}.lc-ed span{margin-right:1px}
+.lc-ed.nob>b{display:none}.lc-ed.still,.lc-ed.still *{animation:none!important}
+@keyframes lcAnts{to{stroke-dashoffset:-12}}
+@keyframes lcGlow{50%{box-shadow:0 0 22px -1px color-mix(in srgb,var(--c) 85%,transparent)}}
+@keyframes lcPen{50%{transform:rotate(-14deg) translateY(-1px)}}
+@keyframes lcDot{40%{opacity:1}}
+.lc-people{display:flex;align-items:center;padding:0 4px 0 2px}.lc-people[hidden]{display:none}
+.lc-av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 12px/1 var(--sans);border:2px solid var(--card,#fff);margin-left:-6px;cursor:pointer;padding:0;position:relative}
+.lc-av:first-child{margin-left:0}.lc-av.away{opacity:.6}
+.lc-av.more{background:var(--soft,#eee);color:var(--ink);font-size:11px;cursor:default}
+@media (max-width:760px){.lc-av:nth-child(n+3):not(.more){display:none}}
 .share-btn{position:relative}.share-btn.on{color:var(--accent)}.share-btn .sh-n{position:absolute;right:1px;top:1px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--accent);color:#fff;font:700 10px/15px var(--sans);text-align:center}
 .sh-badge{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);font:600 11px/1.3 var(--sans);vertical-align:2px;white-space:nowrap}
 .acct.share{width:min(540px,calc(100vw - 48px));gap:8px}.sh-list{display:grid;gap:2px;max-height:min(44vh,360px);overflow:auto;margin:4px 0 10px}
@@ -117,6 +138,24 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .acct-prov{display:flex;flex-direction:column;gap:8px}.acct-p{justify-content:center;gap:10px;height:40px}.acct-p svg{width:18px;height:18px}
 .acct-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.acct-or::before,.acct-or::after{content:'';flex:1;height:1px;background:var(--line)}
 .acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.acct-msg.bad{color:#e5484d}.acct-legal{font-size:12px;margin:2px 0 0}.acct-legal a{color:inherit}
+.acct.auth{gap:14px;width:min(420px,calc(100vw - 48px))}
+.acct-step{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.acct-fl{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.acct-fl .muted{font-weight:500}
+.acct-f .fi{width:100%}
+.acct-pw{position:relative;display:block}.acct-pw .fi{padding-right:62px}
+.acct-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font:600 12.5px var(--sans);padding:6px 8px;border-radius:7px;cursor:pointer}.acct-eye:hover{color:var(--ink)}
+.acct-link{border:0;background:none;padding:0;color:var(--accent);font:600 13px var(--sans);cursor:pointer}.acct-link:hover{text-decoration:underline}.acct-link.center{align-self:center}
+.acct-main{width:100%;justify-content:center;height:42px}.acct-row.end{justify-content:flex-end}.acct-row.end .acct-main{width:auto;flex:1}
+.btn.busy{opacity:.6;pointer-events:none}
+.acct-switch{text-align:center;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:14px}
+.acct-q{display:flex;flex-direction:column;gap:8px}.acct-q>b{font-size:13.5px}.acct-q>b .muted{font-weight:500}
+.acct-chips{display:flex;flex-wrap:wrap;gap:6px}
+.acct-chip{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13px/1.2 var(--sans);cursor:pointer}
+.acct-chip:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.acct-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.acct-mail{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}.acct-mail svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.acct-msg{font-size:13px;color:var(--muted)}
+@media (max-height:760px){.acct.auth{max-height:calc(100vh - 40px);overflow:auto}}
 .acct-me{display:flex;align-items:center;gap:10px}.acct-me img,.acct-me .acct-i{width:36px;height:36px;font-size:15px}.acct-me small{display:block}
 .modmenu{width:min(420px,calc(100vw - 16px));gap:10px}.modmenu .extopts{flex-wrap:wrap}.modmenu .extopts button{width:76px;position:relative;padding-bottom:9px}
 .modmenu .extopts button.on{background:color-mix(in srgb,var(--accent) 14%,var(--field));box-shadow:inset 0 0 0 1.5px var(--accent)}
@@ -1846,6 +1885,7 @@ body.presenting #northHint,html.embed #northHint{display:none!important}
       <button class="ib" id="redoBtn" aria-label="Redo" title="Redo  Ctrl+Shift+Z" disabled></button>
       <span class="vsep hide-s"></span>
       <button class="ib hide-s" id="detailsBtn" aria-pressed="false" aria-label="Setup details and gear list" title="Setup details &amp; gear"></button>
+      <div class="lc-people" id="lcPeople" hidden></div>
       <button class="ib share-btn" id="shareBtn" aria-label="Share this shoot" title="Share this shoot with your crew" hidden></button>
       <button class="ib acct-btn" id="acctBtn" aria-label="Account"></button>
       <button class="ib" id="presentBtn" aria-label="Focus mode" title="Focus mode: hide the toolbars  Shift+F"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/></svg></button>
@@ -2835,7 +2875,7 @@ function body(d){ return Object.assign(meta(d), {items:d.items||[], createdAt:d.
 
 /* ================= render ================= */
 let raf=0;
-function draw(){ guideSoon(); if(typeof renderDial==='function') dialSoon(); if(typeof fitHintSoon==='function') fitHintSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); }); }
+function draw(){ if(typeof lcGuard==='function') lcGuard(); guideSoon(); if(typeof renderDial==='function') dialSoon(); if(typeof fitHintSoon==='function') fitHintSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); if(typeof lcPaint==='function') lcPaint(); }); }
 /* ================= board ================= */
 const BOARD_SWATCHES = [['auto','Match theme'],['#ffffff','Paper'],['#eceef0','Fog'],['#e8e5df','Stone'],['#e2e9e3','Sage'],['#e3eaf4','Sky'],['#2b3037','Slate'],['#1b3a5c','Blueprint'],['#121315','Black']];
 let board = {bg:'auto', pattern:'grid', intensity:1, exportBg:false};
@@ -6902,7 +6942,7 @@ const DRAW_AREA=[['rect','Rectangle select','<rect x="4" y="5" width="16" height
 function drawName(o){ if(o.t==='img') return (o.loc?'Location · ':'')+(o.nm||'Photo'); if(o.t==='fig'){ const F=DRAW_FIGS.find(q=>q[0]===o.k); return F?F[1]:'Figure'; } if(o.t==='text') return '“'+String(o.text).split('\n')[0].slice(0,22)+(String(o.text).length>22?'…':'')+'”';
   return {rough:'Rough pencil',pen:'Brush stroke',marker:'Marker',eraser:'Eraser',line:'Line',arrow:'Arrow',rect:'Rectangle',ellipse:'Ellipse'}[o.t]||'Object'; }
 function drawOpIcon(o){ if(o.t==='img'){ const u=imgURL(o.src); return u?`<img src="${esc(u)}" alt="">`:drawIcon(DRAW_PHOTO_ICON); } if(o.t==='fig') return figIcon(o.k); const T=DRAW_TOOLS.find(q=>q[0]===o.t); return drawIcon(T?T[3]:DRAW_SELECT_ICON); }
-function openDraw(it){ if(readOnly||!it) return; track('draw_open'); closeFloating&&closeFloating();
+function openDraw(it){ if(readOnly||!it) return; { const lp=typeof lcHolder==='function'&&lcHolder(it.id); if(lp){ lcSay([lp]); return; } } track('draw_open'); closeFloating&&closeFloating();
   const saved=it.p.draw&&Array.isArray(it.p.draw.ops)?it.p.draw:null;
   const W=saved?saved.W:1600, H=saved?saved.H:1200;
   let ops=saved?JSON.parse(JSON.stringify(saved.ops)):[]; { let k=ops.length-1; while(k>=0&&ops[k].t!=='clear') k--; ops=ops.slice(k+1); }   /* older drawings kept a "clear" step */
@@ -9370,8 +9410,10 @@ async function sbInit(){ const c=sbConf(); renderAccount(); if(!c||mode!=='local
   try{ await sbLoad(); sb=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}}); }
   catch(e){ sb=null; renderAccount(); return; }
   sb.auth.onAuthStateChange((ev,session)=>{ const was=sbUser&&sbUser.id; sbUser=session&&session.user||null; renderAccount(); if(sbUser) trackOpen(); if(ev==='SIGNED_IN'&&sbUser&&sbUser.id!==was) track('sign_in');
-    if(sbUser&&sbUser.id!==was) cloudSync(true); if(!sbUser&&was){ setStatus('Saved in this browser'); sbProj={}; syncProjectRO(); } renderShareBtn(); });
-  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); if(sbUser){ cloudSync(true); trackOpen(); }
+    if(ev==='PASSWORD_RECOVERY'){ openAccount('newpass'); } else if(sbUser&&sbUser.id!==was) profileCheck();
+    if(sbUser&&sbUser.id!==was) cloudSync(true); if(!sbUser&&was){ sbProfile=null; setStatus('Saved in this browser'); sbProj={}; syncProjectRO(); } renderShareBtn(); });
+  const {data}=await sb.auth.getSession(); sbUser=data&&data.session&&data.session.user||null; renderAccount(); renderShareBtn(); sbRealtime(); if(sbUser){ cloudSync(true); trackOpen(); if(!/type=recovery/.test(location.hash)) profileCheck(); }
+  else { const q=new URLSearchParams(location.search); if(q.has('signup')||q.has('signin')) setTimeout(()=>openAccount(q.has('signup')?'signup':'signin'),400); }
   if(/[?&]signin\b/.test(location.search)){ if(!sbUser) setTimeout(openAccount,300); try{ history.replaceState(null,'',location.pathname+location.search.replace(/[?&]signin\b=?[^&]*/,'').replace(/^&/,'?')+location.hash); }catch(e){} }   /* "Sign in" on the landing page opens the dialog */
   addEventListener('focus',()=>{ if(sbUser&&Date.now()-sbLastSync>15000) cloudSync(false); }); }
 const sbName=u=>u&&((u.user_metadata&&(u.user_metadata.full_name||u.user_metadata.name))||u.email||'Account');
@@ -9433,6 +9475,98 @@ async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=t
 function sbRealtime(){ if(!sb||!sb.channel||sbChan) return; try{ sbChan=sb.channel('plots-live').on('postgres_changes',{event:'*',schema:'public',table:'plots'},p=>{ const r=p&&p.new;
     if(r&&r.id&&all[r.id]&&Date.parse(r.updated_at)===(all[r.id].updatedAt||0)&&(r.project_id||null)===(all[r.id].pid||null)) return;   /* my own save coming back */
     clearTimeout(sbRtT); sbRtT=setTimeout(()=>cloudSync(false,true),900); }).subscribe(); }catch(e){ sbChan=null; } }
+/* live cursors: people in the same shared setup see each other's pointer and who's here.
+   One private realtime channel per setup ("plot:<project>:<setup>"); the database lets only project members join it */
+var lc={ch:null,topic:'',peers:{},online:[],where:'',sent:0,pend:null,pt:0,lay:null,selKey:'',mine:new Set(),at:0,tt:0,said:0};
+const LC_COL=['#e5484d','#2f7cf6','#2f9e62','#e38a2b','#8e4ec6','#d6409f','#12a594','#b08800'];
+function lcColor(id){ let h=7; for(const c of String(id)) h=(h*31+c.charCodeAt(0))|0; return LC_COL[Math.abs(h)%LC_COL.length]; }
+function lcName(){ const m=sbUser&&sbUser.user_metadata||{}; return String(m.full_name||m.name||(sbUser&&sbUser.email||'').split('@')[0]||'Someone').trim().slice(0,40); }
+function lcWhere(){ return drawEd?'board':'plot'; }
+function lcMe(){ return {id:sbUser.id,name:lcName(),color:lcColor(sbUser.id),where:lcWhere(),sel:[...lc.mine],at:lc.at}; }
+function lcTopic(){ try{ if(mode!=='local'||!sb||!sb.channel||!sbUser||!cur||!cur.pid||!sbProj[cur.pid]||document.visibilityState==='hidden') return '';
+  const p=sbProj[cur.pid]; if(p.members!=null&&p.members<2) return ''; return 'plot:'+cur.pid+':'+cur.id; }catch(e){ return ''; } }
+function lcLeave(){ const ch=lc.ch; lc.ch=null; lc.topic=''; lc.peers={}; lc.online=[]; lc.where=''; lc.selKey=''; lc.mine=new Set(); lc.at=0;
+  if(ch){ try{ sb.removeChannel(ch); }catch(e){} } lcPaint(); lcPeople(); }
+async function lcSync(){ const t=lcTopic();
+  if(t&&t===lc.topic){ if(lc.ch&&lc.where!==lcWhere()&&lc.ok){ lc.where=lcWhere(); try{ lc.ch.track(lcMe()); }catch(e){} if(lc.where==='board') lcSend(null,true); } return; }
+  if(lc.topic||lc.ch) lcLeave(); if(!t) return; lc.topic=t; lc.ok=false;
+  try{ const {data}=await sb.auth.getSession(), tok=data&&data.session&&data.session.access_token;
+    if(lc.topic!==t) return; if(tok&&sb.realtime&&sb.realtime.setAuth) await sb.realtime.setAuth(tok); if(lc.topic!==t) return;
+    const ch=sb.channel(t,{config:{private:true,broadcast:{self:false},presence:{key:sbUser.id}}}); lc.ch=ch;
+    ch.on('broadcast',{event:'cur'},m=>lcRecv(m&&m.payload)).on('presence',{event:'sync'},lcPresence)
+      .subscribe(st=>{ if(lc.ch!==ch) return; if(st==='SUBSCRIBED'){ lc.ok=true; lc.where=lcWhere(); try{ ch.track(lcMe()); }catch(e){} }
+        else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ lc.ok=false; } });
+  }catch(e){ lc.ch=null; } }
+function lcRecv(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={});
+  o.name=String(p.name||o.name||'Someone').slice(0,40); o.color=LC_COL.includes(p.color)?p.color:lcColor(p.id);
+  if(typeof p.x!=='number'||typeof p.y!=='number'||!isFinite(p.x)||!isFinite(p.y)){ o.off=true; } else { o.off=false; o.x=p.x; o.y=p.y; o.ts=Date.now(); }
+  lcPaint(); }
+function lcPresence(){ if(!lc.ch) return; let st={}; try{ st=lc.ch.presenceState()||{}; }catch(e){}
+  const seen={}, me=sbUser&&sbUser.id; lc.online=[];
+  Object.keys(st).forEach(k=>{ const m=(st[k]||[])[0]; if(!m||k===me||seen[k]) return; seen[k]=1;
+    lc.online.push({id:k,name:String(m.name||'Someone').slice(0,40),color:LC_COL.includes(m.color)?m.color:lcColor(k),where:m.where==='board'?'board':'plot'});
+    const o=lc.peers[k]||(lc.peers[k]={off:true}); o.name=String(m.name||o.name||'Someone').slice(0,40); o.color=lcColor(k); if(m.where==='board') o.off=true;
+    o.where=m.where==='board'?'board':'plot'; o.sel=Array.isArray(m.sel)?m.sel.slice(0,200).map(String):[]; o.at=+m.at||0; });
+  Object.keys(lc.peers).forEach(k=>{ if(!seen[k]) delete lc.peers[k]; });
+  lcPeople(); if(typeof draw==='function') draw(); lcPaint(); }
+function lcSend(pt,now){ if(!lc.ch||!lc.ok||!sbUser) return; lc.pend=pt; const go=()=>{ lc.pt=0; lc.sent=Date.now(); const q=lc.pend;
+    try{ lc.ch.send({type:'broadcast',event:'cur',payload:Object.assign({id:sbUser.id,name:lcName(),color:lcColor(sbUser.id)},q?{x:+q.x.toFixed(3),y:+q.y.toFixed(3)}:{})}); }catch(e){} };
+  if(now){ clearTimeout(lc.pt); go(); return; } if(lc.pt) return; const wait=Math.max(0,50-(Date.now()-lc.sent)); lc.pt=setTimeout(go,wait); }
+function lcPaint(){ if(!lc.lay){ if(!lc.ch) return; lc.lay=document.createElement('div'); lc.lay.id='lcLayer'; lc.lay.setAttribute('aria-hidden','true'); ($('#inkOv')||svg).after(lc.lay); }
+  const L=lc.lay, now=Date.now(), show=!drawEd; const keep={};
+  Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(!show||o.off||o.x==null||now-(o.ts||0)>60000) return; keep[k]=1;
+    let el=L.querySelector(`[data-lc="${CSS.escape(k)}"]`);
+    if(!el){ el=document.createElement('div'); el.className='lc'; el.dataset.lc=k; el.innerHTML='<svg viewBox="0 0 20 20"><path d="M3 2.2 16.6 9.4 10.2 10.8 7.4 17Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg><b></b>'; L.appendChild(el); }
+    el.querySelector('path').setAttribute('fill',o.color); const b=el.querySelector('b'); b.style.background=o.color; if(b.textContent!==o.name) b.textContent=o.name;
+    const sx=W/2+(o.x-view.x)*view.s, sy=H/2+(o.y-view.y)*view.s; el.style.transform=`translate(${Math.round(sx-3)}px,${Math.round(sy-2)}px)`;
+    el.classList.toggle('idle',now-(o.ts||0)>8000); });
+  L.querySelectorAll('.lc').forEach(el=>{ if(!keep[el.dataset.lc]) el.remove(); });
+  /* what the others have selected: a box in their colour with marching ants and their name */
+  const ek={}, rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(show&&cur) Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; let first=true; (o.sel||[]).forEach(id=>{ const r=lcRect(id); if(!r) return; const key=k+'|'+id; ek[key]=1; const tag=first; first=false;
+    let el=L.querySelector(`[data-ed="${CSS.escape(key)}"]`);
+    if(!el){ el=document.createElement('div'); el.className='lc-ed'; el.dataset.ed=key; el.innerHTML='<svg><rect/></svg><b><svg class="pen" viewBox="0 0 12 12"><path d="M2 10l.6-2.4L8 2.2 9.8 4 4.4 9.4Z"/></svg><span></span><i></i><i></i><i></i></b>'; L.appendChild(el); }
+    const w=Math.max(10,r.w+10), h=Math.max(10,r.h+10); el.style.cssText=`--c:${o.color};transform:translate(${Math.round(r.x-5)}px,${Math.round(r.y-5)}px);width:${Math.round(w)}px;height:${Math.round(h)}px`;
+    const sv=el.firstChild, rc=sv.firstChild; sv.setAttribute('width',Math.round(w)); sv.setAttribute('height',Math.round(h)); rc.setAttribute('x',1); rc.setAttribute('y',1); rc.setAttribute('width',Math.max(1,Math.round(w)-2)); rc.setAttribute('height',Math.max(1,Math.round(h)-2)); rc.setAttribute('rx',7);
+    const t=el.querySelector('span'), txt=o.name+(o.where==='board'?' is drawing':' is editing'); if(t.textContent!==txt) t.textContent=txt; el.classList.toggle('still',rm); el.classList.toggle('nob',!tag); }); });
+  L.querySelectorAll('.lc-ed').forEach(el=>{ if(!ek[el.dataset.ed]) el.remove(); }); }
+/* screen box of an object or card */
+function lcRect(id){ const it=cur&&cur.items.find(i=>String(i.id)===String(id)); if(!it) return null;
+  if(TYPES[it.type]&&TYPES[it.type].card){ const el=cardsEl.querySelector(`[data-cid="${CSS.escape(String(id))}"]`); if(el&&el.offsetParent!==null){ const b=el.getBoundingClientRect(); if(b.width) return {x:b.left,y:b.top,w:b.width,h:b.height}; } }
+  if(it.w>0&&it.h>0&&isFinite(it.x)&&isFinite(it.y)){ const a=(it.rot||0)*Math.PI/180, c=Math.cos(a), sn=Math.sin(a), hw=it.w/2+.12, hh=it.h/2+.12;
+    const xs=[-1,1].flatMap(i=>[-1,1].map(j=>it.x+i*hw*c-j*hh*sn)), ys=[-1,1].flatMap(i=>[-1,1].map(j=>it.y+i*hw*sn+j*hh*c));
+    const x0=W/2+(Math.min(...xs)-view.x)*view.s, y0=H/2+(Math.min(...ys)-view.y)*view.s; return {x:x0,y:y0,w:(Math.max(...xs)-Math.min(...xs))*view.s,h:(Math.max(...ys)-Math.min(...ys))*view.s}; }
+  const B=bounds([it]); if(!B) return null; const x0=W/2+(B.x0-view.x)*view.s, y0=H/2+(B.y0-view.y)*view.s; return {x:x0,y:y0,w:(B.x1-B.x0)*view.s,h:(B.y1-B.y0)*view.s}; }
+/* editing locks: whoever selected something first holds it; the others can't grab, change or delete it until they let go */
+function lcMySel(){ if(drawEd) return [String(drawEd.id)]; if(readOnly) return []; return [...sel].map(String).slice(0,200); }
+function lcHolder(id){ if(!lc||!lc.ch||readOnly) return null; id=String(id); let best=null;
+  Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(o.sel&&o.sel.includes(id)&&(!best||o.at<best.at||(o.at===best.at&&k<best.k))) best=Object.assign({k},o); });
+  if(!best) return null; if(lc.mine.has(id)&&(lc.at<best.at||(lc.at===best.at&&sbUser&&sbUser.id<best.k))) return null; return best; }
+function lcSay(ps){ const now=Date.now(); if(now-lc.said<1500) return; lc.said=now; const n=[...new Set(ps.map(p=>p.name))];
+  toast(n.length===1?`${n[0]} is editing this right now`:`${n.slice(0,-1).join(', ')} and ${n.slice(-1)} are editing these right now`); }
+function lcTrack(){ clearTimeout(lc.tt); lc.tt=setTimeout(()=>{ if(lc.ch&&lc.ok){ try{ lc.ch.track(lcMe()); }catch(e){} } },120); }
+function lcSelSync(){ if(!lc||!lc.ch) return; const a=lcMySel(), key=a.join(','); if(key===lc.selKey) return; lc.selKey=key; lc.mine=new Set(a); lc.at=a.length?Date.now():0; lcTrack(); }
+function lcGuard(){ if(!lc||!lc.ch||!cur) return; if(!readOnly&&sel.size&&Object.keys(lc.peers).length){ const lost=[];
+    [...sel].forEach(id=>{ const p=lcHolder(id); if(p){ sel.delete(id); lost.push(p); if(drag&&drag.it&&String(drag.it.id)===String(id)){ drag=null; svg.classList.remove('grabbing'); } } });
+    if(lost.length){ lcSay(lost); try{ renderInspector(); syncCardSel(); renderLayersSoon(); }catch(e){} } }
+  lcSelSync(); }
+/* a click on something another person holds goes nowhere, with a note who has it */
+['pointerdown','mousedown','dblclick','contextmenu'].forEach(ev=>addEventListener(ev,e=>{ if(!lc.ch||readOnly||drawEd) return;
+  const t=e.target.closest&&e.target.closest('#plot [data-id], #cards [data-cid]'); if(!t) return; const p=lcHolder(t.dataset.id||t.dataset.cid); if(!p) return;
+  e.preventDefault(); e.stopPropagation(); if(ev==='pointerdown') lcSay([p]); },true));
+function lcPeople(){ const box=$('#lcPeople'); if(!box) return; const ppl=lc.online; box.hidden=!ppl.length; if(!ppl.length){ box.innerHTML=''; return; }
+  const shown=ppl.slice(0,4);
+  box.innerHTML=shown.map(p=>`<button type="button" class="lc-av${p.where==='board'?' away':''}" data-lcgo="${esc(p.id)}" style="background:${p.color}" title="${esc(p.name)} · ${p.where==='board'?'working on the storyboard':'here on the plot, click to go to their cursor'}" aria-label="${esc(p.name)}">${esc(p.name.trim()[0]||'?').toUpperCase()}</button>`).join('')
+    +(ppl.length>4?`<span class="lc-av more" title="${esc(ppl.slice(4).map(p=>p.name).join(', '))}">+${ppl.length-4}</span>`:''); }
+document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('[data-lcgo]'); if(!b) return; const o=lc.peers[b.dataset.lcgo];
+  if(!o||o.off||o.x==null||drawEd){ toast(o&&!drawEd&&o.off?`${o.name} is working on the storyboard`:'Their cursor isn’t on the plot right now'); return; }
+  view.x=o.x; view.y=o.y; draw(); });
+addEventListener('pointermove',e=>{ if(!lc.ch||!lc.ok||drawEd||e.pointerType==='touch') return; lcSend(toWorld(e.clientX,e.clientY)); },true);
+document.addEventListener('mouseout',e=>{ if(!e.relatedTarget&&lc.ch) lcSend(null,true); });
+addEventListener('blur',()=>{ if(lc.ch) lcSend(null,true); });
+document.addEventListener('visibilitychange',()=>lcSync());
+addEventListener('pagehide',()=>{ if(lc.ch) lcLeave(); });
+setInterval(()=>{ lcSync(); lcSelSync(); if(lc.ch&&Object.keys(lc.peers).length) lcPaint(); },1500);
 /* usage events: which features get used. Only when signed in, name + time + account, never any content. Sent in small batches */
 var sbQ=[], sbQT=0;
 function track(name,meta){ try{ if(!sb||!sbUser) return; sbQ.push({name,meta:meta||null}); if(sbQ.length>60) sbQ.splice(0,sbQ.length-60); clearTimeout(sbQT); sbQT=setTimeout(trackFlush,8000); }catch(e){} }
@@ -9492,7 +9626,7 @@ async function shareAct(fn){ const S=shareS; if(!S||S.busy) return; S.busy=true;
   S.busy=false; if(shareS===S){ if(S.pid) await shareLoad(); else renderShare(); } }
 $('#modal').addEventListener('click',e=>{ const b=e.target.closest('[data-sh]'); if(!b||!shareS&&b.dataset.sh!=='signin') return; const a=b.dataset.sh, S=shareS;
   if(a==='signin'){ openAccount(); return; }
-  if(a==='copylink'){ const url=location.origin+location.pathname+'?signin'; (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast('Link copied · send it to the people you added'),()=>prompt('Copy this link',url)); return; }
+  if(a==='copylink'){ const url=location.origin+location.pathname+'?signup'; (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast('Link copied · send it to the people you added'),()=>prompt('Copy this link',url)); return; }
   if(a==='add'){ const em=($('#modal [data-sh-email]').value||'').trim(), role=$('#modal [data-sh-role]').value, inv=$('#modal [data-sh-inv]').checked;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ S.err='Type the person’s email address'; S.focus=true; renderShare(); return; }
     if(sbUser.email&&em.toLowerCase()===sbUser.email.toLowerCase()){ S.err='That’s you. You’re already in the project.'; renderShare(); return; }
@@ -9512,42 +9646,134 @@ $('#modal').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.matches
 const PROV=[['google','Google','<path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" fill="#4285F4"/><path d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z" fill="#34A853"/><path d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z" fill="#FBBC05"/><path d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z" fill="#EA4335"/>'],
   ['azure','Microsoft','<path d="M3 3h8.5v8.5H3z" fill="#F25022"/><path d="M12.5 3H21v8.5h-8.5z" fill="#7FBA00"/><path d="M3 12.5h8.5V21H3z" fill="#00A4EF"/><path d="M12.5 12.5H21V21h-8.5z" fill="#FFB900"/>'],
   ['apple','Apple','<path d="M16.4 12.6c0-2.4 2-3.5 2-3.6-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.2.8 1.1 1.7 2.3 2.8 2.3s1.6-.7 3-.7 1.8.7 3 .7 2-1.1 2.7-2.2c.9-1.3 1.2-2.5 1.2-2.6 0 0-2.3-.9-2.3-3.7zM14.2 5.6c.6-.8 1.1-1.8 1-2.9-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.8 1 .1 2.1-.5 2.7-1.3z" fill="currentColor"/>']];
-function accountHTML(){ const c=sbConf(), close=`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`;
+/* who uses Set Plot: asked once at sign-up (or on first sign-in with Google etc.), shown in aggregate on the admin page */
+const ABOUT={
+  role:[['dop','Cinematographer / DoP'],['gaffer','Gaffer or lighting crew'],['videographer','Videographer'],['photographer','Photographer'],['director','Director'],['producer','Producer or PM'],['creator','Content creator'],['student','Student or teacher'],['other','Something else']],
+  work:[['commercials','Commercials'],['music','Music videos'],['film','Film & series'],['docs','Documentary'],['corporate','Corporate & events'],['weddings','Weddings'],['social','Social content'],['stills','Stills']],
+  crew:[['solo','Just me'],['2-5','2–5 people'],['6-20','6–20'],['20+','More than 20']],
+  heard:[['friend','A friend or colleague'],['instagram','Instagram'],['youtube','YouTube'],['facebook','A Facebook group'],['search','Searching online'],['other','Somewhere else']]};
+var sbProfile=null;
+var acct={view:'signin',email:'',name:'',about:{role:'',work:[],crew:'',heard:''},msg:'',bad:false,back:'',must:false};
+const acctClose=()=>`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`;
+const acctField=(label,attrs,extra)=>`<label class="acct-f"><span class="acct-fl">${label}${extra||''}</span>${attrs}</label>`;
+const acctPw=(ac,ph)=>`<span class="acct-pw"><input class="fi" type="password" data-a="pass" autocomplete="${ac}" placeholder="${ph||''}"><button type="button" class="acct-eye" data-acc="eye" aria-label="Show password">Show</button></span>`;
+const acctMsgHTML=()=>`<p class="acct-msg${acct.bad?' bad':''}" id="acctMsg" role="status">${esc(acct.msg)}</p>`;
+const acctProv=verb=>PROV.some(p=>SB_PROVIDERS.includes(p[0]))?`<div class="acct-prov">${PROV.filter(p=>SB_PROVIDERS.includes(p[0])).map(([id,n,svgp])=>`<button class="btn acct-p" data-acc="oauth" data-prov="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${svgp}</svg>${verb} with ${n}</button>`).join('')}</div><div class="acct-or"><span>or with email</span></div>`:'';
+const acctLegal=`<p class="muted acct-legal">By creating an account you agree to how we handle your data in the <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p>`;
+function acctChips(key,multi){ const v=acct.about[key]; return `<div class="acct-chips" role="${multi?'group':'radiogroup'}" data-q="${key}">`+ABOUT[key].map(([k,l])=>{ const on=multi?v.includes(k):v===k;
+  return `<button type="button" class="acct-chip${on?' on':''}" data-acc="chip" data-q="${key}" data-k="${k}" role="${multi?'checkbox':'radio'}" aria-checked="${on}">${esc(l)}</button>`; }).join('')+`</div>`; }
+function accountHTML(){ const c=sbConf(), close=acctClose(), v=acct.view;
   if(mode!=='local') return `<div class="acct"><div class="acct-h"><h3>Account</h3>${close}</div><p class="muted">Here on claude.ai your plots are already saved with your Claude account. Sign-in is for the version on your own website.</p></div>`;
   if(!c||!sb) return `<div class="acct"><div class="acct-h"><h3>Set up sign-in</h3>${close}</div>
     <p class="muted">${c&&!sb?'The sign-in library could not load. Check the connection and reload.':'Connect a free Supabase project to let people sign in and keep their plots in the cloud.'}</p>
     <label class="acct-f">Project URL<input class="fi" data-sb="url" placeholder="https://xxxx.supabase.co" value="${esc((c&&c.url)||'')}"></label>
     <label class="acct-f">Anon public key<input class="fi" data-sb="key" placeholder="eyJhbGciOi…" value="${esc((c&&c.key)||'')}"></label>
     <div class="acct-row"><button class="btn primary" data-acc="savecfg">Connect</button>${c?'<button class="btn ghost" data-acc="clearcfg">Disconnect</button>':''}</div></div>`;
-  if(sbUser) return `<div class="acct"><div class="acct-h"><h3>Account</h3>${close}</div>
-    <div class="acct-me">${$('#acctBtn').innerHTML}<div><b>${esc(sbName(sbUser))}</b><small class="muted">${esc(sbUser.email||'')}</small></div></div>
+  if(v==='about'){ const signup=!sbUser, A=acct.about;
+    return `<div class="acct auth${acct.must?' must':''}"><div class="acct-h"><div>${signup?'<span class="acct-step">Step 2 of 2</span>':''}<h3>${signup?'A bit about you':sbProfile&&sbProfile.role?'Your profile':'One more thing'}</h3></div>${acct.must?'':close}</div>
+      <p class="muted">${signup||acct.must?'Three quick questions, so we can shape Set Plot around the way you work.':'Your name and the answers you gave when you joined.'}</p>
+      ${!signup?acctField('Your name',`<input class="fi" data-a="name" autocomplete="name" maxlength="80" value="${esc(acct.name)}" placeholder="First and last name">`):''}
+      <div class="acct-q"><b>What describes you best?</b>${acctChips('role')}</div>
+      <div class="acct-q"><b>What do you mostly shoot? <span class="muted">Pick any</span></b>${acctChips('work',true)}</div>
+      <div class="acct-q"><b>How big is your usual crew?</b>${acctChips('crew')}</div>
+      <label class="acct-f"><span class="acct-fl">How did you hear about Set Plot? <span class="muted">Optional</span></span><select class="fi" data-a="heard"><option value="">Choose…</option>${ABOUT.heard.map(([k,l])=>`<option value="${k}"${A.heard===k?' selected':''}>${esc(l)}</option>`).join('')}</select></label>
+      ${acctMsgHTML()}
+      <div class="acct-row end">${signup?'<button class="btn ghost" data-acc="go" data-v="signup">Back</button>':''}<button class="btn primary acct-main" data-acc="${signup?'signup':'saveprofile'}">${signup?'Create account':'Save'}</button></div>
+      ${signup?acctLegal:''}</div>`; }
+  if(sbUser&&v==='newpass') return `<div class="acct auth"><div class="acct-h"><h3>Choose a new password</h3>${close}</div><p class="muted">For ${esc(sbUser.email||'your account')}.</p>
+      ${acctField('New password',acctPw('new-password','At least 8 characters'))}${acctMsgHTML()}<button class="btn primary acct-main" data-acc="newpass">Save password</button></div>`;
+  if(sbUser){ const P=sbProfile, rl=P&&P.role&&(ABOUT.role.find(r=>r[0]===P.role)||[])[1];
+    return `<div class="acct"><div class="acct-h"><h3>Account</h3>${close}</div>
+    <div class="acct-me">${$('#acctBtn').innerHTML}<div><b>${esc(sbName(sbUser))}</b><small class="muted">${esc(sbUser.email||'')}${rl?' · '+esc(rl):''}</small></div></div>
     <p class="muted">Your plots sync to your account and follow you to any device you sign in on.</p>
-    <div class="acct-row"><button class="btn" data-acc="sync">Sync now</button><button class="btn ghost" data-acc="signout">Sign out</button></div></div>`;
-  return `<div class="acct"><div class="acct-h"><h3>Sign in</h3>${close}</div><p class="muted">Keep your plots in the cloud and open them on any device.</p>
-    ${PROV.some(p=>SB_PROVIDERS.includes(p[0]))?`<div class="acct-prov">${PROV.filter(p=>SB_PROVIDERS.includes(p[0])).map(([id,n,svgp])=>`<button class="btn acct-p" data-acc="oauth" data-prov="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${svgp}</svg>Continue with ${n}</button>`).join('')}</div>
-    <div class="acct-or"><span>or with email</span></div>`:''}
-    <input class="fi" type="email" data-acc-email placeholder="you@example.com" autocomplete="email">
-    <input class="fi" type="password" data-acc-pass placeholder="Password (leave empty for a sign-in link)" autocomplete="current-password">
-    <div class="acct-row"><button class="btn primary" data-acc="email">Continue</button><button class="btn ghost" data-acc="signup">Create account</button></div>
-    <p class="muted acct-msg" id="acctMsg"></p><p class="muted acct-legal">By signing in you agree to how we handle your data in the <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p></div>`; }
-function openAccount(){ showModal(accountHTML()); }
-const acctMsg=(t,bad)=>{ const m=$('#acctMsg'); if(m){ m.textContent=t; m.classList.toggle('bad',!!bad); } };
+    <div class="acct-row"><button class="btn" data-acc="sync">Sync now</button><button class="btn" data-acc="editprofile">Edit profile</button><button class="btn ghost" data-acc="signout">Sign out</button></div></div>`; }
+  const em=`<input class="fi" type="email" data-a="email" autocomplete="email" placeholder="you@example.com" value="${esc(acct.email)}">`;
+  if(v==='signup') return `<div class="acct auth"><div class="acct-h"><div><span class="acct-step">Step 1 of 2</span><h3>Create your account</h3></div>${close}</div>
+      <p class="muted">Free during the beta. Keep your plots in the cloud and work on them with your crew.</p>
+      ${acctProv('Sign up')}
+      ${acctField('Your name',`<input class="fi" data-a="name" autocomplete="name" maxlength="80" placeholder="First and last name" value="${esc(acct.name)}">`)}
+      ${acctField('Email',em)}
+      ${acctField('Password',acctPw('new-password','At least 8 characters'))}
+      ${acctMsgHTML()}
+      <button class="btn primary acct-main" data-acc="next">Continue</button>
+      <div class="acct-switch">Already have an account? <button class="acct-link" data-acc="go" data-v="signin">Sign in</button></div></div>`;
+  if(v==='reset') return `<div class="acct auth"><div class="acct-h"><h3>Reset your password</h3>${close}</div>
+      <p class="muted">Type the email you signed up with and we’ll send you a link to choose a new password.</p>
+      ${acctField('Email',em)}${acctMsgHTML()}
+      <button class="btn primary acct-main" data-acc="reset">Send reset link</button>
+      <div class="acct-switch"><button class="acct-link" data-acc="go" data-v="signin">Back to sign in</button></div></div>`;
+  if(v==='check'||v==='linksent') return `<div class="acct auth"><div class="acct-h"><h3>Check your inbox</h3>${close}</div>
+      <div class="acct-mail" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/></svg></div>
+      <p>We sent ${v==='check'?'a confirmation link':'a sign-in link'} to <b>${esc(acct.email)}</b>. ${v==='check'?'Click it to confirm your email and you’re in.':'Click it to sign in, no password needed.'}</p>
+      <p class="muted">Nothing there? Look in spam, or send it again.</p>${acctMsgHTML()}
+      <div class="acct-row"><button class="btn" data-acc="${v==='check'?'resend':'magic'}">Send again</button><button class="btn ghost" data-acc="go" data-v="${v==='check'?'signup':'signin'}">Use another email</button></div></div>`;
+  return `<div class="acct auth"><div class="acct-h"><h3>Sign in</h3>${close}</div><p class="muted">Welcome back. Your plots are waiting.</p>
+    ${acctProv('Continue')}
+    ${acctField('Email',em)}
+    ${acctField('Password',acctPw('current-password'),'<button type="button" class="acct-link" data-acc="go" data-v="reset">Forgot password?</button>')}
+    ${acctMsgHTML()}
+    <button class="btn primary acct-main" data-acc="signin">Sign in</button>
+    <button type="button" class="acct-link center" data-acc="magic">Email me a sign-in link instead</button>
+    <div class="acct-switch">New to Set Plot? <button class="acct-link" data-acc="go" data-v="signup">Create an account</button></div></div>`; }
+function acctGrab(){ const m=$('#modal'); if(!m) return; const g=k=>m.querySelector(`[data-a="${k}"]`);
+  if(g('email')) acct.email=g('email').value.trim(); if(g('name')) acct.name=g('name').value.trim(); if(g('heard')) acct.about.heard=g('heard').value; }
+function openAccount(view){ if(typeof view!=='string') view=sbUser?'me':'signin'; acct.view=view; acct.msg=''; acct.bad=false;
+  if(view!=='about') acct.must=false; showModal(accountHTML()); const f=$('#modal [data-a]:not([value]), #modal [data-a=""]')||$('#modal input[data-a]'); if(f&&matchMedia('(pointer:fine)').matches) setTimeout(()=>{ try{ (([...$('#modal').querySelectorAll('input[data-a]')].find(x=>!x.value))||f).focus(); }catch(e){} },30); }
+const acctMsg=(t,bad)=>{ acct.msg=t||''; acct.bad=!!bad; const m=$('#acctMsg'); if(m){ m.textContent=acct.msg; m.classList.toggle('bad',acct.bad); } };
+function acctErr(e){ const m=String(e&&(e.message||e)||'');
+  if(/invalid login credentials/i.test(m)) return 'That email and password don’t match. Try again, or reset your password.';
+  if(/email not confirmed/i.test(m)) return 'Confirm your email first. Check your inbox for the link we sent.';
+  if(/already registered|already been registered|already exists/i.test(m)) return 'There’s already an account with this email. Sign in instead.';
+  if(/rate limit|too many|security purposes/i.test(m)) return 'Too many tries in a short time. Wait a minute and try again.';
+  if(/password should be|weak password/i.test(m)) return 'Pick a stronger password: at least 8 characters.';
+  if(/fetch|network/i.test(m)) return 'Couldn’t reach the server. Check your connection.';
+  return m||'Something went wrong. Try again.'; }
 const sbRedirect=()=>location.origin+location.pathname;
+const okEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+async function profileCheck(){ if(!sb||!sbUser) return; try{ const {data,error}=await sb.from('profiles').select('name,role,work,crew,heard').eq('user_id',sbUser.id).maybeSingle(); if(error) return;
+    sbProfile=data||null; if(sbProfile&&sbProfile.name&&sbProfile.name!==(sbUser.user_metadata||{}).full_name){ sbUser.user_metadata=Object.assign({},sbUser.user_metadata,{full_name:sbProfile.name}); renderAccount(); }
+    if(!sbProfile||!sbProfile.role){ const md=sbUser.user_metadata||{}; acct.name=(sbProfile&&sbProfile.name)||md.full_name||md.name||''; acct.about={role:'',work:[],crew:'',heard:''}; acct.must=true; acct.view='about'; acct.msg=''; showModal(accountHTML()); }
+  }catch(e){} }
+function acctAboutOk(needName){ const A=acct.about; if(needName&&acct.name.length<2) return 'Type your name'; if(!A.role) return 'Pick what describes you best'; if(!A.work.length) return 'Pick at least one kind of work'; if(!A.crew) return 'Pick your usual crew size'; return ''; }
+$('#modal').addEventListener('click',e=>{ if(e.target.id==='modal'&&$('#modal .acct.must')) e.stopImmediatePropagation(); },true);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#modal').hidden&&$('#modal .acct.must')){ e.stopImmediatePropagation(); e.preventDefault(); } },true);
 $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-acc]'); if(!b) return; const a=b.dataset.acc;
   if(a==='savecfg'){ const url=$('#modal [data-sb=url]').value.trim().replace(/\/+$/,''), key=$('#modal [data-sb=key]').value.trim(); if(!/^https:\/\/.+/.test(url)||key.length<20){ toast('Paste the project URL and the anon key'); return; }
     try{ localStorage.setItem('setplot-sb',JSON.stringify({url,key})); }catch(err){} b.disabled=true; await sbInit(); openAccount(); return; }
   if(a==='clearcfg'){ try{ localStorage.removeItem('setplot-sb'); }catch(err){} if(sb) await sb.auth.signOut().catch(()=>{}); sb=null; sbUser=null; renderAccount(); openAccount(); return; }
+  if(a==='eye'){ const i=b.previousElementSibling, sh=i.type==='password'; i.type=sh?'text':'password'; b.textContent=sh?'Hide':'Show'; b.setAttribute('aria-label',sh?'Hide password':'Show password'); return; }
+  if(a==='chip'){ const q=b.dataset.q, k=b.dataset.k; acctGrab(); if(q==='work'){ const w=acct.about.work, i=w.indexOf(k); i<0?w.push(k):w.splice(i,1); } else acct.about[q]=k;
+    b.parentElement.querySelectorAll('.acct-chip').forEach(c=>{ const on=q==='work'?acct.about.work.includes(c.dataset.k):acct.about[q]===c.dataset.k; c.classList.toggle('on',on); c.setAttribute('aria-checked',on); }); if(acct.bad) acctMsg(''); return; }
   if(!sb) return;
-  if(a==='oauth'){ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:sbRedirect(),scopes:b.dataset.prov==='azure'?'email':undefined}}); if(error) acctMsg(error.message,true); return; }
-  const email=($('#modal [data-acc-email]')||{}).value||'', pass=($('#modal [data-acc-pass]')||{}).value||'';
-  if(a==='email'||a==='signup'){ if(!/.+@.+\..+/.test(email)){ acctMsg('Type your email address',true); return; } b.disabled=true;
-    let r; if(a==='signup'){ if(pass.length<8){ acctMsg('Pick a password of at least 8 characters',true); b.disabled=false; return; } r=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:sbRedirect()}}); if(!r.error) acctMsg(r.data&&r.data.session?'Account created':'Check your inbox to confirm your email'); }
-    else if(pass){ r=await sb.auth.signInWithPassword({email,password:pass}); if(!r.error){ $('#modal').hidden=true; toast('Signed in'); } }
-    else { r=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:sbRedirect()}}); if(!r.error) acctMsg('Check your inbox for a sign-in link'); }
-    if(r&&r.error) acctMsg(r.error.message,true); b.disabled=false; return; }
+  const pwEl=$('#modal [data-a=pass]'), pass=pwEl?pwEl.value:''; acctGrab();
+  if(a==='go'){ const keep=pass; acct.pass=b.dataset.v==='about'?keep:acct.pass; openAccount(b.dataset.v); if(b.dataset.v==='signup'&&acct.pass){ const p2=$('#modal [data-a=pass]'); if(p2) p2.value=acct.pass; } return; }
+  if(a==='oauth'){ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:sbRedirect(),scopes:b.dataset.prov==='azure'?'email':undefined}}); if(error) acctMsg(acctErr(error),true); return; }
   if(a==='sync'){ await cloudSync(true); return; }
-  if(a==='signout'){ await sb.auth.signOut(); $('#modal').hidden=true; toast('Signed out · your plots stay in this browser'); return; } });
-$('#modal').addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.matches&&e.target.matches('[data-acc-email],[data-acc-pass]')){ e.preventDefault(); const b=$('#modal [data-acc=email]'); if(b) b.click(); } });
+  if(a==='signout'){ await sb.auth.signOut(); $('#modal').hidden=true; toast('Signed out · your plots stay in this browser'); return; }
+  if(a==='editprofile'){ const P=sbProfile||{}; acct.name=P.name||sbName(sbUser); acct.about={role:P.role||'',work:(P.work||[]).slice(),crew:P.crew||'',heard:P.heard||''}; openAccount('about'); return; }
+  const busy=async fn=>{ b.disabled=true; b.classList.add('busy'); try{ await fn(); }catch(err){ acctMsg(acctErr(err),true); } finally{ b.disabled=false; b.classList.remove('busy'); } };
+  if(a==='next'){ if(acct.name.length<2){ acctMsg('Type your name',true); return; } if(!okEmail(acct.email)){ acctMsg('Type a valid email address',true); return; } if(pass.length<8){ acctMsg('Pick a password of at least 8 characters',true); return; }
+    acct.pass=pass; openAccount('about'); return; }
+  if(a==='signup'){ const bad=acctAboutOk(false); if(bad){ acctMsg(bad,true); return; } const A=acct.about;
+    return busy(async()=>{ const r=await sb.auth.signUp({email:acct.email,password:acct.pass,options:{emailRedirectTo:sbRedirect(),data:{full_name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null}}}); if(r.error) throw r.error;
+      const u=r.data&&r.data.user; if(u&&Array.isArray(u.identities)&&!u.identities.length){ acct.pass=''; openAccount('signin'); acctMsg('There’s already an account with this email. Sign in instead.',true); return; }
+      track('sign_up',{role:A.role}); acct.pass='';
+      if(r.data&&r.data.session){ sbProfile={name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null}; $('#modal').hidden=true; toast('Welcome to Set Plot, '+acct.name.split(' ')[0]); } else openAccount('check'); }); }
+  if(a==='signin'){ if(!okEmail(acct.email)){ acctMsg('Type your email address',true); return; } if(!pass){ acctMsg('Type your password, or use a sign-in link',true); return; }
+    return busy(async()=>{ const r=await sb.auth.signInWithPassword({email:acct.email,password:pass}); if(r.error) throw r.error; if(!$('#modal .acct.must')) $('#modal').hidden=true; toast('Signed in'); }); }
+  if(a==='magic'){ if(!okEmail(acct.email)){ acctMsg('Type your email address first',true); return; }
+    return busy(async()=>{ const r=await sb.auth.signInWithOtp({email:acct.email,options:{emailRedirectTo:sbRedirect(),shouldCreateUser:false}}); if(r.error){ if(/signups? not allowed|not found/i.test(r.error.message)){ acctMsg('No account with this email yet. Create one instead.',true); return; } throw r.error; } if(acct.view==='linksent') acctMsg('Sent again'); else openAccount('linksent'); }); }
+  if(a==='resend'){ return busy(async()=>{ const r=await sb.auth.resend({type:'signup',email:acct.email,options:{emailRedirectTo:sbRedirect()}}); if(r.error) throw r.error; acctMsg('Sent again'); }); }
+  if(a==='reset'){ if(!okEmail(acct.email)){ acctMsg('Type your email address',true); return; }
+    return busy(async()=>{ const r=await sb.auth.resetPasswordForEmail(acct.email,{redirectTo:sbRedirect()}); if(r.error) throw r.error; acctMsg('If there’s an account for this email, a reset link is on its way.'); }); }
+  if(a==='newpass'){ if(pass.length<8){ acctMsg('Pick a password of at least 8 characters',true); return; }
+    return busy(async()=>{ const r=await sb.auth.updateUser({password:pass}); if(r.error) throw r.error; $('#modal').hidden=true; toast('Password changed'); profileCheck(); }); }
+  if(a==='saveprofile'){ const bad=acctAboutOk(true); if(bad){ acctMsg(bad,true); return; } const A=acct.about;
+    return busy(async()=>{ const row={user_id:sbUser.id,name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null,updated_at:new Date().toISOString()};
+      const {error}=await sb.from('profiles').upsert(row,{onConflict:'user_id'}); if(error) throw error; const was=!!(sbProfile&&sbProfile.role); sbProfile=row;
+      if(acct.name!==(sbUser.user_metadata||{}).full_name){ try{ const r=await sb.auth.updateUser({data:{full_name:acct.name}}); if(r.data&&r.data.user) sbUser=r.data.user; }catch(err){} sbUser.user_metadata=Object.assign({},sbUser.user_metadata,{full_name:acct.name}); renderAccount(); }
+      track(was?'profile_edit':'profile_done',{role:A.role}); acct.must=false; $('#modal').hidden=true; toast(was?'Profile saved':'Thanks, '+acct.name.split(' ')[0]+'. You’re all set'); }); } });
+$('#modal').addEventListener('keydown',e=>{ if(e.key!=='Enter'||!e.target.matches||!e.target.matches('.acct.auth input')) return; e.preventDefault(); const b=$('#modal .acct-main'); if(b) b.click(); });
 /* ================= walkthrough ================= */
 var tourOn=null;
 function startTour(){
