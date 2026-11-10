@@ -160,6 +160,7 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 @media (prefers-reduced-motion:reduce){.acct.q .acct-qbody{animation:none}}
 .acct-mail{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}.acct-mail svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .acct-msg{font-size:13px;color:var(--muted)}
+.acct-gsi{display:flex;flex-direction:column;align-items:center;min-height:44px}.acct-gsi-btn{display:flex;justify-content:center;width:100%;min-height:44px}.acct-gsi-btn iframe{margin:0 auto!important}.acct-gsi-fb{width:100%}.acct-gsi-fb .btn{width:100%}
 .acct-danger{border-top:1px solid var(--line);padding-top:12px;margin-top:2px}.acct-link.danger{color:var(--danger,#e5484d);font-weight:600}
 .btn.danger-fill{background:var(--danger,#e5484d);border-color:var(--danger,#e5484d);color:#fff}.btn.danger-fill:hover{filter:brightness(1.08)}
 .acct textarea.fi{resize:vertical;height:72px;min-height:58px;max-height:200px;flex:none;font:inherit;font-size:14px;padding:10px 12px;background:var(--field);color:var(--ink);border:1px solid transparent;border-radius:10px;width:100%;box-sizing:border-box}.acct textarea.fi:focus{outline:none;border-color:var(--accent)}
@@ -9732,7 +9733,8 @@ const acctClose=()=>authGate&&!sbUser?'':`<button class="ib" data-close aria-lab
 const acctField=(label,attrs,extra)=>`<label class="acct-f"><span class="acct-fl">${label}${extra||''}</span>${attrs}</label>`;
 const acctPw=(ac,ph)=>`<span class="acct-pw"><input class="fi" type="password" data-a="pass" autocomplete="${ac}" placeholder="${ph||''}"><button type="button" class="acct-eye" data-acc="eye" aria-label="Show password">Show</button></span>`;
 const acctMsgHTML=()=>`<p class="acct-msg${acct.bad?' bad':''}" id="acctMsg" role="status">${esc(acct.msg)}</p>`;
-const acctProv=verb=>PROV.some(p=>SB_PROVIDERS.includes(p[0]))?`<div class="acct-prov">${PROV.filter(p=>SB_PROVIDERS.includes(p[0])).map(([id,n,svgp])=>`<button class="btn acct-p" data-acc="oauth" data-prov="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${svgp}</svg>${verb} with ${n}</button>`).join('')}</div><div class="acct-or"><span>or with email</span></div>`:'';
+const acctProv=verb=>PROV.some(p=>SB_PROVIDERS.includes(p[0]))?`<div class="acct-prov">${PROV.filter(p=>SB_PROVIDERS.includes(p[0])).map(([id,n,svgp])=>{ const b=`<button class="btn acct-p" data-acc="oauth" data-prov="${id}"><svg viewBox="0 0 24 24" aria-hidden="true">${svgp}</svg>${verb} with ${n}</button>`;
+    return id==='google'&&GSI_CLIENT?`<div class="acct-gsi" data-gsi="${verb==='Sign up'?'signup':'signin'}"><div class="acct-gsi-btn"></div><div class="acct-gsi-fb" hidden>${b}</div></div>`:b; }).join('')}</div><div class="acct-or"><span>or with email</span></div>`:'';
 const acctLegal=`<p class="muted acct-legal">By creating an account you agree to how we handle your data in the <a href="privacy.html" target="_blank" rel="noopener">privacy policy</a>.</p>`;
 function acctChips(key,multi){ const v=acct.about[key]; return `<div class="acct-chips" role="${multi?'group':'radiogroup'}" data-q="${key}">`+ABOUT[key].map(([k,l])=>{ const on=multi?v.includes(k):v===k;
   return `<button type="button" class="acct-chip${on?' on':''}" data-acc="chip" data-q="${key}" data-k="${k}" role="${multi?'checkbox':'radio'}" aria-checked="${on}">${esc(l)}</button>`; }).join('')+`</div>`; }
@@ -9808,7 +9810,7 @@ function gateOffline(){ return `<div class="acct auth"><div class="acct-h"><h3>C
 function acctGrab(){ const m=$('#modal'); if(!m) return; const g=k=>m.querySelector(`[data-a="${k}"]`);
   if(g('email')) acct.email=g('email').value.trim(); if(g('name')) acct.name=g('name').value.trim(); if(g('heard')) acct.about.heard=g('heard').value; }
 function openAccount(view,keepQ){ if(typeof view!=='string') view=sbUser?'me':'signin'; if(view==='about'&&!keepQ){ acct.qi=0; ACCT_Q=sbUser?['name','role','work','crew','heard']:['role','work','crew','heard']; } acct.view=view; acct.msg=''; acct.bad=false;
-  if(view!=='about') acct.must=false; showModal(accountHTML()); const f=$('#modal [data-a]:not([value]), #modal [data-a=""]')||$('#modal input[data-a]'); if(f&&matchMedia('(pointer:fine)').matches) setTimeout(()=>{ try{ (([...$('#modal').querySelectorAll('input[data-a]')].find(x=>!x.value))||f).focus(); }catch(e){} },30); }
+  if(view!=='about') acct.must=false; showModal(accountHTML()); if(view==='signin'||view==='signup') gsiMount(); const f=$('#modal [data-a]:not([value]), #modal [data-a=""]')||$('#modal input[data-a]'); if(f&&matchMedia('(pointer:fine)').matches) setTimeout(()=>{ try{ (([...$('#modal').querySelectorAll('input[data-a]')].find(x=>!x.value))||f).focus(); }catch(e){} },30); }
 const acctMsg=(t,bad)=>{ acct.msg=t||''; acct.bad=!!bad; const m=$('#acctMsg'); if(m){ m.textContent=acct.msg; m.classList.toggle('bad',acct.bad); } };
 function acctErr(e){ const m=String(e&&(e.message||e)||'');
   if(/invalid login credentials/i.test(m)) return 'That email and password don’t match. Try again, or reset your password.';
@@ -9819,6 +9821,26 @@ function acctErr(e){ const m=String(e&&(e.message||e)||'');
   if(/fetch|network/i.test(m)) return 'Couldn’t reach the server. Check your connection.';
   return m||'Something went wrong. Try again.'; }
 const sbRedirect=()=>location.origin+location.pathname;
+/* Google's own sign-in button: the sign-in happens on this site (Google shows plot.malikmotion.com, not the Supabase address),
+   and the ID token goes to Supabase. If Google's script can't load, the ordinary redirect button shows instead */
+const GSI_CLIENT='137479177032-cd3e8suclcldc3oukstjsa9vvv2tq3ah.apps.googleusercontent.com';
+let gsiLoad=null, gsiNonce='';
+function gsiScript(){ if(window.google&&google.accounts&&google.accounts.id) return Promise.resolve(); if(gsiLoad) return gsiLoad;
+  gsiLoad=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.async=true; s.onload=()=>window.google&&google.accounts?res():rej(new Error('gsi')); s.onerror=()=>rej(new Error('gsi')); document.head.appendChild(s); setTimeout(()=>rej(new Error('gsi timeout')),8000); });
+  gsiLoad.catch(()=>{ gsiLoad=null; }); return gsiLoad; }
+async function gsiMount(){ const box=$('#modal .acct-gsi'); if(!box||mode!=='local'||!sb) return; const fb=box.querySelector('.acct-gsi-fb'), slot=box.querySelector('.acct-gsi-btn');
+  try{ await gsiScript(); if(!box.isConnected) return;
+    const raw=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join(''); gsiNonce=raw;
+    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw))),b=>b.toString(16).padStart(2,'0')).join('');
+    google.accounts.id.initialize({client_id:GSI_CLIENT,nonce:hash,callback:gsiDone,ux_mode:'popup',context:box.dataset.gsi==='signup'?'signup':'signin',itp_support:true,use_fedcm_for_button:true,auto_select:false,cancel_on_tap_outside:true});
+    const dark=document.documentElement.dataset.theme==='dark'||(document.documentElement.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
+    slot.textContent=''; google.accounts.id.renderButton(slot,{type:'standard',theme:dark?'filled_black':'outline',size:'large',shape:'rectangular',logo_alignment:'center',
+      text:box.dataset.gsi==='signup'?'signup_with':'continue_with',width:Math.max(200,Math.min(400,Math.round(box.clientWidth||360))),locale:'en'});
+  }catch(e){ if(fb) fb.hidden=false; if(slot) slot.remove(); } }
+async function gsiDone(resp){ if(!resp||!resp.credential||!sb) return; acctMsg('Signing in…');
+  try{ const {error}=await sb.auth.signInWithIdToken({provider:'google',token:resp.credential,nonce:gsiNonce}); if(error) throw error; track('sign_in',{via:'google'});
+    if(!$('#modal .acct.must')&&!authGate) $('#modal').hidden=true; }
+  catch(err){ acctMsg(acctErr(err),true); gsiMount(); } }
 const okEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
 async function profileCheck(){ if(!sb||!sbUser) return; try{ const {data,error}=await sb.from('profiles').select('name,role,work,crew,heard').eq('user_id',sbUser.id).maybeSingle(); if(error) return;
     sbProfile=data||null; if(sbProfile&&sbProfile.name&&sbProfile.name!==(sbUser.user_metadata||{}).full_name){ sbUser.user_metadata=Object.assign({},sbUser.user_metadata,{full_name:sbProfile.name}); renderAccount(); }
