@@ -7749,10 +7749,10 @@ function drawFrameGo(j){ const D=drawEd; if(j===D.pi||j<0||j>=D.pages.length) re
     clearTimeout(box._fx); box._fx=setTimeout(()=>{ box.classList.remove('dragging','gliding'); pp.classList.remove('fd-anim'); },320); }); }
 function drawSibs(){ const E=drawEd; if(!E||!E.el) return; const st=E.el.querySelector('.de-stage'); if(!st) return; let box=st.querySelector('.de-sibs');
   if(!box){ box=document.createElement('div'); box.className='de-sibs'; st.prepend(box); st.addEventListener('scroll',()=>{ st.scrollTop=0; st.scrollLeft=0; });   /* focusing a row title must never scroll the stage */
-    box.addEventListener('pointerdown',e=>{ const D=drawEd; if(e.button!==0||D.tool==='hand'||D.spaceHand) return; const bt=e.target.closest('button');
+    box.addEventListener('pointerdown',e=>{ const D=drawEd; if(!D||e.button!==0||D.tool==='hand'||D.spaceHand) return; const bt=e.target.closest('button');
       if(bt){ e.stopPropagation(); return; } if(e.target.closest('[data-ghost]')){ e.preventDefault(); return; }
       const n=e.target.closest('[data-sp]'); if(!n) return; e.preventDefault(); const c0=drawCell(+n.dataset.sp,false); D.fd={from:+n.dataset.sp,to:+n.dataset.sp,dx:0,dy:0,x0:e.clientX,y0:e.clientY,c0:c0[0],r0:c0[1],tc:c0[0],tr:c0[1],on:false,id:e.pointerId}; try{ box.setPointerCapture(e.pointerId); }catch(err){} });
-    box.addEventListener('pointermove',e=>{ const D=drawEd, F=D.fd; if(!F||e.pointerId!==F.id) return; const dx=e.clientX-F.x0, dy=e.clientY-F.y0; if(!F.on&&Math.hypot(dx,dy)<6) return;
+    box.addEventListener('pointermove',e=>{ const D=drawEd, F=D&&D.fd; if(!F||e.pointerId!==F.id) return; const dx=e.clientX-F.x0, dy=e.clientY-F.y0; if(!F.on&&Math.hypot(dx,dy)<6) return;
       if(!F.on){ F.on=true; box.classList.add('dragging'); const pp=D.el.querySelector('.de-paper'); pp.classList.add('fd-anim'); pp.classList.toggle('fd-lift',F.from===D.pi); }
       F.dx=dx; F.dy=dy; const G=drawGrid(false,null), sx=drawSibStep()*D.scale, sy=drawRowStep();
       let tr=Math.max(0,Math.min(G.length,Math.round(F.r0+dy/sy))); if(tr===G.length&&G[F.r0].length===1&&F.r0===G.length-1) tr=G.length-1;   /* below the last row starts a new row */
