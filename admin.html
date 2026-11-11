@@ -244,6 +244,12 @@ table.acc td.r,table.acc th.r{text-align:right}
         <div class="tblwrap"><table class="acc"><thead><tr><th>Sent</th><th>Type</th><th>Message</th><th>From</th><th>Details</th><th>Status</th></tr></thead><tbody id="fbRows"></tbody></table></div>
       </section>
 
+      <section class="card" aria-label="Newsletter">
+        <div class="acct-h"><h2>Newsletter</h2><span class="sp"></span><button class="btn" id="nlCopy" type="button">Copy emails</button><button class="btn" id="nlCsv" type="button">Download CSV</button></div>
+        <p class="sub" id="nlSub">People who are subscribed to tips and updates</p>
+        <div class="tblwrap"><table class="acc"><thead><tr><th>Email</th><th>Name</th><th>Subscribed</th></tr></thead><tbody id="nlRows"></tbody></table></div>
+      </section>
+
       <section class="card" aria-label="Deleted accounts">
         <h2>Deleted accounts</h2><p class="sub" id="delSub">People who deleted their account, and why</p>
         <div class="aud" id="delWhy"></div>
@@ -351,6 +357,16 @@ $('#next').onclick=()=>{ if((page+1)*PAGE<(data.accounts&&data.accounts.total||0
 async function rpc(fn,args){ const {data:d,error}=await sb.rpc(fn,args||{}); if(error) throw error; return d; }
 /* bugs and ideas people sent from What's new */
 const FB_ST=[['new','New'],['seen','Seen'],['planned','Planned'],['done','Done'],['wontfix','Won’t do']];
+let NL=[];
+async function loadNewsletter(){ const body=$('#nlRows'); if(!body) return; const {data:d,error}=await sb.rpc('admin_newsletter'); body.textContent='';
+  if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=3; tr.append(td); body.append(tr); return; }
+  NL=d.rows||[]; $('#nlSub').textContent=`${d.total} of ${d.accounts} accounts subscribed`+(d.accounts?` (${Math.round(100*d.total/d.accounts)}%)`:'');
+  if(!NL.length){ const tr=el('tr'), td=el('td','sub','No subscribers yet'); td.colSpan=3; tr.append(td); body.append(tr); return; }
+  NL.slice(0,200).forEach(r=>{ const tr=el('tr'); tr.append(el('td','',r.email),el('td','',r.name||'—'),el('td','sub',new Date(r.since).toLocaleDateString())); body.append(tr); }); }
+document.addEventListener('click',e=>{ const t=e.target.closest('#nlCopy,#nlCsv'); if(!t||!NL.length) return;
+  if(t.id==='nlCopy'){ navigator.clipboard.writeText(NL.map(r=>r.email).join(', ')).then(()=>{ t.textContent='Copied'; setTimeout(()=>t.textContent='Copy emails',1500); }); return; }
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"', csv='email,name,subscribed\n'+NL.map(r=>[r.email,r.name||'',r.since].map(q).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='set-plot-newsletter.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); });
 async function loadFeedback(){ const body=$('#fbRows'); if(!body) return; const k=$('#fbKind').value, st=$('#fbStat').value; let q=sb.from('feedback').select('id,created_at,kind,message,email,page,ua,version,source,status').order('created_at',{ascending:false}).limit(300);
   if(k) q=q.eq('kind',k); if(st==='open') q=q.in('status',['new','seen','planned']); else if(st==='done') q=q.in('status',['done','wontfix']);
   const {data:rows,error}=await q; body.textContent=''; if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=6; tr.append(td); body.append(tr); return; }
@@ -362,7 +378,7 @@ async function loadFeedback(){ const body=$('#fbRows'); if(!body) return; const 
     sel.onchange=async()=>{ const {error:e2}=await sb.from('feedback').update({status:sel.value}).eq('id',r.id); if(e2) alert('Couldn’t update: '+e2.message); }; s.append(sel); tr.append(d,t,m,f,det,s); if(r.status==='new') tr.style.background='color-mix(in srgb,var(--accent,#4f7fff) 6%,transparent)'; body.append(tr); }); }
 async function load(){ const m=$('#main'); m.classList.add('loading');
   try{ const [ov,daily,ret,feat,st,aud,del]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status'),rpc('admin_audience').catch(()=>null),rpc('admin_deleted',{lim:200}).catch(()=>null)]);
-    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
+    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); loadNewsletter(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
     $('#stamp').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
   catch(err){ $('#stamp').textContent='Couldn’t load: '+(err.message||err); }
   m.classList.remove('loading'); }

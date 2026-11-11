@@ -144,7 +144,7 @@ body.lc-following::before{content:"";position:fixed;inset:0;z-index:5;pointer-ev
 .acct{display:flex;flex-direction:column;gap:12px;width:min(380px,calc(100vw - 48px))}.acct-h{display:flex;align-items:center;justify-content:space-between}.acct-h h3{margin:0;font-size:17px}.acct p{margin:0}
 .acct-prov{display:flex;flex-direction:column;gap:8px}.acct-p{justify-content:center;gap:10px;height:40px}.acct-p svg{width:18px;height:18px}
 .acct-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.acct-or::before,.acct-or::after{content:'';flex:1;height:1px;background:var(--line)}
-.acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.acct-msg.bad{color:#e5484d}.acct-legal{font-size:12px;margin:2px 0 0}.acct-legal a{color:inherit}
+.acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.acct-news b{color:var(--ink);font-weight:600}.acct-news{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--muted);margin-top:4px;cursor:pointer}.acct-news input{margin:2px 0 0;width:16px;height:16px;accent-color:var(--accent);flex:none}.acct-msg.bad{color:#e5484d}.acct-legal{font-size:12px;margin:2px 0 0}.acct-legal a{color:inherit}
 .acct.auth{gap:14px;width:min(420px,calc(100vw - 48px))}
 .acct-step{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
 .acct-fl{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.acct-fl .muted{font-weight:500}
@@ -11201,7 +11201,7 @@ function gateOn(view){ if(!gateWanted()) return; authGate=true; document.body.cl
 function gateOff(){ if(!authGate) return; authGate=false; document.body.classList.remove('gated'); try{ localStorage.setItem('setplot-had-acct','1'); }catch(e){}
   if(!$('#modal').hidden&&$('#modal .acct.auth')&&!$('#modal .acct.must')&&acct.view!=='newpass') $('#modal').hidden=true; }
 setInterval(()=>{ if(authGate&&!sbUser&&($('#modal').hidden||!$('#modal .acct'))) gateOn(); },700); let ACCT_Q=['role','work','crew','heard'];
-var acct={view:'signin',email:'',name:'',about:{role:'',work:[],crew:'',heard:''},msg:'',bad:false,back:'',must:false};
+var acct={view:'signin',email:'',name:'',about:{role:'',work:[],crew:'',heard:''},news:false,msg:'',bad:false,back:'',must:false};
 const acctClose=()=>authGate&&!sbUser?'':`<button class="ib" data-close aria-label="Close">${ic('close')}</button>`;
 const acctField=(label,attrs,extra)=>`<label class="acct-f"><span class="acct-fl">${label}${extra||''}</span>${attrs}</label>`;
 const acctPw=(ac,ph)=>`<span class="acct-pw"><input class="fi" type="password" data-a="pass" autocomplete="${ac}" placeholder="${ph||''}"><button type="button" class="acct-eye" data-acc="eye" aria-label="Show password">Show</button></span>`;
@@ -11231,6 +11231,7 @@ function accountHTML0(){ const c=sbConf(), close=acctClose(), v=acct.view;
       <div class="acct-dots" aria-hidden="true">${dots}</div>
       <p class="muted">${hint}</p>
       <div class="acct-qbody">${body}</div>
+      ${last?`<label class="acct-news"><input type="checkbox" data-a="news"${acct.news?' checked':''}><span><b>Get offers and new features first.</b> Early access, member offers and tips for your shoots by email. Unsubscribe any time.</span></label>`:''}
       ${acctMsgHTML()}
       <div class="acct-row end">${signup||qi>0?'<button class="btn ghost" data-acc="qback">Back</button>':''}<button class="btn primary acct-main" data-acc="qnext">${!last?'Continue':signup?'Create account':'Save'}</button></div>
       ${signup&&last?acctLegal:''}</div>`; }
@@ -11284,7 +11285,7 @@ function accountHTML0(){ const c=sbConf(), close=acctClose(), v=acct.view;
     <div class="acct-switch">New to Set Plot? <button class="acct-link" data-acc="go" data-v="signup">Create an account</button></div></div>`; }
 function gateOffline(){ return `<div class="acct auth"><div class="acct-h"><h3>Can’t reach Set Plot</h3></div><p class="muted">The sign-in service didn’t load. Check your internet connection and try again.</p><button class="btn primary acct-main" onclick="location.reload()">Try again</button></div>`; }
 function acctGrab(){ const m=$('#modal'); if(!m) return; const g=k=>m.querySelector(`[data-a="${k}"]`);
-  if(g('email')) acct.email=g('email').value.trim(); if(g('name')) acct.name=g('name').value.trim(); if(g('heard')) acct.about.heard=g('heard').value; }
+  if(g('email')) acct.email=g('email').value.trim(); if(g('name')) acct.name=g('name').value.trim(); if(g('heard')) acct.about.heard=g('heard').value; if(g('news')) acct.news=g('news').checked; }
 function openAccount(view,keepQ){ if(typeof view!=='string') view=sbUser?'me':'signin'; if(view==='about'&&!keepQ){ acct.qi=0; ACCT_Q=sbUser?['name','role','work','crew','heard']:['role','work','crew','heard']; } acct.view=view; acct.msg=''; acct.bad=false;
   if(view!=='about') acct.must=false; showModal(accountHTML()); if(view==='signin'||view==='signup') gsiMount(); const f=$('#modal [data-a]:not([value]), #modal [data-a=""]')||$('#modal input[data-a]'); if(f&&matchMedia('(pointer:fine)').matches) setTimeout(()=>{ try{ (([...$('#modal').querySelectorAll('input[data-a]')].find(x=>!x.value))||f).focus(); }catch(e){} },30); }
 const acctMsg=(t,bad)=>{ acct.msg=t||''; acct.bad=!!bad; const m=$('#acctMsg'); if(m){ m.textContent=acct.msg; m.classList.toggle('bad',acct.bad); } };
@@ -11318,9 +11319,9 @@ async function gsiDone(resp){ if(!resp||!resp.credential||!sb) return; acctMsg('
     if(!$('#modal .acct.must')&&!authGate) $('#modal').hidden=true; }
   catch(err){ acctMsg(acctErr(err),true); gsiMount(); } }
 const okEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
-async function profileCheck(){ if(!sb||!sbUser) return; { const md=sbUser.user_metadata||{}; if(md.project_name&&!md.pw_set&&sbUser.invited_at&&!(sbUser.app_metadata&&(sbUser.app_metadata.providers||[]).some(p=>p!=='email'))){ acct.must=true; acct.view='setpass'; acct.msg=''; showModal(accountHTML()); return; } } try{ const {data,error}=await sb.from('profiles').select('name,role,work,crew,heard').eq('user_id',sbUser.id).maybeSingle(); if(error) return;
+async function profileCheck(){ if(!sb||!sbUser) return; { const md=sbUser.user_metadata||{}; if(md.project_name&&!md.pw_set&&sbUser.invited_at&&!(sbUser.app_metadata&&(sbUser.app_metadata.providers||[]).some(p=>p!=='email'))){ acct.must=true; acct.view='setpass'; acct.msg=''; showModal(accountHTML()); return; } } try{ const {data,error}=await sb.from('profiles').select('name,role,work,crew,heard,news').eq('user_id',sbUser.id).maybeSingle(); if(error) return;
     sbProfile=data||null; if(sbProfile&&sbProfile.name&&sbProfile.name!==(sbUser.user_metadata||{}).full_name){ sbUser.user_metadata=Object.assign({},sbUser.user_metadata,{full_name:sbProfile.name}); renderAccount(); }
-    if(!sbProfile||!sbProfile.role){ const md=sbUser.user_metadata||{}; acct.name=(sbProfile&&sbProfile.name)||md.full_name||md.name||''; acct.about={role:'',work:[],crew:'',heard:''}; acct.must=true; acct.view='about'; acct.qi=0; ACCT_Q=acct.name?['role','work','crew','heard']:['name','role','work','crew','heard']; acct.msg=''; showModal(accountHTML()); }
+    if(!sbProfile||!sbProfile.role){ const md=sbUser.user_metadata||{}; acct.name=(sbProfile&&sbProfile.name)||md.full_name||md.name||''; acct.about={role:'',work:[],crew:'',heard:''}; acct.news=false; acct.must=true; acct.view='about'; acct.qi=0; ACCT_Q=acct.name?['role','work','crew','heard']:['name','role','work','crew','heard']; acct.msg=''; showModal(accountHTML()); }
   }catch(e){} }
 function acctAboutOk(needName){ const A=acct.about; if(needName&&acct.name.length<2) return 'Type your name'; if(!A.role) return 'Pick what describes you best'; if(!A.work.length) return 'Pick at least one kind of work'; if(!A.crew) return 'Pick your usual crew size'; return ''; }
 $('#modal').addEventListener('click',e=>{ if(e.target.id==='modal'&&($('#modal .acct.must')||(authGate&&!sbUser))) e.stopImmediatePropagation(); },true);
@@ -11339,7 +11340,7 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
   if(a==='oauth'){ const {error}=await sb.auth.signInWithOAuth({provider:b.dataset.prov,options:{redirectTo:sbRedirect(),scopes:b.dataset.prov==='azure'?'email':undefined}}); if(error) acctMsg(acctErr(error),true); return; }
   if(a==='sync'){ await cloudSync(true); return; }
   if(a==='signout'){ b.disabled=true; try{ if(drawEd) await closeDraw(true); if(dirty) await flush(); await cloudSync(false,true); }catch(err){} await sb.auth.signOut(); if(!authGate) $('#modal').hidden=true; toast('Signed out · your setups are safe in your account'); return; }
-  if(a==='editprofile'){ const P=sbProfile||{}; acct.name=P.name||sbName(sbUser); acct.about={role:P.role||'',work:(P.work||[]).slice(),crew:P.crew||'',heard:P.heard||''}; openAccount('about'); return; }
+  if(a==='editprofile'){ const P=sbProfile||{}; acct.name=P.name||sbName(sbUser); acct.about={role:P.role||'',work:(P.work||[]).slice(),crew:P.crew||'',heard:P.heard||''}; acct.news=!!P.news; openAccount('about'); return; }
   const busy=async fn=>{ b.disabled=true; b.classList.add('busy'); try{ await fn(); }catch(err){ acctMsg(acctErr(err),true); } finally{ b.disabled=false; b.classList.remove('busy'); } };
   if(a==='why'){ acct.why=acct.why===b.dataset.k?'':b.dataset.k; b.parentElement.querySelectorAll('.acct-chip').forEach(c=>{ const on=c.dataset.k===acct.why; c.classList.toggle('on',on); c.setAttribute('aria-checked',on); }); return; }
   if(a==='delacct'){ const conf=($('#modal [data-a=confirm]')||{}).value||'', com=(($('#modal [data-a=comment]')||{}).value||'').trim(); acct.comment=com;
@@ -11360,10 +11361,10 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
   if(a==='next'){ if(acct.name.length<2){ acctMsg('Type your name',true); return; } if(!okEmail(acct.email)){ acctMsg('Type a valid email address',true); return; } if(pass.length<8){ acctMsg('Pick a password of at least 8 characters',true); return; }
     acct.pass=pass; openAccount('about'); return; }
   if(a==='signup'){ const bad=acctAboutOk(false); if(bad){ acctMsg(bad,true); return; } const A=acct.about;
-    return busy(async()=>{ const r=await sb.auth.signUp({email:acct.email,password:acct.pass,options:{emailRedirectTo:sbRedirect(),data:{full_name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null}}}); if(r.error) throw r.error;
+    return busy(async()=>{ const r=await sb.auth.signUp({email:acct.email,password:acct.pass,options:{emailRedirectTo:sbRedirect(),data:{full_name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null,news:!!acct.news}}}); if(r.error) throw r.error;
       const u=r.data&&r.data.user; if(u&&Array.isArray(u.identities)&&!u.identities.length){ acct.pass=''; openAccount('signin'); acctMsg('There’s already an account with this email. Sign in instead.',true); return; }
       track('sign_up',{role:A.role}); acct.pass='';
-      if(r.data&&r.data.session){ sbProfile={name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null}; $('#modal').hidden=true; toast('Welcome to Set Plot, '+acct.name.split(' ')[0]); } else openAccount('check'); }); }
+      if(r.data&&r.data.session){ sbProfile={name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null,news:!!acct.news}; $('#modal').hidden=true; toast('Welcome to Set Plot, '+acct.name.split(' ')[0]); } else openAccount('check'); }); }
   if(a==='signin'){ if(!okEmail(acct.email)){ acctMsg('Type your email address',true); return; } if(!pass){ acctMsg('Type your password, or use a sign-in link',true); return; }
     return busy(async()=>{ const r=await sb.auth.signInWithPassword({email:acct.email,password:pass}); if(r.error) throw r.error; if(!$('#modal .acct.must')) $('#modal').hidden=true; toast('Signed in'); }); }
   if(a==='magic'){ if(!okEmail(acct.email)){ acctMsg('Type your email address first',true); return; }
@@ -11376,7 +11377,7 @@ $('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-
   if(a==='setpass'){ if(pass.length<8){ acctMsg('Pick a password of at least 8 characters',true); return; }
     return busy(async()=>{ const r=await sb.auth.updateUser({password:pass,data:{pw_set:true}}); if(r.error) throw r.error; if(r.data&&r.data.user) sbUser=r.data.user; acct.must=false; $('#modal').hidden=true; track('invite_pw'); profileCheck(); }); }
   if(a==='saveprofile'){ const bad=acctAboutOk(true); if(bad){ acctMsg(bad,true); return; } const A=acct.about;
-    return busy(async()=>{ const row={user_id:sbUser.id,name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null,updated_at:new Date().toISOString()};
+    return busy(async()=>{ const row={user_id:sbUser.id,name:acct.name,role:A.role,work:A.work,crew:A.crew,heard:A.heard||null,news:!!acct.news,updated_at:new Date().toISOString()}; if(!!acct.news!==!!(sbProfile&&sbProfile.news)) row.news_at=new Date().toISOString();
       const {error}=await sb.from('profiles').upsert(row,{onConflict:'user_id'}); if(error) throw error; const was=!!(sbProfile&&sbProfile.role); sbProfile=row;
       if(acct.name!==(sbUser.user_metadata||{}).full_name){ try{ const r=await sb.auth.updateUser({data:{full_name:acct.name}}); if(r.data&&r.data.user) sbUser=r.data.user; }catch(err){} sbUser.user_metadata=Object.assign({},sbUser.user_metadata,{full_name:acct.name}); renderAccount(); }
       track(was?'profile_edit':'profile_done',{role:A.role}); acct.must=false; $('#modal').hidden=true; toast(was?'Profile saved':'Thanks, '+acct.name.split(' ')[0]+'. You’re all set'); }); } });
