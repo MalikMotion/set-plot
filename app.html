@@ -869,6 +869,10 @@ body.placing #plot,body.placing #cards .bc{cursor:copy!important}
 body.gating::after{content:"";position:fixed;inset:0;z-index:69;background:var(--bg,#16191d)}
 body.gated .modal{background:color-mix(in srgb,var(--bg,#16191d) 55%,transparent);backdrop-filter:blur(10px) saturate(.8);-webkit-backdrop-filter:blur(10px) saturate(.8)}
 body.gated #betaPop,body.gated #tour,body.gated #tourBtn,body.gating #betaPop{display:none!important}
+/* account setup (invited people and new sign-ups): blur the app until it's finished */
+body:has(#modal:not([hidden]) .acct.must) .modal{background:color-mix(in srgb,var(--bg,#16191d) 55%,transparent);backdrop-filter:blur(14px) saturate(.75);-webkit-backdrop-filter:blur(14px) saturate(.75);animation:mustBlur .35s ease both}
+body:has(#modal:not([hidden]) .acct.must) :is(#betaPop,#tour,#tourBtn,#chatPanel,#notifPanel){display:none!important}
+@keyframes mustBlur{from{backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0);background:transparent}}
 .acct-brand{display:flex;align-items:center;gap:9px;font:800 15px var(--sans);color:var(--ink);margin-bottom:-2px}.acct-brand span{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--ink)}.acct-brand svg{width:17px;height:17px}
 .modal{position:fixed;inset:0;z-index:70;background:rgba(18,20,24,.45);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal > div{background:var(--card);border-radius:var(--r);padding:16px;max-width:min(980px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-lg)}
