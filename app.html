@@ -144,7 +144,7 @@ body.lc-following::before{content:"";position:fixed;inset:0;z-index:5;pointer-ev
 .acct{display:flex;flex-direction:column;gap:12px;width:min(380px,calc(100vw - 48px))}.acct-h{display:flex;align-items:center;justify-content:space-between}.acct-h h3{margin:0;font-size:17px}.acct p{margin:0}
 .acct-prov{display:flex;flex-direction:column;gap:8px}.acct-p{justify-content:center;gap:10px;height:40px}.acct-p svg{width:18px;height:18px}
 .acct-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.acct-or::before,.acct-or::after{content:'';flex:1;height:1px;background:var(--line)}
-.acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.acct-news b{color:var(--ink);font-weight:600}.acct-news{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--muted);margin-top:4px;cursor:pointer}.acct-news input{margin:2px 0 0;width:16px;height:16px;accent-color:var(--accent);flex:none}.acct-msg.bad{color:#e5484d}.acct-legal{font-size:12px;margin:2px 0 0}.acct-legal a{color:inherit}
+.acct-row{display:flex;gap:8px;flex-wrap:wrap}.acct-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}.acct-msg:empty{display:none}.oa-list{margin:4px 0 2px;padding-left:1.1em;display:grid;gap:6px;font-size:13.5px;line-height:1.45}.oa-small{font-size:12px}.acct-news b{color:var(--ink);font-weight:600}.acct-news{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--muted);margin-top:4px;cursor:pointer}.acct-news input{margin:2px 0 0;width:16px;height:16px;accent-color:var(--accent);flex:none}.acct-msg.bad{color:#e5484d}.acct-legal{font-size:12px;margin:2px 0 0}.acct-legal a{color:inherit}
 .acct.auth{gap:14px;width:min(420px,calc(100vw - 48px))}
 .acct-step{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
 .acct-fl{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.acct-fl .muted{font-weight:500}
@@ -11553,7 +11553,31 @@ function academyQueue(){ if(EMBED||PEEK||VIEW_TOKEN) return; try{ const q=new UR
 function academyOpen(k){ if(readOnly){ setReadOnly(false); roProj=false; } const t=tplOf('a:'+k), now=Date.now(), id=uid();
   all[id]={title:t.label,shoot:'Set Plot Academy',client:'',date:new Date().toISOString().slice(0,10),location:'',crew:'',notes:'',items:t.items(),createdAt:now,updatedAt:now};
   closeDrawer(); openDiagram(id); dirty=true; flush(); track('academy_open',{k:k.slice(0,40)}); setTimeout(()=>toast(`${t.label} added to your setups · it’s yours to change`),250); }
-function startLocal(){ mode='local'; all=localRead(); setStatus('Saved in this browser'); ready(); sbInit(); academyQueue(); if(EMBED){ embedFit(false); setTimeout(()=>embedFit(false),300); } }
+/* "Connect Set Plot to Claude / ChatGPT": the OAuth consent screen. Supabase Auth sends people to /oauth/consent?authorization_id=…,
+   which forwards here. We wait until they're signed in, show who's asking and what they get, then approve or deny. */
+function oauthQueue(){ if(EMBED||PEEK||VIEW_TOKEN) return; try{ const q=new URLSearchParams(location.search), id=q.get('authorization_id');
+    if(id&&/^[\w-]{8,100}$/.test(id)){ localStorage.setItem('setplot-oauth',JSON.stringify({id,t:Date.now()})); q.delete('authorization_id'); history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash); } }catch(e){}
+  let P=null; try{ P=JSON.parse(localStorage.getItem('setplot-oauth')||'null'); }catch(e){} if(!P||Date.now()-P.t>9e5){ try{ localStorage.removeItem('setplot-oauth'); }catch(e){} return; }
+  const tick=setInterval(()=>{ const b=document.body.classList, m=$('#modal'); if(!sb||!sbUser||b.contains('gated')||b.contains('gating')||(m&&!m.hidden&&!m.querySelector('.oa'))) return; clearInterval(tick); oauthShow(P.id); },500); }
+async function oauthApi(id,method,body){ const c=sbConf(); const {data}=await sb.auth.getSession(); const tok=data&&data.session&&data.session.access_token; if(!c||!tok) throw new Error('Sign in first');
+  const r=await fetch(`${c.url}/auth/v1/oauth/authorizations/${encodeURIComponent(id)}${body?'/consent':''}`,{method,headers:{apikey:c.key,Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.msg||j.message||j.error_description||j.error||('Error '+r.status)); return j; }
+async function oauthShow(id){ let d; try{ d=await oauthApi(id,'GET'); }catch(e){ try{ localStorage.removeItem('setplot-oauth'); }catch(_){} toast('That connection request has expired. Start again from the app you were connecting.'); return; }
+  if(d.redirect_url&&!d.authorization_id){ try{ localStorage.removeItem('setplot-oauth'); }catch(_){} location.assign(d.redirect_url); return; }
+  const cl=d.client||{}, name=cl.name||cl.client_name||'An app'; let host=''; try{ host=new URL(d.redirect_uri||cl.uri||'').hostname; }catch(e){}
+  acct.msg=''; acct.bad=false;
+  showModal(`<div class="acct auth oa"><div class="acct-h"><div><span class="acct-step">Connect an app</span><h3>Allow ${esc(name)} to use your Set Plot?</h3></div></div>
+    <p class="muted">${esc(name)}${host?` (${esc(host)})`:''} is asking to work with Set Plot as <b>${esc(sbUser.email||'you')}</b>. It will be able to:</p>
+    <ul class="oa-list"><li>See your shoots, setups, notes and gear lists, including projects shared with you</li><li>Create setups, and add, move and change items on plans you can edit</li><li>Every change it makes is saved as a version, so you can roll it back</li></ul>
+    <p class="muted oa-small">Only allow apps you trust. You can disconnect it later from the app you connected.</p>${acctMsgHTML()}
+    <div class="acct-row end"><button class="btn ghost" data-oa="deny">Deny</button><button class="btn primary acct-main" data-oa="approve">Allow</button></div></div>`);
+  $('#modal').dataset.oa=id; }
+document.addEventListener('click',async e=>{ const b=e.target.closest('#modal [data-oa]'); if(!b) return; const id=$('#modal').dataset.oa; if(!id) return;
+  $('#modal').querySelectorAll('[data-oa]').forEach(x=>x.disabled=true); b.textContent=b.dataset.oa==='approve'?'Connecting…':'Cancelling…';
+  try{ const r=await oauthApi(id,'POST',{action:b.dataset.oa}); try{ localStorage.removeItem('setplot-oauth'); }catch(_){} track('oauth_'+b.dataset.oa);
+    if(r.redirect_url) location.assign(r.redirect_url); else { $('#modal').hidden=true; toast(b.dataset.oa==='approve'?'Connected':'Cancelled'); } }
+  catch(err){ $('#modal').querySelectorAll('[data-oa]').forEach(x=>x.disabled=false); b.textContent=b.dataset.oa==='approve'?'Allow':'Deny'; const m=$('#modal .acct-msg'); if(m){ m.textContent=err.message; m.classList.add('bad'); } } });
+function startLocal(){ mode='local'; all=localRead(); setStatus('Saved in this browser'); ready(); sbInit(); academyQueue(); oauthQueue(); if(EMBED){ embedFit(false); setTimeout(()=>embedFit(false),300); } }
 (async()=>{
   if(!window.claude || typeof window.claude.use!=='function'){ startLocal(); return; }
   const [db,dl,usr]=await Promise.all([claude.use('db').catch(()=>null),claude.use('downloads').catch(()=>null),claude.use('user').catch(()=>null)]);
