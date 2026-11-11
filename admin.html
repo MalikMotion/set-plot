@@ -219,13 +219,13 @@ table.acc td.r,table.acc th.r{text-align:right}
         <div class="card kpi"><div class="lbl">Accounts</div><div class="val" id="kAcc">–</div><div class="foot" id="kAccF"></div></div>
         <div class="card kpi"><div class="lbl">Active this week</div><div class="val" id="kWau">–</div><div class="foot" id="kWauF"></div></div>
         <div class="card kpi"><div class="lbl">30-day churn</div><div class="val" id="kChurn">–</div><div class="foot" id="kChurnF"></div></div>
-        <div class="card kpi"><div class="lbl">Beta list</div><div class="val" id="kBeta">–</div><div class="foot" id="kBetaF"></div></div>
+        <div class="card kpi"><div class="lbl">Alpha list</div><div class="val" id="kBeta">–</div><div class="foot" id="kBetaF"></div></div>
         <div class="card kpi"><div class="lbl">Storyboards &amp; plots</div><div class="val" id="kPlots">–</div><div class="foot" id="kPlotsF"></div></div>
       </section>
 
       <section class="two">
         <div class="card"><h2>Active people per day</h2><p class="sub">Signed in, edited a plot or used the app that day</p><div class="chart" id="cActive"></div></div>
-        <div class="card"><h2>New people per day</h2><p class="sub">Accounts created and beta sign-ups</p><div class="legend" id="lNew"></div><div class="chart" id="cNew"></div></div>
+        <div class="card"><h2>New people per day</h2><p class="sub">Accounts created and alpha sign-ups</p><div class="legend" id="lNew"></div><div class="chart" id="cNew"></div></div>
       </section>
 
       <section class="two">
@@ -423,8 +423,8 @@ function lineChart(box,rows,series){
 function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(Math.max(raw,1e-9)))), f=raw/p; return Math.max(1,(f<=1?1:f<=2?2:f<=5?5:10)*p); }
 function renderCharts(){ const rows=data.daily||[];
   lineChart($('#cActive'),rows,[{key:'active',label:'Active people',color:'--s1'}]);
-  const lg=$('#lNew'); lg.textContent=''; [['New accounts','--s1'],['Beta sign-ups','--s2']].forEach(([n,c])=>{ const s=el('span'); const i=el('i'); i.style.background=css(c); s.append(i,document.createTextNode(n)); lg.append(s); });
-  lineChart($('#cNew'),rows,[{key:'accounts',label:'New accounts',short:'Accounts',color:'--s1'},{key:'signups',label:'Beta sign-ups',short:'Sign-ups',color:'--s2'}]); }
+  const lg=$('#lNew'); lg.textContent=''; [['New accounts','--s1'],['Alpha sign-ups','--s2']].forEach(([n,c])=>{ const s=el('span'); const i=el('i'); i.style.background=css(c); s.append(i,document.createTextNode(n)); lg.append(s); });
+  lineChart($('#cNew'),rows,[{key:'accounts',label:'New accounts',short:'Accounts',color:'--s1'},{key:'signups',label:'Alpha sign-ups',short:'Sign-ups',color:'--s2'}]); }
 let rT=0; new ResizeObserver(()=>{ clearTimeout(rT); rT=setTimeout(()=>{ if(data.daily) renderCharts(); },80); }).observe(document.body);
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ if(data.daily){ renderCharts(); renderRetention(data.ret); renderFeatures(data.feat); renderStatus(data.st); } });
 

@@ -1,6 +1,6 @@
 # Set Plot
 
-> Set Plot is a browser-based planning tool for film and photo shoots: lighting diagrams to scale, storyboards and animatics, shoot notes, and a PDF with the call sheet, shot list and gear list. Made by Malik Motion in Randers, Denmark. Free during the open beta.
+> Set Plot is a browser-based planning tool for film and photo shoots: lighting diagrams to scale, storyboards and animatics, shoot notes, and a PDF with the call sheet, shot list and gear list. Made by Malik Motion in Randers, Denmark. Free during the open alpha.
 
 ## Product
 - [Set Plot](https://plot.malikmotion.com/): lighting diagram maker, storyboard tool and shoot planner for cinematographers, gaffers, photographers, directors and producers
