@@ -101,7 +101,25 @@ body.connecting,body.connecting *{cursor:crosshair!important}
 .extopts button:hover{background:var(--hover);box-shadow:inset 0 0 0 1.5px var(--accent)}
 .extopts svg{width:46px;height:30px;display:block}
 #lcLayer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:4}
-.lc{position:absolute;left:0;top:0;transition:opacity .4s;will-change:transform}
+#aiLayer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.ai-badge{position:absolute;left:0;top:0;pointer-events:auto;width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:#8e4ec6;color:#fff;font:700 11px/1 var(--sans);display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(80,30,120,.35);animation:aiPop .35s cubic-bezier(.3,1.4,.5,1) both;padding:0}
+.ai-badge:hover{transform:scale(1.12)}.ai-badge.k-delete{background:#c2410c}.ai-badge.k-add{background:#2f9e62}
+.ai-badge::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid currentColor;color:inherit;opacity:0;animation:aiRing 2.4s ease-out infinite}
+.ai-badge.k-edit::after{color:#8e4ec6}.ai-badge.k-delete::after{color:#c2410c}.ai-badge.k-add::after{color:#2f9e62}
+@keyframes aiPop{from{opacity:0;scale:.4}}@keyframes aiRing{0%{opacity:.6;scale:.8}70%,100%{opacity:0;scale:1.5}}
+.ai-ghost{position:absolute;left:0;top:0;border:2px dashed #c2410c;border-radius:8px;background:repeating-linear-gradient(45deg,rgba(194,65,12,.06) 0 6px,transparent 6px 12px)}
+.ai-badge.pend{border-style:dashed;background:#fff;color:#8e4ec6}.ai-badge.pend.k-delete{color:#c2410c}.ai-badge.pend.k-add{color:#2f9e62}
+.ai-sugg{position:absolute;left:0;top:0;border:2px dashed #8e4ec6;border-radius:8px;background:rgba(142,78,198,.06)}
+.ai-mark.pend{border-style:dashed}
+.ai-del{position:absolute;left:0;top:0;border:2px dashed #c2410c;border-radius:8px;background:linear-gradient(to top right,transparent calc(50% - 1px),rgba(194,65,12,.55) 50%,transparent calc(50% + 1px)),linear-gradient(to bottom right,transparent calc(50% - 1px),rgba(194,65,12,.55) 50%,transparent calc(50% + 1px)),rgba(194,65,12,.05)}
+.ai-gcard{position:absolute;left:0;top:0;border:2px dashed #8e4ec6;border-radius:10px;background:color-mix(in srgb,var(--panel,#fff) 80%,transparent);padding:10px 12px;font:13px/1.4 var(--sans);color:var(--ink,#16191d);opacity:.85;overflow:hidden}
+.ai-was{position:absolute;left:0;top:0;border:1.5px dashed rgba(142,78,198,.5);border-radius:8px;background:rgba(142,78,198,.05)}.ai-mark{position:absolute;left:0;top:0;border:1.5px solid rgba(142,78,198,.55);border-radius:8px}
+.ai-pop{position:fixed;z-index:60;width:250px;background:var(--panel,#fff);color:var(--ink,#16191d);border:1px solid var(--line,#e4e7eb);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:12px;font:13px/1.45 var(--sans);animation:aiPop .2s ease both}
+.ai-pop b{display:block;font-size:13px}.ai-pop p{margin:3px 0 10px;color:var(--muted,#6b7380)}.ai-pop .row{display:flex;gap:6px;justify-content:flex-end}
+.ai-pop button{border:0;border-radius:999px;padding:6px 12px;font:600 12.5px var(--sans);cursor:pointer;background:var(--soft,#f1f3f5);color:inherit}.ai-pop button.ok{background:#8e4ec6;color:#fff}
+.ai-bar{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:6px;background:#1f1630;color:#fff;border-radius:999px;padding:6px 6px 6px 14px;box-shadow:0 10px 28px rgba(40,10,70,.35);font:600 13px var(--sans);animation:aiPop .3s ease both;pointer-events:auto}
+.ai-bar button{border:0;border-radius:999px;padding:6px 12px;font:600 12.5px var(--sans);cursor:pointer;background:rgba(255,255,255,.12);color:#fff}.ai-bar button.ok{background:#a970e0}.ai-bar button:hover{filter:brightness(1.15)}
+.lc{position:absolute;left:0;top:0;transition:opacity .4s;will-change:transform}.lc.ai{transition:opacity .4s,transform .55s cubic-bezier(.3,.7,.2,1)}.lc.ai b{background-image:linear-gradient(110deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.35) 50%,rgba(255,255,255,0) 70%)!important;background-size:250% 100%;animation:lcShine 2.2s linear infinite}@keyframes lcShine{from{background-position:120% 0}to{background-position:-120% 0}}
 .lc svg{display:block;width:22px;height:22px;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.35))}
 .lc b{position:absolute;left:15px;top:17px;padding:2px 7px;border-radius:7px 7px 7px 2px;color:#fff;font:600 12px/16px var(--sans);white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:opacity .4s}
 .lc.idle{opacity:.55}.lc.idle b{opacity:0}
@@ -273,7 +291,7 @@ html.peek .ui>.top,html.peek #rail,html.peek #railR,html.peek #layersPanel,html.
 .hp-tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);margin-left:6px;vertical-align:1px}
 .hp-empty{padding:28px 18px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
 /* view-only link + view mode */
-.sh-view{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.sh-view{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;margin-top:6px}.sh-ai p{margin:0;font-size:13px;color:var(--muted)}.sh-ams{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sh-am{display:grid;gap:3px;text-align:left;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:none;color:inherit;cursor:pointer;font:inherit}.sh-am b{font-size:13.5px}.sh-am small{font-size:12px;color:var(--muted);line-height:1.35}.sh-am.on{border-color:#8e4ec6;background:color-mix(in srgb,#8e4ec6 9%,transparent)}.sh-am:disabled{cursor:default;opacity:.8}.sh-am:disabled:not(.on){opacity:.5}@media (max-width:520px){.sh-ams{grid-template-columns:1fr}}
 .sh-view b{font-size:13.5px}.sh-view p{margin:0;font-size:12.5px;color:var(--muted)}
 .sh-vrow{display:flex;gap:6px}.sh-vrow input{flex:1;min-width:0;font-size:12.5px}
 body.view-only #acctBtn,body.view-only #shareBtn,body.view-only #chatBtn,body.view-only #notifBtn,body.view-only #histBtn,body.view-only #lcPeople{display:none!important}
@@ -3258,12 +3276,12 @@ const CAT_DESC = {Lights:'Drag onto the plot or tap to drop in the middle.',Grip
 
 try{ Object.assign(opts, JSON.parse(localStorage.getItem('setplot-opts')||'{}')); }catch(e){}
 function saveOpts(){ try{ localStorage.setItem('setplot-opts',JSON.stringify(opts)); }catch(e){} }
-function meta(d){ return {title:d.title||'Setup', shoot:d.shoot||'', client:d.client||'', date:d.date||'', location:d.location||'', crew:d.crew||'', notes:d.notes||'', layers:d.layers||null, layerAuto:d.layerAuto!==false, power:d.power||null, parent:d.parent||null, archived:d.archived||null, brand:d.brand||null, pid:d.pid||null, own:d.own||null}; }
+function meta(d){ return {title:d.title||'Setup', shoot:d.shoot||'', client:d.client||'', date:d.date||'', location:d.location||'', crew:d.crew||'', notes:d.notes||'', layers:d.layers||null, layerAuto:d.layerAuto!==false, power:d.power||null, parent:d.parent||null, archived:d.archived||null, brand:d.brand||null, pid:d.pid||null, own:d.own||null, ai:d.ai&&Object.keys(d.ai).length?d.ai:null}; }
 function body(d){ return Object.assign(meta(d), {items:d.items||[], createdAt:d.createdAt||Date.now(), updatedAt:d.updatedAt||Date.now()}); }
 
 /* ================= render ================= */
 let raf=0;
-function draw(){ if(typeof lcGuard==='function') lcGuard(); if(CH.tagSeen) chatTagSync(); guideSoon(); if(typeof renderDial==='function') dialSoon(); if(typeof fitHintSoon==='function') fitHintSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); if(typeof lcPaint==='function') lcPaint(); }); }
+function draw(){ if(typeof lcGuard==='function') lcGuard(); if(typeof aiPaintSoon==='function') aiPaintSoon(); if(CH.tagSeen) chatTagSync(); guideSoon(); if(typeof renderDial==='function') dialSoon(); if(typeof fitHintSoon==='function') fitHintSoon(); if(!raf) raf=requestAnimationFrame(()=>{ raf=0; renderPlot(); if(typeof lcPaint==='function') lcPaint(); }); }
 /* ================= board ================= */
 const BOARD_SWATCHES = [['auto','Match theme'],['#ffffff','Paper'],['#eceef0','Fog'],['#e8e5df','Stone'],['#e2e9e3','Sage'],['#e3eaf4','Sky'],['#2b3037','Slate'],['#1b3a5c','Blueprint'],['#121315','Black']];
 let board = {bg:'auto', pattern:'grid', intensity:1, exportBg:false};
@@ -3317,7 +3335,7 @@ function renderPlot(){ migrateLights(); foldUpdate(); northSync(); if(!drag&&!tw
   cardBadges=[];
   const m = plotMarkup(cur?cur.items:[],P,{pxm:view.s,beams:opts.beams,specs:opts.specs&&view.s>=50,sel,handles:!readOnly && ![...sel].some(id=>{ const it=itemById(id); return it && LFc().lock(it); }),layers:cur&&cur.layers,iso:!!isoSet,plug:plugIds(),cable:cableIds(),cableSel,beamH:beamHoverId()});
   const g = patternMarkup(P,x0,y0,vw,vh,k,view.s,'pv');
-  svg.innerHTML = `<defs>${g.defs}${m.defs}</defs>${g.body}${walkLineMarkup(k)}<g>${m.beams}</g><g>${m.body}</g><g>${m.labels}</g>${linksSVG(cur?cur.items:[],P,k,cur&&cur.layers,true)}${reDragMarkup(k)}${conDragMarkup(k)}${plugDragMarkup(k)}${plugSnapMarkup(k)}<g>${m.over}</g>${lockSelMarkup(k)}${hoverMarkup(k)}${lockFlashMarkup(k)}${isoPulseMarkup(k)}${walkMarkup(k)}${roomDimMarkup(k,P)}<g>${cur&&sel.size&&!extMode?originMarkup(k):''}</g>${extMarkup(k)}${camDropMarkup(k)}${angModeMarkup(k)}${rotModeMarkup(k)}${wallLine&&drag?(w=>w?`<g pointer-events="none" transform="translate(${f(w.x)} ${f(w.y)}) rotate(${f(w.rot)})"><rect x="${f(-w.w/2)}" y="${f(-w.h/2-4*k)}" width="${f(w.w)}" height="${f(w.h+8*k)}" rx="${f(3*k)}" fill="${P.accent}" fill-opacity=".12" stroke="${P.accent}" stroke-opacity=".6" stroke-width="${f(1.2*k)}" stroke-dasharray="${f(4*k)} ${f(3*k)}"/></g>`:'')(itemById(wallLine)):''}${snapMark&&drag?`<g pointer-events="none"><circle cx="${f(snapMark.x)}" cy="${f(snapMark.y)}" r="${f(9*k)}" fill="${P.accent}" fill-opacity=".15" stroke="${P.accent}" stroke-width="${f(1.6*k)}"/><circle cx="${f(snapMark.x)}" cy="${f(snapMark.y)}" r="${f(2.5*k)}" fill="${P.accent}"/></g>`:''}${drag&&drag.mode==='draw'?`<path d="${drag.pts.length>1?smoothPath(drag.pts):`M${f(drag.pts[0][0])} ${f(drag.pts[0][1])}l0 0`}" fill="none" stroke="${penColor(penOpts.color,P)}" stroke-width="${f(Math.max(penOpts.width,1.2*k))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`:''}<g>${cur&&!readOnly?focusMarkup(k):''}</g>${drag&&drag.mode==='box'&&drag.cur?`<rect x="${f(Math.min(drag.start.x,drag.cur.x))}" y="${f(Math.min(drag.start.y,drag.cur.y))}" width="${f(Math.abs(drag.cur.x-drag.start.x))}" height="${f(Math.abs(drag.cur.y-drag.start.y))}" rx="${f(3*k)}" fill="${P.accent}" fill-opacity=".08" stroke="${P.accent}" stroke-width="${f(1.2*k)}" pointer-events="none"/>`:''}`;
+  svg.innerHTML = `<defs>${g.defs}${m.defs}</defs>${g.body}${walkLineMarkup(k)}<g>${m.beams}</g><g>${m.body}</g><g>${m.labels}</g>${typeof aiGhostMarkup==='function'?aiGhostMarkup():''}${linksSVG(cur?cur.items:[],P,k,cur&&cur.layers,true)}${reDragMarkup(k)}${conDragMarkup(k)}${plugDragMarkup(k)}${plugSnapMarkup(k)}<g>${m.over}</g>${lockSelMarkup(k)}${hoverMarkup(k)}${lockFlashMarkup(k)}${isoPulseMarkup(k)}${walkMarkup(k)}${roomDimMarkup(k,P)}<g>${cur&&sel.size&&!extMode?originMarkup(k):''}</g>${extMarkup(k)}${camDropMarkup(k)}${angModeMarkup(k)}${rotModeMarkup(k)}${wallLine&&drag?(w=>w?`<g pointer-events="none" transform="translate(${f(w.x)} ${f(w.y)}) rotate(${f(w.rot)})"><rect x="${f(-w.w/2)}" y="${f(-w.h/2-4*k)}" width="${f(w.w)}" height="${f(w.h+8*k)}" rx="${f(3*k)}" fill="${P.accent}" fill-opacity=".12" stroke="${P.accent}" stroke-opacity=".6" stroke-width="${f(1.2*k)}" stroke-dasharray="${f(4*k)} ${f(3*k)}"/></g>`:'')(itemById(wallLine)):''}${snapMark&&drag?`<g pointer-events="none"><circle cx="${f(snapMark.x)}" cy="${f(snapMark.y)}" r="${f(9*k)}" fill="${P.accent}" fill-opacity=".15" stroke="${P.accent}" stroke-width="${f(1.6*k)}"/><circle cx="${f(snapMark.x)}" cy="${f(snapMark.y)}" r="${f(2.5*k)}" fill="${P.accent}"/></g>`:''}${drag&&drag.mode==='draw'?`<path d="${drag.pts.length>1?smoothPath(drag.pts):`M${f(drag.pts[0][0])} ${f(drag.pts[0][1])}l0 0`}" fill="none" stroke="${penColor(penOpts.color,P)}" stroke-width="${f(Math.max(penOpts.width,1.2*k))}" stroke-linecap="round" stroke-linejoin="round" pointer-events="none"/>`:''}<g>${cur&&!readOnly?focusMarkup(k):''}</g>${drag&&drag.mode==='box'&&drag.cur?`<rect x="${f(Math.min(drag.start.x,drag.cur.x))}" y="${f(Math.min(drag.start.y,drag.cur.y))}" width="${f(Math.abs(drag.cur.x-drag.start.x))}" height="${f(Math.abs(drag.cur.y-drag.start.y))}" rx="${f(3*k)}" fill="${P.accent}" fill-opacity=".08" stroke="${P.accent}" stroke-width="${f(1.2*k)}" pointer-events="none"/>`:''}`;
   renderCards(); renderCardBadges();
   $('#zoomLbl').textContent = Math.round(view.s/70*100)+'%';
   const cands=[.25,.5,1,2,5,10]; let L=1; for(const c of cands){ if(c*view.s>=36){ L=c; break; } }
@@ -4574,7 +4592,7 @@ $('#undoBtn').onclick=undo; $('#redoBtn').onclick=redo;
 
 /* ================= persistence ================= */
 function setStatus(t,kind){ const s=$('#status'); $('#statusT').textContent=t; s.classList.toggle('warn',kind==='warn'); s.classList.toggle('busy',kind==='busy'); }
-function touch(){ if(EMBED) embedFitSoon(); if(!cur||readOnly) return; if(!followHold) followSoon(); ensureLayers(cur); { const ids=new Set(cur.items.map(i=>i.id)); cur.items.forEach(i=>{ if(i.conns){ i.conns=i.conns.filter(c=>ids.has(c.to)&&c.to!==i.id); if(!i.conns.length) delete i.conns; } }); } renderLayersSoon(); cur.updatedAt=Date.now(); all[cur.id]=body(cur); pruneOrphanSetups(); dirty=true; setStatus('Saving','busy'); clearTimeout(saveT); saveT=setTimeout(flush,650); if(!$('#drawer').hidden) renderDrawer(); }
+function touch(){ if(EMBED) embedFitSoon(); if(!cur||readOnly) return; if(cur.ai&&typeof aiUserEdits==='function') aiUserEdits(); if(!followHold) followSoon(); ensureLayers(cur); { const ids=new Set(cur.items.map(i=>i.id)); cur.items.forEach(i=>{ if(i.conns){ i.conns=i.conns.filter(c=>ids.has(c.to)&&c.to!==i.id); if(!i.conns.length) delete i.conns; } }); } renderLayersSoon(); cur.updatedAt=Date.now(); all[cur.id]=body(cur); pruneOrphanSetups(); dirty=true; setStatus('Saving','busy'); clearTimeout(saveT); saveT=setTimeout(flush,650); if(!$('#drawer').hidden) renderDrawer(); }
 async function flush(){ glideFinish();
   clearTimeout(saveT);
   if(!cur||!dirty||readOnly) return;
@@ -10582,6 +10600,82 @@ async function cloudSync(first,quiet){ if(!sb||!sbUser||sbBusy) return; sbBusy=t
 function sbRealtime(){ if(!sb||!sb.channel||sbChan) return; try{ sbChan=sb.channel('plots-live').on('postgres_changes',{event:'*',schema:'public',table:'plots'},p=>{ const r=p&&p.new;
     if(r&&r.id&&all[r.id]&&Date.parse(r.updated_at)===(all[r.id].updatedAt||0)&&(r.project_id||null)===(all[r.id].pid||null)) return;   /* my own save coming back */
     clearTimeout(sbRtT); sbRtT=setTimeout(()=>cloudSync(false,true),900); }).subscribe(); }catch(e){ sbChan=null; } }
+/* AI review: what an AI agent changes stays marked until its owner (or a project admin) accepts or rejects it.
+   cur.ai = { itemId: { k:'add'|'edit'|'delete', b: the item before (null for add), d: what changed, by, client, owner, at } }, written by the MCP server */
+function aiCan(e){ return !!(e&&!readOnly&&sbUser&&cur&&(e.owner===sbUser.id||(cur.pid&&sbProj[cur.pid]&&sbProj[cur.pid].is_admin))); }
+function aiWho(e){ return sbUser&&e.owner===sbUser.id?'Your AI agent':((String(e.by||'').trim().split(/\s+/)[0]||'An')+'’s AI agent'); }
+function aiRectOf(it){ if(!it||!isFinite(it.x)||!isFinite(it.y)) return null; const w=Math.max(.3,it.w||.5), h=Math.max(.3,it.h||.5);
+  const a=(it.rot||0)*Math.PI/180, c=Math.cos(a), sn=Math.sin(a), hw=w/2+.12, hh=h/2+.12;
+  const xs=[-1,1].flatMap(i=>[-1,1].map(j=>it.x+i*hw*c-j*hh*sn)), ys=[-1,1].flatMap(i=>[-1,1].map(j=>it.y+i*hw*sn+j*hh*c));
+  return {x:W/2+(Math.min(...xs)-view.x)*view.s, y:H/2+(Math.min(...ys)-view.y)*view.s, w:(Math.max(...xs)-Math.min(...xs))*view.s, h:(Math.max(...ys)-Math.min(...ys))*view.s}; }
+/* editing an AI-changed object yourself rejects the AI's change as a suggestion: your version wins and the badge goes.
+   We remember each marked object as the AI left it; when a change of mine makes it differ, the mark is dropped */
+var AI_SNAP={};
+function aiSig(id){ const it=cur&&cur.items.find(i=>String(i.id)===id); return it?JSON.stringify(it):'gone'; }
+function aiSnapSync(){ if(!cur||!cur.ai) return; Object.keys(cur.ai).forEach(id=>{ const e=cur.ai[id], k=cur.id+'|'+id, s=AI_SNAP[k]; if(!s||s.at!==e.at) AI_SNAP[k]={at:e.at,sig:aiSig(id)}; }); }
+function aiUserEdits(){ if(!cur||!cur.ai) return; let n=0;
+  Object.keys(cur.ai).forEach(id=>{ const e=cur.ai[id], s=AI_SNAP[cur.id+'|'+id]; if(!s||s.at!==e.at) return; if(typeof lcHolder==='function'&&lcHolder(id)) return;   /* the agent is still working on it */
+    const now=aiSig(id); if(now===s.sig) return; if(e.k==='delete'&&now==='gone') return;
+    delete cur.ai[id]; delete AI_SNAP[cur.id+'|'+id]; n++; });
+  if(n){ if(!Object.keys(cur.ai).length) delete cur.ai; track('ai_review',{a:-1,n}); const t=Date.now(); if(t-(aiUserEdits.t||0)>4000){ aiUserEdits.t=t; toast(n>1?'Your edits replace the AI changes':'Your edit replaces the AI change'); } aiPaintSoon(); } }
+/* suggested lights and objects are drawn as see-through ghosts on the plan itself */
+function aiGhostMarkup(){ if(!cur||!cur.ai||drawEd) return ''; const its=[];
+  Object.keys(cur.ai).forEach(id=>{ const e=cur.ai[id]; if(!e.pend||!e.a||(e.k!=='add'&&e.k!=='edit')) return; if(TYPES[e.a.type]&&TYPES[e.a.type].card) return;
+    if(e.k==='add'&&cur.items.some(i=>String(i.id)===id)) return; its.push(Object.assign(JSON.parse(JSON.stringify(e.a)),{id:'aigh-'+id})); });
+  if(!its.length) return ''; try{ const m=plotMarkup(its,P,{pxm:view.s,beams:opts.beams,specs:false,layers:null});
+    return `<g class="ai-ghostg" opacity=".42" pointer-events="none" style="filter:saturate(.6)"><g>${m.beams}</g><g>${m.body}</g><g>${m.labels}</g></g>`; }catch(e){ return ''; } }
+var aiRaf=0; function aiPaintSoon(){ if(aiRaf) return; aiRaf=requestAnimationFrame(()=>{ aiRaf=0; aiPaint(); }); }
+function aiPaint(){ aiSnapSync(); let L=$('#aiLayer'); const A=cur&&cur.ai&&!drawEd&&!EMBED?cur.ai:null, ids=A?Object.keys(A):[];
+  if(!ids.length){ if(L) L.innerHTML=''; aiBar([]); return; }
+  if(!L){ L=document.createElement('div'); L.id='aiLayer'; ($('#lcLayer')||$('#inkOv')||svg).after(L); }
+  const keep={};
+  ids.forEach(id=>{ const e=A[id]; const live=cur.items.find(i=>String(i.id)===id); let r=null;
+    const card=e.pend&&e.k==='add'&&e.a&&TYPES[e.a.type]&&TYPES[e.a.type].card;
+    if(e.pend){ if(e.k==='add'){ if(live){ return; } r=card?{x:W/2+(e.a.x-view.x)*view.s,y:H/2+(e.a.y-view.y)*view.s,w:Math.max(120,(e.a.w||220)),h:90}:aiRectOf(e.a); } else if(live) r=lcRect(id)||aiRectOf(live); }
+    else if(e.k==='delete'){ if(live){ return; } r=aiRectOf(e.b); } else if(live){ r=lcRect(id)||aiRectOf(live); }
+    if(!r) return; keep[id]=1;
+    let g=L.querySelector(`[data-aig="${CSS.escape(id)}"]`);
+    if(!g){ g=document.createElement('div'); g.dataset.aig=id; L.appendChild(g); }
+    g.className=e.pend?(e.k==='delete'?'ai-del':e.k==='add'?(card?'ai-gcard':'ai-sugg'):'ai-mark pend'):(e.k==='delete'?'ai-ghost':'ai-mark');
+    if(card){ const t=String(e.a.p&&(e.a.p.title||e.a.p.text)||'').replace(/<[^>]+>/g,' ').slice(0,140); if(g.dataset.t!==t){ g.dataset.t=t; g.textContent=t; } } else if(g.textContent){ g.textContent=''; delete g.dataset.t; } g.style.cssText=`transform:translate(${Math.round(r.x-4)}px,${Math.round(r.y-4)}px);width:${Math.round(r.w+8)}px;height:${Math.round(r.h+8)}px`;
+    /* where it was before the AI moved it: a faint outline, so you can see what "Undo change" brings back */
+    let w=L.querySelector(`[data-aiw="${CSS.escape(id)}"]`); const wr=!e.pend&&e.k==='edit'&&e.b&&live&&(Math.abs((e.b.x||0)-live.x)>.05||Math.abs((e.b.y||0)-live.y)>.05)?aiRectOf(e.b):null;
+    if(wr){ if(!w){ w=document.createElement('div'); w.dataset.aiw=id; w.className='ai-was'; L.prepend(w); } keep['w'+id]=1; w.style.cssText=`transform:translate(${Math.round(wr.x)}px,${Math.round(wr.y)}px);width:${Math.round(wr.w)}px;height:${Math.round(wr.h)}px`; } else if(w) w.remove();
+    let b=L.querySelector(`[data-ai="${CSS.escape(id)}"]`);
+    if(!b){ b=document.createElement('button'); b.type='button'; b.dataset.ai=id; b.textContent='✦'; L.appendChild(b); }
+    b.className='ai-badge k-'+e.k+(e.pend?' pend':''); b.title=`${aiWho(e)} ${e.pend?'suggests: ':''}${e.d||'changed this'}`; b.setAttribute('aria-label',b.title+'. Review');
+    b.style.transform=`translate(${Math.round(r.x+r.w-6)}px,${Math.round(r.y-14)}px)`; });
+  L.querySelectorAll('[data-aig],[data-ai],[data-aiw]').forEach(el=>{ if(el.dataset.aiw?!keep['w'+el.dataset.aiw]:!keep[el.dataset.aig||el.dataset.ai]) el.remove(); });
+  aiBar(ids.filter(id=>aiCan(A[id]))); }
+function aiBar(ids){ let B=$('#aiBar'); if(!ids.length){ if(B) B.remove(); return; }
+  if(!B){ B=document.createElement('div'); B.id='aiBar'; B.className='ai-bar'; B.setAttribute('role','status'); document.body.appendChild(B); }
+  const sug=ids.every(id=>cur.ai[id].pend), t=`✦ ${ids.length} AI ${sug?'suggestion':'change'}${ids.length>1?'s':''} to review`, sig=ids.length+'|'+sug; if(B.dataset.n!==sig){ B.dataset.n=sig;
+    B.innerHTML=`<span>${t}</span><button type="button" data-aiall="next">Show</button><button type="button" data-aiall="reject">${sug?'Dismiss all':'Reject all'}</button><button type="button" class="ok" data-aiall="accept">${sug?'Apply all':'Accept all'}</button>`; } }
+function aiResolve(ids,accept){ if(!cur||!cur.ai) return 0; let n=0; checkpoint();
+  ids.forEach(id=>{ const e=cur.ai[id]; if(!aiCan(e)) return; n++;
+    if(e.pend){ if(accept){ if(e.k==='add'&&e.a&&!cur.items.some(x=>String(x.id)===id)) cur.items.push(JSON.parse(JSON.stringify(e.a)));
+        else if(e.k==='edit'&&e.a){ const i=cur.items.findIndex(x=>String(x.id)===id); if(i>=0) cur.items[i]=JSON.parse(JSON.stringify(e.a)); }
+        else if(e.k==='delete') cur.items=cur.items.filter(i=>String(i.id)!==id); } }
+    else if(!accept){ if(e.k==='add') cur.items=cur.items.filter(i=>String(i.id)!==id);
+      else if(e.k==='edit'&&e.b){ const i=cur.items.findIndex(x=>String(x.id)===id); if(i>=0) cur.items[i]=JSON.parse(JSON.stringify(e.b)); }
+      else if(e.k==='delete'&&e.b&&!cur.items.some(x=>String(x.id)===id)) cur.items.push(JSON.parse(JSON.stringify(e.b))); }
+    delete cur.ai[id]; });
+  if(!Object.keys(cur.ai).length) delete cur.ai; if(!n){ dropNoopCheckpoint(); return 0; }
+  migrateLights(); sel.clear(); touch(); try{ renderInspector(); syncCardSel(); }catch(e){} draw(); track('ai_review',{a:accept?1:0,n}); return n; }
+function aiPopClose(){ const p=$('#aiPop'); if(p) p.remove(); }
+function aiPopOpen(id,anchor){ aiPopClose(); const e=cur&&cur.ai&&cur.ai[id]; if(!e) return; const can=aiCan(e);
+  const p=document.createElement('div'); p.id='aiPop'; p.className='ai-pop'; p.setAttribute('role','dialog');
+  p.innerHTML=`<b>✦ ${esc(aiWho(e))}${e.pend?' suggests':''}${e.client?` <span style="font-weight:500;color:var(--muted)">· ${esc(e.client)}</span>`:''}</b><p>${esc((e.d||'Changed this').replace(/^./,c=>c.toUpperCase()))} · ${agoTxt(new Date(e.at||Date.now()).toISOString())}</p>`+
+    (can?`<div class="row"><button type="button" data-aip="reject">${e.pend?'Dismiss':e.k==='add'?'Remove it':e.k==='delete'?'Bring it back':'Undo change'}</button><button type="button" class="ok" data-aip="accept">${e.pend?(e.k==='delete'?'Delete it':'Apply'):'Accept'}</button></div>`:`<p style="margin:0">Only ${esc(String(e.by||'its owner').split(/\s+/)[0])} or a project admin can accept or reject this.</p>`);
+  p.dataset.id=id; document.body.appendChild(p); const r=anchor.getBoundingClientRect();
+  p.style.left=Math.max(8,Math.min(innerWidth-258,r.left-110))+'px'; p.style.top=(r.bottom+8+p.offsetHeight>innerHeight?r.top-p.offsetHeight-8:r.bottom+8)+'px'; }
+document.addEventListener('click',e=>{ const b=e.target.closest('.ai-badge'); if(b){ e.stopPropagation(); aiPopOpen(b.dataset.ai,b); return; }
+  const a=e.target.closest('[data-aip]'); if(a){ const id=a.closest('#aiPop').dataset.id; const ok=a.dataset.aip==='accept', pend=!!(cur.ai&&cur.ai[id]&&cur.ai[id].pend); aiPopClose(); if(aiResolve([id],ok)) toast(pend?(ok?'Suggestion applied':'Suggestion dismissed'):(ok?'Change accepted':'Change undone')); return; }
+  const all=e.target.closest('[data-aiall]'); if(all&&cur&&cur.ai){ const ids=Object.keys(cur.ai).filter(id=>aiCan(cur.ai[id]));
+    if(all.dataset.aiall==='next'){ const n=(aiBar.i=((aiBar.i||0)+1)%ids.length), id=ids[n], e2=cur.ai[id], it=cur.items.find(i=>String(i.id)===id)||e2.b; if(it&&isFinite(it.x)){ view.x=it.x; view.y=it.y; draw(); setTimeout(()=>{ const bb=document.querySelector(`.ai-badge[data-ai="${CSS.escape(id)}"]`); if(bb) aiPopOpen(id,bb); },60); } return; }
+    const sug=ids.every(id=>cur.ai[id].pend), ok=all.dataset.aiall==='accept', n=aiResolve(ids,ok), pl=n>1?'s':''; if(n) toast(sug?(ok?`Applied ${n} suggestion${pl}`:`Dismissed ${n} suggestion${pl}`):(ok?`Accepted ${n} change${pl}`:`Undid ${n} change${pl}`)); return; }
+  if(!e.target.closest('#aiPop')) aiPopClose(); },true);
+addEventListener('keydown',e=>{ if(e.key==='Escape') aiPopClose(); });
 /* live cursors: people in the same shared setup see each other's pointer and who's here.
    One private realtime channel per setup ("plot:<project>:<setup>"); the database lets only project members join it */
 var lc={ch:null,topic:'',peers:{},online:[],where:'',sent:0,pend:null,pt:0,lay:null,selKey:'',mine:new Set(),at:0,tt:0,said:0};
@@ -10590,8 +10684,9 @@ function lcColor(id){ let h=7; for(const c of String(id)) h=(h*31+c.charCodeAt(0
 function lcName(){ const m=sbUser&&sbUser.user_metadata||{}; return String(m.full_name||m.name||(sbUser&&sbUser.email||'').split('@')[0]||'Someone').trim().slice(0,40); }
 function lcWhere(){ return drawEd?'board':'plot'; }
 function lcMe(){ return {id:sbUser.id,name:lcName(),color:lcColor(sbUser.id),where:lcWhere(),sel:[...lc.mine],at:lc.at,seq:lc.seq||0,follow:lc.follow||null}; }
-function lcTopic(){ try{ if(mode!=='local'||!sb||!sb.channel||!sbUser||!cur||!cur.pid||!sbProj[cur.pid]||document.visibilityState==='hidden') return '';
-  const p=sbProj[cur.pid]; if(p.members!=null&&p.members<2) return ''; return 'plot:'+cur.pid+':'+cur.id; }catch(e){ return ''; } }
+/* shared setups use "plot:<project>:<setup>"; personal ones "me:<user>:<setup>", so an AI assistant working as you can show its cursor there too */
+function lcTopic(){ try{ if(mode!=='local'||!sb||!sb.channel||!sbUser||!cur||document.visibilityState==='hidden') return '';
+  if(cur.pid&&sbProj[cur.pid]) return 'plot:'+cur.pid+':'+cur.id; if(cur.pid) return ''; if(cur.own&&cur.own!==sbUser.id) return ''; return 'me:'+sbUser.id+':'+cur.id; }catch(e){ return ''; } }
 function lcLeave(){ if(lc.follow) lcUnfollow(); lc.followers=[]; const ch=lc.ch; lc.ch=null; lc.topic=''; lc.peers={}; lc.online=[]; lc.where=''; lc.selKey=''; lc.mine=new Set(); lc.at=0;
   if(ch){ try{ sb.removeChannel(ch); }catch(e){} } lcPaint(); lcPeople(); }
 async function lcSync(){ const t=lcTopic();
@@ -10604,7 +10699,10 @@ async function lcSync(){ const t=lcTopic();
       .subscribe(st=>{ if(lc.ch!==ch) return; if(st==='SUBSCRIBED'){ lc.ok=true; lc.where=lcWhere(); try{ ch.track(lcMe()); }catch(e){} }
         else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'){ lc.ok=false; } });
   }catch(e){ lc.ch=null; } }
+/* an AI assistant working for someone: "Your AI agent" when it's yours, otherwise "Anna’s AI agent" */
+function lcAgentName(p){ if(sbUser&&p.owner===sbUser.id) return 'Your AI agent'; const n=String(p.name||'').trim(); return (n?n.split(/\s+/)[0]+'’s':'An')+' AI agent'; }
 function lcRecv(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={}); delete o.gone;
+  if(p.agent){ if((+p.cs||0)<(o.cs||0)) return; o.cs=+p.cs||0; o.agent=true; o.last=Date.now(); o.where='plot'; o.client=String(p.client||'').slice(0,30); if(!lc.online.some(x=>x.id===p.id)){ o.name=lcAgentName(p); o.color=LC_COL.includes(p.color)?p.color:lcColor(p.id); lcOnline(); lcPeople(); } p=Object.assign({},p,{name:lcAgentName(p)}); }
   o.name=String(p.name||o.name||'Someone').slice(0,40); o.color=LC_COL.includes(p.color)?p.color:lcColor(p.id);
   if(typeof p.x!=='number'||typeof p.y!=='number'||!isFinite(p.x)||!isFinite(p.y)){ o.off=true; o.hidden=true; } else { o.off=false; if(o.dx==null||o.hidden){ o.dx=p.x; o.dy=p.y; } o.x=p.x; o.y=p.y; o.ts=Date.now(); o.hidden=false; }
   lcAnimKick(); }
@@ -10614,14 +10712,14 @@ function lcPresence(){ if(!lc.ch) return; let st={}; try{ st=lc.ch.presenceState
     if(!lc.peers[k]||lc.peers[k].gone) fresh.push(k);
     const o=lc.peers[k]||(lc.peers[k]={off:true}); delete o.gone; o.name=String(m.name||o.name||'Someone').slice(0,40); o.color=lcColor(k); if(m.where==='board') o.off=true;
     o.where=m.where==='board'?'board':'plot'; if((+m.seq||0)>=(o.seq||0)){ o.seq=+m.seq||0; o.sel=Array.isArray(m.sel)?m.sel.slice(0,200).map(String):[]; o.at=+m.at||0; } o.follow=m.follow||null; });
-  Object.keys(lc.peers).forEach(k=>{ if(!seen[k]&&!lc.peers[k].gone) lc.peers[k].gone=Date.now(); });
+  Object.keys(lc.peers).forEach(k=>{ if(!seen[k]&&!lc.peers[k].gone&&!lc.peers[k].agent) lc.peers[k].gone=Date.now(); });   /* AI assistants send no presence; they expire on their own below */
   lcOnline(); lcFollowPresence();
   if(fresh.length) lcHello();
   lcPeople(); if(typeof draw==='function') draw(); lcPaint(); }
 /* who's here: presence can blink (a person drops out for a moment while their status updates), so someone only leaves after 10 s missing */
 const LC_GRACE=10000;
-function lcOnline(){ lc.online=Object.keys(lc.peers).filter(k=>{ const o=lc.peers[k]; return o.name&&(!o.gone||Date.now()-o.gone<LC_GRACE); }).map(k=>{ const o=lc.peers[k]; return {id:k,name:o.name,color:o.color||lcColor(k),where:o.where||'plot'}; }); }
-function lcPrune(){ let ch=false; Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(o.gone&&Date.now()-o.gone>=LC_GRACE){ delete lc.peers[k]; ch=true; } }); if(ch){ lcOnline(); lcPeople(); lcFollowPresence(); draw(); lcPaint(); } }
+function lcOnline(){ lc.online=Object.keys(lc.peers).filter(k=>{ const o=lc.peers[k]; return o.name&&(!o.gone||Date.now()-o.gone<LC_GRACE); }).map(k=>{ const o=lc.peers[k]; return {id:k,name:o.name,color:o.color||lcColor(k),where:o.where||'plot',agent:!!o.agent,client:o.client||''}; }); }
+function lcPrune(){ let ch=false; Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(o.agent&&!o.gone&&Date.now()-(o.last||0)>45000) o.gone=Date.now()-LC_GRACE; if(o.gone&&Date.now()-o.gone>=LC_GRACE){ delete lc.peers[k]; ch=true; } }); if(ch){ lcOnline(); lcPeople(); lcFollowPresence(); draw(); lcPaint(); } }
 /* someone new arrived: show them where I am and what I hold right away, instead of waiting until I move */
 function lcHello(){ if(!lc.ch||!lc.ok||!sbUser) return; setTimeout(()=>{ if(!lc.ch||!lc.ok) return; if(lc.lastPt&&!drawEd) lcSend(lc.lastPt,true);
   try{ lc.ch.send({type:'broadcast',event:'sel',payload:{id:sbUser.id,sel:[...lc.mine],at:lc.at,seq:lc.seq||0,where:lcWhere()}}); }catch(e){} lc.vwSig=''; lcViewSend(); },300); }
@@ -10633,7 +10731,7 @@ function lcPaint(){ if(!lc.lay){ if(!lc.ch) return; lc.lay=document.createElemen
   Object.keys(lc.peers).forEach(k=>{ const o=lc.peers[k]; if(!show||o.off||o.x==null||(o.gone&&now-o.gone>2500)) return; keep[k]=1;
     let el=L.querySelector(`[data-lc="${CSS.escape(k)}"]`);
     if(!el){ el=document.createElement('div'); el.className='lc'; el.dataset.lc=k; el.innerHTML='<svg viewBox="0 0 20 20"><path d="M3 2.2 16.6 9.4 10.2 10.8 7.4 17Z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg><b></b>'; L.appendChild(el); }
-    el.querySelector('path').setAttribute('fill',o.color); const b=el.querySelector('b'); b.style.background=o.color; if(b.textContent!==o.name) b.textContent=o.name;
+    el.querySelector('path').setAttribute('fill',o.color); const b=el.querySelector('b'); b.style.background=o.color; const nm=(o.agent?'✦ ':'')+o.name; if(b.textContent!==nm) b.textContent=nm; el.classList.toggle('ai',!!o.agent);
     const cx=o.dx!=null?o.dx:o.x, cy=o.dy!=null?o.dy:o.y, sx=W/2+(cx-view.x)*view.s, sy=H/2+(cy-view.y)*view.s, m=18, top=64, bot=56;
     const side=W>700?100:m, out=sx<side||sx>W-side||sy<top||sy>H-bot;
     if(out){ const ex=Math.max(side,Math.min(W-side-70,sx)), ey=Math.max(top,Math.min(H-bot,sy)), ang=Math.atan2(sy-ey,sx-ex)*180/Math.PI; el.style.transform=`translate(${ex.toFixed(1)}px,${ey.toFixed(1)}px)`; el.style.setProperty('--ang',ang.toFixed(0)+'deg'); }
@@ -10647,7 +10745,7 @@ function lcPaint(){ if(!lc.lay){ if(!lc.ch) return; lc.lay=document.createElemen
     if(!el){ el=document.createElement('div'); el.className='lc-ed'; el.dataset.ed=key; el.innerHTML='<svg><rect/></svg><b><svg class="pen" viewBox="0 0 12 12"><path d="M2 10l.6-2.4L8 2.2 9.8 4 4.4 9.4Z"/></svg><span></span><i></i><i></i><i></i></b>'; L.appendChild(el); }
     const w=Math.max(10,r.w+10), h=Math.max(10,r.h+10); el.style.cssText=`--c:${o.color};transform:translate(${Math.round(r.x-5)}px,${Math.round(r.y-5)}px);width:${Math.round(w)}px;height:${Math.round(h)}px`;
     const sv=el.firstChild, rc=sv.firstChild; sv.setAttribute('width',Math.round(w)); sv.setAttribute('height',Math.round(h)); rc.setAttribute('x',1); rc.setAttribute('y',1); rc.setAttribute('width',Math.max(1,Math.round(w)-2)); rc.setAttribute('height',Math.max(1,Math.round(h)-2)); rc.setAttribute('rx',7);
-    const t=el.querySelector('span'), txt=o.name+(o.where==='board'?' is drawing':' is editing'); if(t.textContent!==txt) t.textContent=txt; el.classList.toggle('still',rm); el.classList.toggle('nob',!tag); }); });
+    const t=el.querySelector('span'), txt=(o.agent?'✦ ':'')+o.name+(o.where==='board'?' is drawing':' is editing'); if(t.textContent!==txt) t.textContent=txt; el.classList.toggle('still',rm); el.classList.toggle('nob',!tag); }); });
   L.querySelectorAll('.lc-ed').forEach(el=>{ if(!ek[el.dataset.ed]) el.remove(); }); }
 /* screen box of an object or card */
 function lcRect(id){ const it=cur&&cur.items.find(i=>String(i.id)===String(id)); if(!it) return null;
@@ -10668,6 +10766,7 @@ function lcSelSync(){ if(!lc||!lc.ch) return; const a=lcMySel(), key=a.join(',')
   /* tell the others straight away over broadcast (as fast as the cursor); presence follows for anyone who joins later */
   if(lc.ok){ try{ lc.ch.send({type:'broadcast',event:'sel',payload:{id:sbUser.id,sel:[...lc.mine],at:lc.at,seq:lc.seq,where:lcWhere()}}); }catch(e){} } lcTrack(); }
 function lcRecvSel(p){ if(!p||!p.id||(sbUser&&p.id===sbUser.id)||!Array.isArray(p.sel)) return; const o=lc.peers[p.id]||(lc.peers[p.id]={off:true,name:'Someone',color:lcColor(p.id)});
+  if(p.agent){ o.agent=true; o.last=Date.now(); o.name=lcAgentName(p); o.client=String(p.client||o.client||'').slice(0,30); if(LC_COL.includes(p.color)) o.color=p.color; delete o.gone; }
   if((+p.seq||0)<(o.seq||0)) return; o.seq=+p.seq||0; o.sel=p.sel.slice(0,200).map(String); o.at=+p.at||0; o.where=p.where==='board'?'board':'plot'; draw(); lcPaint(); }
 /* smoothing: cursors and objects someone else is moving glide to where they are instead of jumping every message */
 const LC_MOVE=['x','y','rot'];
@@ -10733,7 +10832,7 @@ function lcGuard(){ if(!lc||!lc.ch||!cur) return; if(!readOnly&&sel.size&&Object
   e.preventDefault(); e.stopPropagation(); if(ev==='pointerdown') lcSay([p]); },true));
 function lcPeople(){ const box=$('#lcPeople'); if(!box) return; const ppl=lc.online; box.hidden=!ppl.length; if(!ppl.length){ box.innerHTML=''; return; }
   const shown=ppl.slice(0,4);
-  box.innerHTML=shown.map(p=>{ const f=lc.follow===p.id, me=sbUser&&lc.peers[p.id]&&lc.peers[p.id].follow===sbUser.id; return `<button type="button" class="lc-av${p.where==='board'?' away':''}${f?' following':''}" data-lcgo="${esc(p.id)}" style="background:${p.color};--c:${p.color}" title="${esc(p.name)}${p.where==='board'?' · on the storyboard':''}${me?' · following you':''} · ${f?'click to stop following':'click to follow'}" aria-label="${f?'Stop following':'Follow'} ${esc(p.name)}" aria-pressed="${f}">${esc(p.name.trim()[0]||'?').toUpperCase()}</button>`; }).join('')+(ppl.length>4?`<span class="lc-av more" title="${esc(ppl.slice(4).map(p=>p.name).join(', '))}">+${ppl.length-4}</span>`:''); }
+  box.innerHTML=shown.map(p=>{ const f=lc.follow===p.id, me=sbUser&&lc.peers[p.id]&&lc.peers[p.id].follow===sbUser.id; return `<button type="button" class="lc-av${p.where==='board'?' away':''}${f?' following':''}" data-lcgo="${esc(p.id)}" style="background:${p.color};--c:${p.color}" title="${esc(p.name)}${p.agent?(p.client?' · '+esc(p.client):'')+' · AI assistant. What it selects is locked while it works':''}${p.where==='board'?' · on the storyboard':''}${me?' · following you':''}${p.agent?'':' · '+(f?'click to stop following':'click to follow')}" aria-label="${p.agent?esc(p.name)+', AI assistant':(f?'Stop following':'Follow')+' '+esc(p.name)}" aria-pressed="${f}">${p.agent?'✦':esc(p.name.trim()[0]||'?').toUpperCase()}</button>`; }).join('')+(ppl.length>4?`<span class="lc-av more" title="${esc(ppl.slice(4).map(p=>p.name).join(', '))}">+${ppl.length-4}</span>`:''); }
 document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('[data-lcgo]'); if(!b) return; const id=b.dataset.lcgo; if(!lc.peers[id]) return;
   if(drawEd){ toast('Close the storyboard editor to follow someone'); return; } if(lc.follow===id) lcUnfollow(); else lcFollow(id); });
 addEventListener('pointermove',e=>{ if(!lc.ch||!lc.ok||drawEd||e.pointerType==='touch') return; lcSend(toWorld(e.clientX,e.clientY)); },true);
@@ -10998,6 +11097,15 @@ async function histCopy(id){ if(VH.busy) return; VH.busy=true; try{ const doc=aw
   catch(e){ toast('Couldn’t copy: '+(e.message||e)); } VH.busy=false; }
 $('#histBtn').addEventListener('click',()=>{ if(VH.open) histClose(); else histOpen(); });
 setInterval(()=>{ const b=$('#histBtn'); if(b) b.hidden=!histOK(); if(VH.open&&!histOK()) histClose(); },1500);
+/* ===== AI agents per project: admins choose whether connected AI assistants change the plan or only suggest ===== */
+function shAgentHTML(P){ const m=P.agent_mode==='suggest'?'suggest':'apply';
+  const opt=(k,t,d)=>`<button type="button" class="sh-am${m===k?' on':''}" data-sham="${k}" role="radio" aria-checked="${m===k}"${P.is_admin?'':' disabled'}><b>${t}</b><small>${d}</small></button>`;
+  return `<div class="sh-view sh-ai"><b>✦ AI agents</b><p>What AI assistants that people in this shoot connect to Set Plot are allowed to do.${P.is_admin?'':' Only a project admin can change this.'}</p>
+    <div class="sh-ams" role="radiogroup" aria-label="AI agents">${opt('apply','Make changes','Changes go straight onto the plan, marked for review')}${opt('suggest','Suggest only','Changes appear as ghosts until someone accepts them')}</div></div>`; }
+$('#modal').addEventListener('click',async e=>{ const b=e.target.closest('[data-sham]'); if(!b||b.disabled||!shareS||!shareS.pid) return; const pid=shareS.pid, P=sbProj[pid]; if(!P||!P.is_admin||P.agent_mode===b.dataset.sham) return;
+  const prev=P.agent_mode; P.agent_mode=b.dataset.sham; renderShare();
+  const {error}=await sb.rpc('project_set_agent_mode',{pid,p_mode:b.dataset.sham}); if(error){ P.agent_mode=prev; renderShare(); toast(error.message); return; }
+  track('agent_mode',{m:b.dataset.sham}); toast(b.dataset.sham==='suggest'?'AI agents can now only suggest changes in this shoot':'AI agents can now make changes in this shoot'); });
 /* ===== view-only links ===== */
 async function viewLinkFill(){ const box=$('#modal #shView'); if(!box||!cur||!sbUser) return; const id=cur.id;
   box.innerHTML='<b>View-only link</b><p>Loading…</p>';
@@ -11108,6 +11216,7 @@ function renderShare(){ const S=shareS; if(!S) return; const name=cur?(cur.shoot
     <div class="sh-list">${rows}</div>${add}
     <p class="muted sh-msg${S.err?' bad':''}" role="status">${esc(S.err||S.note||'')}</p>
     <div class="sh-view" id="shView"></div>
+    ${S.pid&&P?shAgentHTML(P):''}
     <details class="sh-help"><summary>What the rights mean</summary><ul><li><b>Can view</b>: open and look at everything, export, present.</li><li><b>Can edit</b>: change plots, storyboards and notes, add and delete setups.</li><li><b>Invite</b>: add more people, with at most their own rights.</li><li><b>Admin</b>: all of that, plus change other people’s rights and remove them. The owner always stays admin.</li></ul><p>People get access the next time they open Set Plot with that email. Set Plot doesn’t send the invitation for you, so send them the link. If two people edit the same setup at the same moment, the last save wins.</p></details>
     <div class="acct-row sh-foot"><button class="btn" data-sh="copylink">Copy link to send</button><span style="flex:1"></span>${S.pid&&P?(P.is_owner?`<button class="btn ghost danger" data-sh="stop">Stop sharing</button>`:`<button class="btn ghost danger" data-sh="leave">Leave project</button>`):''}</div></div>`);
   viewLinkFill(); const em=$('#modal [data-sh-email]'); if(em&&S.focus){ em.focus(); S.focus=false; } }
