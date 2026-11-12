@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FyeVoXqScyliAD7NjsW1pAkBhC5SOhmBpBLJEc+c1dA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://jwpikfywijqdjfozzmpl.supabase.co; connect-src 'self' https://jwpikfywijqdjfozzmpl.supabase.co wss://jwpikfywijqdjfozzmpl.supabase.co; frame-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin · Set Plot</title>
@@ -181,6 +182,7 @@ table.acc td.r,table.acc th.r{text-align:right}
 @media (max-width:1020px){ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media (max-width:760px){ .two{grid-template-columns:1fr} .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} .me{display:none} .kpi .val{font-size:26px} }
 @media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr} .top .tag{display:none} }
+.al-tog{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-left:8px;cursor:pointer}.al-add{display:flex;gap:8px;margin:0 0 12px}.al-add input{flex:1;min-width:0;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--ring);background:var(--card);color:inherit;font:inherit}
 </style>
 </head>
 <body>
@@ -242,6 +244,13 @@ table.acc td.r,table.acc th.r{text-align:right}
         <div class="acct-h"><h2>Bugs and ideas</h2><span class="sp"></span><select id="fbKind" aria-label="Type"><option value="">All</option><option value="bug">Bugs</option><option value="idea">Ideas</option></select><select id="fbStat" aria-label="Status"><option value="open">Open</option><option value="">Everything</option><option value="done">Done</option></select></div>
         <p class="sub" id="fbSub">Reports sent from What’s new</p>
         <div class="tblwrap"><table class="acc"><thead><tr><th>Sent</th><th>Type</th><th>Message</th><th>From</th><th>Details</th><th>Status</th></tr></thead><tbody id="fbRows"></tbody></table></div>
+      </section>
+
+      <section class="card" aria-label="Alpha access">
+        <div class="acct-h"><h2>Alpha access</h2><span class="sp"></span><select id="alShow" aria-label="Show"><option value="wait">Waiting</option><option value="in">Let in</option><option value="">Everyone</option></select><label class="al-tog"><input type="checkbox" id="alInv"> Invite-only</label></div>
+        <p class="sub" id="alSub">The waitlist. Letting someone in emails them a link to create their account.</p>
+        <form id="alAdd" class="al-add"><input id="alEmail" type="email" placeholder="Let someone in by email" aria-label="Email to let in" required><button class="btn" type="submit">Let in &amp; email</button></form>
+        <div class="tblwrap"><table class="acc"><thead><tr><th>Email</th><th>On the list since</th><th>From</th><th>Status</th><th></th></tr></thead><tbody id="alRows"></tbody></table></div>
       </section>
 
       <section class="card" aria-label="Newsletter">
@@ -306,7 +315,7 @@ table.acc td.r,table.acc th.r{text-align:right}
   </dialog>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="/vendor/supabase-2.45.4.js"></script>
 <script>
 (()=>{
 const SB_URL='https://jwpikfywijqdjfozzmpl.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cGlrZnl3aWpxZGpmb3p6bXBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTEzNDcsImV4cCI6MjEwOTgyNzM0N30.OkUXW_8lyd1ketEJnGs0UFyCnzHNpV_8cyPayDRv0CI';
@@ -357,6 +366,31 @@ $('#next').onclick=()=>{ if((page+1)*PAGE<(data.accounts&&data.accounts.total||0
 async function rpc(fn,args){ const {data:d,error}=await sb.rpc(fn,args||{}); if(error) throw error; return d; }
 /* bugs and ideas people sent from What's new */
 const FB_ST=[['new','New'],['seen','Seen'],['planned','Planned'],['done','Done'],['wontfix','Won’t do']];
+/* invite-only alpha: the waitlist, letting people in (with an email), and the switch */
+let AL={rows:[],invite_only:true};
+async function loadAlpha(){ const body=$('#alRows'); if(!body) return; const {data:d,error}=await sb.rpc('admin_alpha'); body.textContent='';
+  if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=5; tr.append(td); body.append(tr); return; }
+  AL=d; $('#alInv').checked=!!d.invite_only; const R=d.rows||[], wait=R.filter(r=>!r.approved_at&&!r.joined), inn=R.filter(r=>r.approved_at&&!r.joined), joined=R.filter(r=>r.joined);
+  $('#alSub').textContent=d.invite_only?`${wait.length} waiting · ${inn.length} let in, no account yet · ${joined.length} of the list have an account. Letting someone in emails them a link.`:'Invite-only is off: anyone can create an account. The list is kept for reference.';
+  const f=$('#alShow').value, rows=f==='wait'?wait:f==='in'?inn.concat(joined):R;
+  if(!rows.length){ const tr=el('tr'), td=el('td','sub',f==='wait'?'Nobody waiting':'Nobody here yet'); td.colSpan=5; tr.append(td); body.append(tr); return; }
+  rows.slice(0,300).forEach(r=>{ const tr=el('tr'); const st=r.joined?'Has an account':r.approved_at?('Let in'+(r.mailed_at?' · emailed '+new Date(r.mailed_at).toLocaleDateString():' · not emailed')):'Waiting';
+    const act=el('td'); if(!r.joined){ const b=el('button','btn',r.approved_at?'Email again':'Let in & email'); b.dataset.al='in'; b.dataset.e=r.email; act.append(b);
+      if(r.approved_at){ const u=el('button','btn',"Undo"); u.dataset.al='undo'; u.dataset.e=r.email; u.style.marginLeft='6px'; act.append(u); } }
+    tr.append(el('td','',r.email),el('td','sub',new Date(r.at).toLocaleDateString()),el('td','sub',r.source||'—'),el('td',r.joined?'sub':'',st),act); body.append(tr); }); }
+async function alphaLetIn(email,btn){ if(btn){ btn.disabled=true; btn.textContent='Sending…'; }
+  try{ await rpc('admin_alpha_approve',{p_email:email}); const {data,error}=await sb.functions.invoke('invite-mail',{body:{kind:'alpha',email}});
+    const ok=!error&&data&&data.sent; if(btn) btn.textContent=ok?'Emailed':'Let in';
+    if(!ok){ const why=(data&&data.reason)||(error&&error.message)||'unknown'; alert(why==='no_mail_service'?`${email} is let in, but no email was sent: add the RESEND_API_KEY secret in Supabase, or tell them yourself.`:`${email} is let in, but the email failed (${why}). Tell them yourself or try Email again.`); } }
+  catch(e){ alert('Couldn’t let them in: '+e.message); if(btn){ btn.disabled=false; btn.textContent='Let in & email'; } return; }
+  setTimeout(loadAlpha,600); }
+document.addEventListener('click',async e=>{ const b=e.target.closest('[data-al]'); if(!b) return; const em=b.dataset.e;
+  if(b.dataset.al==='in') return alphaLetIn(em,b);
+  if(b.dataset.al==='undo'){ if(!confirm(`Take back ${em}'s access? They can still join with a friend's invite link.`)) return; await rpc('admin_alpha_revoke',{p_email:em}).catch(err=>alert(err.message)); loadAlpha(); } });
+document.addEventListener('change',async e=>{ if(e.target.id==='alShow') return loadAlpha();
+  if(e.target.id==='alInv'){ const on=e.target.checked; if(!on&&!confirm('Turn invite-only off? Anyone will be able to create an account.')){ e.target.checked=true; return; }
+    try{ await rpc('admin_set_invite_only',{p_on:on}); }catch(err){ alert(err.message); e.target.checked=!on; } loadAlpha(); } });
+document.addEventListener('submit',e=>{ if(e.target.id!=='alAdd') return; e.preventDefault(); const i=$('#alEmail'), v=i.value.trim().toLowerCase(); if(!v) return; alphaLetIn(v,e.target.querySelector('button')).then(()=>{ i.value=''; const b=e.target.querySelector('button'); b.disabled=false; b.textContent='Let in & email'; }); });
 let NL=[];
 async function loadNewsletter(){ const body=$('#nlRows'); if(!body) return; const {data:d,error}=await sb.rpc('admin_newsletter'); body.textContent='';
   if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=3; tr.append(td); body.append(tr); return; }
@@ -378,7 +412,7 @@ async function loadFeedback(){ const body=$('#fbRows'); if(!body) return; const 
     sel.onchange=async()=>{ const {error:e2}=await sb.from('feedback').update({status:sel.value}).eq('id',r.id); if(e2) alert('Couldn’t update: '+e2.message); }; s.append(sel); tr.append(d,t,m,f,det,s); if(r.status==='new') tr.style.background='color-mix(in srgb,var(--accent,#4f7fff) 6%,transparent)'; body.append(tr); }); }
 async function load(){ const m=$('#main'); m.classList.add('loading');
   try{ const [ov,daily,ret,feat,st,aud,del]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status'),rpc('admin_audience').catch(()=>null),rpc('admin_deleted',{lim:200}).catch(()=>null)]);
-    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); loadNewsletter(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
+    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); loadNewsletter(); loadAlpha(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
     $('#stamp').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
   catch(err){ $('#stamp').textContent='Couldn’t load: '+(err.message||err); }
   m.classList.remove('loading'); }
