@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FyeVoXqScyliAD7NjsW1pAkBhC5SOhmBpBLJEc+c1dA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://jwpikfywijqdjfozzmpl.supabase.co; connect-src 'self' https://jwpikfywijqdjfozzmpl.supabase.co wss://jwpikfywijqdjfozzmpl.supabase.co; frame-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-J1r/uWotofuvcwTZqUVlBpfKXUDoHARGHen/vjNEj3Y='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://jwpikfywijqdjfozzmpl.supabase.co; connect-src 'self' https://jwpikfywijqdjfozzmpl.supabase.co wss://jwpikfywijqdjfozzmpl.supabase.co; frame-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<script src="frame-guard.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin · Set Plot</title>
@@ -182,6 +183,11 @@ table.acc td.r,table.acc th.r{text-align:right}
 @media (max-width:1020px){ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
 @media (max-width:760px){ .two{grid-template-columns:1fr} .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} .me{display:none} .kpi .val{font-size:26px} }
 @media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr} .top .tag{display:none} }
+.mfa-qr{display:block;width:180px;height:180px;margin:4px auto 10px;background:#fff;border-radius:10px;padding:8px}
+.mfa-secret{display:block;font:600 12.5px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-align:center;color:var(--ink2);overflow-wrap:anywhere;margin:0 0 12px;user-select:all}
+.gate input.mfa-code{font:600 22px/1 ui-monospace,Menlo,monospace;letter-spacing:.35em;text-align:center}
+.gate .link{background:none;border:0;padding:0;margin-top:12px;color:var(--ink2);text-decoration:underline;cursor:pointer;font-size:13px}
+#logRows td.d{white-space:normal;color:var(--ink2);max-width:360px}
 .al-tog{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-left:8px;cursor:pointer}.al-add{display:flex;gap:8px;margin:0 0 12px}.al-add input{flex:1;min-width:0;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--ring);background:var(--card);color:inherit;font:inherit}
 </style>
 </head>
@@ -196,6 +202,17 @@ table.acc td.r,table.acc th.r{text-align:right}
     <input type="password" id="gPass" placeholder="Password (leave empty for a sign-in link)" autocomplete="current-password">
     <button class="btn pri" type="submit">Sign in</button>
     <p class="msg" id="gateMsg" role="status"></p>
+  </form>
+  <form class="card" id="mfaForm" novalidate hidden>
+    <span class="mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="7" width="5" height="6" rx="1.2" fill="#ffffff"/><path d="M8.5 7.5 L17.5 3.5 V16.5 L8.5 12.5Z" fill="#e38a2b"/></svg></span>
+    <h1 id="mfaTitle">Two-step sign-in</h1>
+    <p id="mfaText">Open your authenticator app and type the 6-digit code for Set Plot.</p>
+    <img class="mfa-qr" id="mfaQr" alt="QR code to scan with your authenticator app" hidden>
+    <code class="mfa-secret" id="mfaSecret" hidden></code>
+    <input class="mfa-code" id="mfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="000000" aria-label="6-digit code" required>
+    <button class="btn pri" type="submit" id="mfaGo">Continue</button>
+    <p class="msg" id="mfaMsg" role="status"></p>
+    <button class="link" type="button" id="mfaOut">Sign out</button>
   </form>
 </div>
 
@@ -251,6 +268,12 @@ table.acc td.r,table.acc th.r{text-align:right}
         <p class="sub" id="alSub">The waitlist. Letting someone in emails them a link to create their account.</p>
         <form id="alAdd" class="al-add"><input id="alEmail" type="email" placeholder="Let someone in by email" aria-label="Email to let in" required><button class="btn" type="submit">Let in &amp; email</button></form>
         <div class="tblwrap"><table class="acc"><thead><tr><th>Email</th><th>On the list since</th><th>From</th><th>Status</th><th></th></tr></thead><tbody id="alRows"></tbody></table></div>
+      </section>
+
+      <section class="card" aria-label="Admin log">
+        <div class="acct-h"><h2>Admin log</h2><span class="sp"></span><button class="btn" id="logMore" type="button">Show more</button></div>
+        <p class="sub" id="logSub">Every admin action: who, what and when. Entries can't be changed or deleted.</p>
+        <div class="tblwrap"><table class="acc"><thead><tr><th>When</th><th>Who</th><th>What</th><th>Details</th></tr></thead><tbody id="logRows"></tbody></table></div>
       </section>
 
       <section class="card" aria-label="Newsletter">
@@ -341,7 +364,7 @@ const pill=(kind,label,color)=>{ const p=el('span','pill'); p.style.color=color;
 let sb=null, user=null, days=30, page=0, q='', qT=0, data={};
 const PAGE=25;
 
-function gate(text,bad){ $('#app').hidden=true; $('#gate').hidden=false; if(text!=null){ $('#gateText').textContent=text; } $('#gateMsg').textContent=''; $('#gateMsg').classList.toggle('bad',!!bad); }
+function gate(text,bad){ $('#app').hidden=true; $('#gate').hidden=false; $('#gateForm').hidden=false; $('#mfaForm').hidden=true; if(text!=null){ $('#gateText').textContent=text; } $('#gateMsg').textContent=''; $('#gateMsg').classList.toggle('bad',!!bad); }
 async function boot(){
   if(!window.supabase){ gate('The sign-in library could not load. Check the connection and reload.',true); return; }
   sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
@@ -349,9 +372,34 @@ async function boot(){
   const {data:d}=await sb.auth.getSession(); user=d&&d.session&&d.session.user||null; check(); }
 async function check(){
   if(!user){ gate('Sign in with an admin account.'); return; }
+  const notAdmin=()=>gate(`${user.email} isn't an admin. Sign in with an admin account, or add this email to the admins table in Supabase.`,true);
+  const {data:st,error:e1}=await sb.rpc('admin_mfa_state');
+  if(e1||!st||!st.listed) return notAdmin();
+  if(st.aal!=='aal2') return st.has_factor?mfaVerify():mfaEnroll();   /* two-step sign-in is required for admins */
   const {data:ok,error}=await sb.rpc('is_admin');
-  if(error||!ok){ gate(`${user.email} isn't an admin. Sign in with an admin account, or add this email to the admins table in Supabase.`,true); return; }
-  $('#gate').hidden=true; $('#app').hidden=false; $('#me').textContent=user.email; load(); }
+  if(error||!ok) return notAdmin();
+  $('#gate').hidden=true; $('#app').hidden=false; $('#me').textContent=user.email; sb.rpc('admin_log_open').then(()=>{},()=>{}); load(); }
+/* ---- two-step sign-in (authenticator app, TOTP) ---- */
+let MFA={id:null,enrolling:false};
+function mfaShow(title,text){ $('#app').hidden=true; $('#gate').hidden=false; $('#gateForm').hidden=true; const f=$('#mfaForm'); f.hidden=false;
+  $('#mfaTitle').textContent=title; $('#mfaText').textContent=text; $('#mfaMsg').textContent=''; $('#mfaMsg').classList.remove('bad'); $('#mfaCode').value=''; setTimeout(()=>$('#mfaCode').focus(),50); }
+async function mfaVerify(){ const {data:f,error}=await sb.auth.mfa.listFactors(); const t=!error&&f&&f.totp&&f.totp.find(x=>x.status==='verified');
+  if(!t){ return mfaEnroll(); } MFA={id:t.id,enrolling:false}; $('#mfaQr').hidden=true; $('#mfaSecret').hidden=true;
+  mfaShow('Two-step sign-in','Open your authenticator app and type the 6-digit code for Set Plot.'); }
+async function mfaEnroll(){ mfaShow('Set up two-step sign-in','Admins need a second step. Scan this code with an authenticator app (Google Authenticator, 1Password, Authy…), then type the 6-digit code it shows.');
+  $('#mfaGo').disabled=true; const m=$('#mfaMsg'); m.textContent='Preparing…';
+  try{ const {data:f}=await sb.auth.mfa.listFactors(); for(const x of ((f&&f.all)||[]).filter(x=>x.status==='unverified')) await sb.auth.mfa.unenroll({factorId:x.id});
+    const {data:d,error}=await sb.auth.mfa.enroll({factorType:'totp',friendlyName:'Set Plot admin '+new Date().toISOString().slice(0,16)}); if(error) throw error;
+    MFA={id:d.id,enrolling:true}; const q=$('#mfaQr'); q.src=d.totp.qr_code; q.hidden=false; const s=$('#mfaSecret'); s.textContent=d.totp.secret.replace(/(.{4})/g,'$1 ').trim(); s.title='Or type this key into the app'; s.hidden=false; m.textContent='Can’t scan? Type the key above into the app.'; }
+  catch(err){ m.textContent='Couldn’t start two-step sign-in: '+(err.message||err)+'. Check that TOTP is turned on under Authentication → Multi-Factor in Supabase.'; m.classList.add('bad'); }
+  $('#mfaGo').disabled=false; }
+$('#mfaForm').addEventListener('submit',async e=>{ e.preventDefault(); const code=$('#mfaCode').value.replace(/\D/g,''), m=$('#mfaMsg'), b=$('#mfaGo');
+  if(code.length!==6){ m.textContent='Type the 6-digit code from the app.'; m.classList.add('bad'); return; } if(!MFA.id) return;
+  b.disabled=true; m.classList.remove('bad'); m.textContent='Checking…';
+  const {error}=await sb.auth.mfa.challengeAndVerify({factorId:MFA.id,code}); b.disabled=false;
+  if(error){ m.textContent=/invalid|expired/i.test(error.message)?'That code didn’t work. Codes change every 30 seconds: try the current one.':error.message; m.classList.add('bad'); $('#mfaCode').select(); return; }
+  m.textContent=MFA.enrolling?'Two-step sign-in is set up.':'Signed in.'; await sb.auth.refreshSession().catch(()=>{}); check(); });
+$('#mfaOut').onclick=async()=>{ await sb.auth.signOut(); gate('Signed out.'); };
 $('#gateForm').addEventListener('submit',async e=>{ e.preventDefault(); const em=$('#gEmail').value.trim(), pw=$('#gPass').value, m=$('#gateMsg'), b=e.submitter||$('#gateForm button');
   if(!/.+@.+\..+/.test(em)){ m.textContent='Type your email address.'; m.classList.add('bad'); return; } b.disabled=true; m.classList.remove('bad'); m.textContent='…';
   const r=pw?await sb.auth.signInWithPassword({email:em,password:pw}):await sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:false}});
@@ -383,14 +431,29 @@ async function alphaLetIn(email,btn){ if(btn){ btn.disabled=true; btn.textConten
     const ok=!error&&data&&data.sent; if(btn) btn.textContent=ok?'Emailed':'Let in';
     if(!ok){ const why=(data&&data.reason)||(error&&error.message)||'unknown'; alert(why==='no_mail_service'?`${email} is let in, but no email was sent: add the RESEND_API_KEY secret in Supabase, or tell them yourself.`:`${email} is let in, but the email failed (${why}). Tell them yourself or try Email again.`); } }
   catch(e){ alert('Couldn’t let them in: '+e.message); if(btn){ btn.disabled=false; btn.textContent='Let in & email'; } return; }
-  setTimeout(loadAlpha,600); }
+  setTimeout(()=>{ loadAlpha(); loadLog(); },600); }
 document.addEventListener('click',async e=>{ const b=e.target.closest('[data-al]'); if(!b) return; const em=b.dataset.e;
   if(b.dataset.al==='in') return alphaLetIn(em,b);
-  if(b.dataset.al==='undo'){ if(!confirm(`Take back ${em}'s access? They can still join with a friend's invite link.`)) return; await rpc('admin_alpha_revoke',{p_email:em}).catch(err=>alert(err.message)); loadAlpha(); } });
+  if(b.dataset.al==='undo'){ if(!confirm(`Take back ${em}'s access? They can still join with a friend's invite link.`)) return; await rpc('admin_alpha_revoke',{p_email:em}).catch(err=>alert(err.message)); loadAlpha(); loadLog(); } });
 document.addEventListener('change',async e=>{ if(e.target.id==='alShow') return loadAlpha();
   if(e.target.id==='alInv'){ const on=e.target.checked; if(!on&&!confirm('Turn invite-only off? Anyone will be able to create an account.')){ e.target.checked=true; return; }
-    try{ await rpc('admin_set_invite_only',{p_on:on}); }catch(err){ alert(err.message); e.target.checked=!on; } loadAlpha(); } });
+    try{ await rpc('admin_set_invite_only',{p_on:on}); }catch(err){ alert(err.message); e.target.checked=!on; } loadAlpha(); loadLog(); } });
 document.addEventListener('submit',e=>{ if(e.target.id!=='alAdd') return; e.preventDefault(); const i=$('#alEmail'), v=i.value.trim().toLowerCase(); if(!v) return; alphaLetIn(v,e.target.querySelector('button')).then(()=>{ i.value=''; const b=e.target.querySelector('button'); b.disabled=false; b.textContent='Let in & email'; }); });
+/* admin log: every admin action, newest first */
+const LOG_WHAT={open:'Opened the admin page',alpha_approve:'Let someone in',alpha_revoke:'Took back access',alpha_mail:'Sent an invite email',invite_only:'Changed invite-only',feedback_status:'Changed a report’s status',feedback_delete:'Deleted a report'};
+let LOG_N=50;
+async function loadLog(){ const body=$('#logRows'); if(!body) return; const {data:rows,error}=await sb.rpc('admin_log_list',{lim:LOG_N}); body.textContent='';
+  if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=4; tr.append(td); body.append(tr); return; }
+  $('#logMore').hidden=(rows||[]).length<LOG_N;
+  if(!rows||!rows.length){ const tr=el('tr'), td=el('td','sub','Nothing logged yet'); td.colSpan=4; tr.append(td); body.append(tr); return; }
+  rows.forEach(r=>{ const tr=el('tr'), d=el('td',null,ago(r.at)); d.title=new Date(r.at).toLocaleString('en-GB');
+    const x=r.details||{}; let det=r.target||'';
+    if(r.action==='invite_only') det=x.on?'Turned on':'Turned off';
+    else if(r.action==='feedback_status') det=`Report ${r.target}: ${x.from||'–'} → ${x.to||'–'}`;
+    else if(r.action==='alpha_approve') det=(r.target||'')+(x.was_on_waitlist?' (from the waitlist)':' (added by email)');
+    if(r.aal==='aal1') det+=(det?' · ':'')+'without two-step sign-in';
+    tr.append(d,el('td','',r.who||'—'),el('td','',LOG_WHAT[r.action]||r.action),el('td','d',det||'—')); body.append(tr); }); }
+$('#logMore').onclick=()=>{ LOG_N=Math.min(LOG_N+100,500); loadLog(); };
 let NL=[];
 async function loadNewsletter(){ const body=$('#nlRows'); if(!body) return; const {data:d,error}=await sb.rpc('admin_newsletter'); body.textContent='';
   if(error){ const tr=el('tr'), td=el('td','sub','Couldn’t load: '+error.message); td.colSpan=3; tr.append(td); body.append(tr); return; }
@@ -409,10 +472,10 @@ async function loadFeedback(){ const body=$('#fbRows'); if(!body) return; const 
   rows.forEach(r=>{ const tr=el('tr'); const d=el('td',null,dShort(r.created_at)); d.title=new Date(r.created_at).toLocaleString('en-GB'); const t=el('td',null,r.kind==='bug'?'Bug':'Idea'); t.style.fontWeight='600'; t.style.color=r.kind==='bug'?'#e5484d':'#8e4ec6';
     const m=el('td'); m.style.whiteSpace='pre-wrap'; m.style.maxWidth='420px'; m.textContent=r.message; const f=el('td',null,r.email||'Anonymous'); const det=el('td','sub',[r.source,r.page,r.version].filter(Boolean).join(' · ')); det.title=r.ua||''; det.style.maxWidth='200px';
     const s=el('td'), sel=document.createElement('select'); FB_ST.forEach(([v,n])=>{ const o=document.createElement('option'); o.value=v; o.textContent=n; if(v===r.status) o.selected=true; sel.append(o); });
-    sel.onchange=async()=>{ const {error:e2}=await sb.from('feedback').update({status:sel.value}).eq('id',r.id); if(e2) alert('Couldn’t update: '+e2.message); }; s.append(sel); tr.append(d,t,m,f,det,s); if(r.status==='new') tr.style.background='color-mix(in srgb,var(--accent,#4f7fff) 6%,transparent)'; body.append(tr); }); }
+    sel.onchange=async()=>{ const {error:e2}=await sb.from('feedback').update({status:sel.value}).eq('id',r.id); if(e2) alert('Couldn’t update: '+e2.message); else loadLog(); }; s.append(sel); tr.append(d,t,m,f,det,s); if(r.status==='new') tr.style.background='color-mix(in srgb,var(--accent,#4f7fff) 6%,transparent)'; body.append(tr); }); }
 async function load(){ const m=$('#main'); m.classList.add('loading');
   try{ const [ov,daily,ret,feat,st,aud,del]=await Promise.all([rpc('admin_overview'),rpc('admin_daily',{days}),rpc('admin_retention',{weeks:days>30?12:8}),rpc('admin_features',{days}),rpc('admin_status'),rpc('admin_audience').catch(()=>null),rpc('admin_deleted',{lim:200}).catch(()=>null)]);
-    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); loadNewsletter(); loadAlpha(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
+    Object.assign(data,{ov,daily,ret,feat,st,aud}); loadFeedback(); loadNewsletter(); loadAlpha(); loadLog(); renderKpis(ov); renderCharts(); renderRetention(ret); renderFeatures(feat); renderStatus(st); renderAudience(aud); renderDeleted(del); await loadAccounts();
     $('#stamp').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
   catch(err){ $('#stamp').textContent='Couldn’t load: '+(err.message||err); }
   m.classList.remove('loading'); }
