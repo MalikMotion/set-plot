@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-J1r/uWotofuvcwTZqUVlBpfKXUDoHARGHen/vjNEj3Y='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://jwpikfywijqdjfozzmpl.supabase.co; connect-src 'self' https://jwpikfywijqdjfozzmpl.supabase.co wss://jwpikfywijqdjfozzmpl.supabase.co; frame-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-AbuU3IMIFH3vbLoud1aJJqP4RG30weoL6NlY1Sw6oOM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://jwpikfywijqdjfozzmpl.supabase.co; connect-src 'self' https://jwpikfywijqdjfozzmpl.supabase.co wss://jwpikfywijqdjfozzmpl.supabase.co; frame-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <script src="frame-guard.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
@@ -299,7 +299,6 @@ table.acc td.r,table.acc th.r{text-align:right}
         <div class="two" style="gap:24px">
           <div><div id="meters"></div><div class="facts" id="facts"></div></div>
           <div><div class="pill" id="errPill"></div><ul class="errs" id="errs" style="margin-top:10px"></ul>
-            <p class="note" style="margin-top:10px">Server logs, sign-in emails and backups: <a href="https://supabase.com/dashboard/project/jwpikfywijqdjfozzmpl" target="_blank" rel="noopener" style="color:inherit">open the Supabase dashboard</a>.</p></div>
         </div>
       </section>
     </div>
@@ -370,7 +369,11 @@ async function boot(){
   sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
   sb.auth.onAuthStateChange((ev,s)=>{ const was=user&&user.id; user=s&&s.user||null; if((user&&user.id)!==was) check(); });
   const {data:d}=await sb.auth.getSession(); user=d&&d.session&&d.session.user||null; check(); }
-async function check(){
+/* boot and the auth listener both ask for a check at load: run one at a time, and again only if the signed-in user changed meanwhile */
+let checking=null;
+function check(){ if(checking) return checking;
+  checking=(async()=>{ let who; do{ who=user&&user.id; await checkNow(); } while((user&&user.id)!==who); })().finally(()=>{ checking=null; }); return checking; }
+async function checkNow(){
   if(!user){ gate('Sign in with an admin account.'); return; }
   const notAdmin=()=>gate(`${user.email} isn't an admin. Sign in with an admin account, or add this email to the admins table in Supabase.`,true);
   const {data:st,error:e1}=await sb.rpc('admin_mfa_state');
@@ -389,7 +392,7 @@ async function mfaVerify(){ const {data:f,error}=await sb.auth.mfa.listFactors()
 async function mfaEnroll(){ mfaShow('Set up two-step sign-in','Admins need a second step. Scan this code with an authenticator app (Google Authenticator, 1Password, Authy…), then type the 6-digit code it shows.');
   $('#mfaGo').disabled=true; const m=$('#mfaMsg'); m.textContent='Preparing…';
   try{ const {data:f}=await sb.auth.mfa.listFactors(); for(const x of ((f&&f.all)||[]).filter(x=>x.status==='unverified')) await sb.auth.mfa.unenroll({factorId:x.id});
-    const {data:d,error}=await sb.auth.mfa.enroll({factorType:'totp',friendlyName:'Set Plot admin '+new Date().toISOString().slice(0,16)}); if(error) throw error;
+    const {data:d,error}=await sb.auth.mfa.enroll({factorType:'totp',friendlyName:'Set Plot admin '+new Date().toISOString().slice(0,19).replace('T',' ')+' '+Math.random().toString(36).slice(2,6)}); if(error) throw error;
     MFA={id:d.id,enrolling:true}; const q=$('#mfaQr'); q.src=d.totp.qr_code; q.hidden=false; const s=$('#mfaSecret'); s.textContent=d.totp.secret.replace(/(.{4})/g,'$1 ').trim(); s.title='Or type this key into the app'; s.hidden=false; m.textContent='Can’t scan? Type the key above into the app.'; }
   catch(err){ m.textContent='Couldn’t start two-step sign-in: '+(err.message||err)+'. Check that TOTP is turned on under Authentication → Multi-Factor in Supabase.'; m.classList.add('bad'); }
   $('#mfaGo').disabled=false; }
