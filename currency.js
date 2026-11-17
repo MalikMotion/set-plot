@@ -2,7 +2,8 @@
    The country comes from the visitor's internet address (our Supabase "geo" function, which looks it up with
    country.is and returns only the country code). Until that answers, or if it fails, the browser's time zone and
    language are used. Rates are the ECB euro reference rates of 16 Nov 2026; update RATES now and then.
-   Euro countries, and anyone we can't place, keep the euro prices. Add ?cur=USD to the address to preview a currency. */
+   Euro countries, and anyone we can't place, keep the euro prices. Add ?cur=USD to the address to preview a currency.
+   Nothing is stored in the browser (no cookies, no local or session storage). */
 (function () {
   var RATES = { USD: 1.1014, JPY: 175.78, CZK: 24.428, DKK: 7.4752, GBP: 0.8345, HUF: 364.35, PLN: 4.403, RON: 5.3493,
     SEK: 11.095, CHF: 0.9244, ISK: 136.8, NOK: 10.574, TRY: 55.502, AUD: 1.6301, BRL: 6.2838, CAD: 1.5734, CNY: 7.3425,
@@ -73,13 +74,11 @@
   function run() {
     var forced = null; try { var q = new URLSearchParams(location.search).get('cur'); if (q && (RATES[q.toUpperCase()] || q.toUpperCase() === 'EUR')) forced = q.toUpperCase(); } catch (e) {}
     if (forced) return render(forced);
-    var saved = null; try { saved = sessionStorage.getItem('sp-country'); } catch (e) {}
-    if (saved) return render(fromCountry(saved));
     render(guess());   /* right away, then refine from the internet address */
-    var ctl = window.AbortController ? new AbortController() : null; var t = setTimeout(function () { if (ctl) ctl.abort(); }, 3000);
+    var ctl = window.AbortController ? new AbortController() : null; var t = setTimeout(function () { if (ctl) ctl.abort(); window.__spCountry = window.__spCountry || ''; }, 3000);
     fetch(GEO, { signal: ctl ? ctl.signal : undefined, credentials: 'omit' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
       clearTimeout(t); var c = j && /^[A-Z]{2}$/.test(j.c || '') ? j.c : ''; if (!c) return;
-      try { sessionStorage.setItem('sp-country', c); } catch (e) {}
+      window.__spCountry = c;   /* kept in memory only (the visitor counter reuses it); nothing is saved in the browser */
       render(fromCountry(c));
     }).catch(function () {});
   }
