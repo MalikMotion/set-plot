@@ -1,6 +1,7 @@
 /* Shows the landing-page prices in the visitor's own currency, rounded to whole units.
-   The country is guessed in the browser from its time zone (falling back to the language's region), so nothing is
-   sent anywhere. Rates are the ECB euro reference rates of 16 Nov 2026; update RATES now and then.
+   The country comes from the visitor's internet address (our Supabase "geo" function, which looks it up with
+   country.is and returns only the country code). Until that answers, or if it fails, the browser's time zone and
+   language are used. Rates are the ECB euro reference rates of 16 Nov 2026; update RATES now and then.
    Euro countries, and anyone we can't place, keep the euro prices. Add ?cur=USD to the address to preview a currency. */
 (function () {
   var RATES = { USD: 1.1014, JPY: 175.78, CZK: 24.428, DKK: 7.4752, GBP: 0.8345, HUF: 364.35, PLN: 4.403, RON: 5.3493,
@@ -31,6 +32,7 @@
   var REGION = { DK: 'DKK', FO: 'DKK', GL: 'DKK', SE: 'SEK', NO: 'NOK', IS: 'ISK', GB: 'GBP', CH: 'CHF', LI: 'CHF', PL: 'PLN', CZ: 'CZK', HU: 'HUF',
     RO: 'RON', TR: 'TRY', JP: 'JPY', KR: 'KRW', CN: 'CNY', HK: 'HKD', SG: 'SGD', MY: 'MYR', PH: 'PHP', TH: 'THB', ID: 'IDR', IN: 'INR',
     IL: 'ILS', ZA: 'ZAR', AU: 'AUD', NZ: 'NZD', CA: 'CAD', US: 'USD', BR: 'BRL', MX: 'MXN' };
+  var GEO = 'https://jwpikfywijqdjfozzmpl.supabase.co/functions/v1/geo';
 
   function guess() {
     try { var q = new URLSearchParams(location.search).get('cur'); if (q && (RATES[q.toUpperCase()] || q.toUpperCase() === 'EUR')) return q.toUpperCase(); } catch (e) {}
@@ -44,24 +46,42 @@
     return 'EUR';
   }
 
-  function run() {
-    var cur = guess(); if (cur === 'EUR' || !RATES[cur]) return;
-    var rate = RATES[cur], loc = (navigator.language || 'en');
-    var fmt; try { fmt = new Intl.NumberFormat(loc + '-u-nu-latn', { style: 'currency', currency: cur, maximumFractionDigits: 0, minimumFractionDigits: 0 }); }
-    catch (e) { fmt = new Intl.NumberFormat('en', { style: 'currency', currency: cur, maximumFractionDigits: 0, minimumFractionDigits: 0 }); }
-    var conv = function (s) { return s.replace(/€\s?(\d+(?:[.,]\d+)?)/g, function (_, n) { return fmt.format(Math.round(parseFloat(n.replace(',', '.')) * rate)); }); };
+  var shown = 'EUR';
+  function render(cur) {
+    if (!cur || (cur !== 'EUR' && !RATES[cur]) || cur === shown) return;
     var sec = document.getElementById('pricing'); if (!sec) return;
-    sec.querySelectorAll('.price b').forEach(function (b) {
-      if (b.dataset.m) b.dataset.m = conv(b.dataset.m);
-      if (b.dataset.y) b.dataset.y = conv(b.dataset.y);
-      b.textContent = conv(b.textContent);
+    var rate = RATES[cur] || 1, loc = (navigator.language || 'en'), fmt;
+    try { fmt = new Intl.NumberFormat(loc + '-u-nu-latn', { style: 'currency', currency: cur, maximumFractionDigits: 0, minimumFractionDigits: 0 }); }
+    catch (e) { fmt = new Intl.NumberFormat('en', { style: 'currency', currency: cur, maximumFractionDigits: 0, minimumFractionDigits: 0 }); }
+    var conv = function (t) { return cur === 'EUR' ? t : t.replace(/€\s?(\d+(?:[.,]\d+)?)/g, function (_, n) { return fmt.format(Math.round(parseFloat(n.replace(',', '.')) * rate)); }); };
+    sec.querySelectorAll('.price b').forEach(function (b) {   /* always convert from the original euro text */
+      if (b.dataset.eur == null) { b.dataset.eur = b.textContent; if (b.dataset.m) b.dataset.eurM = b.dataset.m; if (b.dataset.y) b.dataset.eurY = b.dataset.y; }
+      if (b.dataset.eurM) b.dataset.m = conv(b.dataset.eurM);
+      if (b.dataset.eurY) b.dataset.y = conv(b.dataset.eurY);
+      var on = document.querySelector('[data-bill].on'), per = on ? on.dataset.bill : 'y';   /* the billing period showing right now */
+      b.textContent = conv(per === 'm' && b.dataset.eurM ? b.dataset.eurM : per === 'y' && b.dataset.eurY ? b.dataset.eurY : b.dataset.eur);
     });
     var note = sec.querySelector('.pnote');
     if (note) {
+      if (note.dataset.eur == null) note.dataset.eur = note.textContent;
       var name = cur; try { name = new Intl.DisplayNames(['en'], { type: 'currency' }).of(cur) || cur; } catch (e) {}
-      note.textContent = conv(note.textContent.replace('Prices in euro, excl. VAT.', 'Prices shown in ' + name + ', converted from euro and rounded, excl. VAT.'));
+      note.textContent = cur === 'EUR' ? note.dataset.eur : conv(note.dataset.eur.replace('Prices in euro, excl. VAT.', 'Prices shown in ' + name + ', converted from euro and rounded, excl. VAT.'));
     }
-    document.documentElement.setAttribute('data-currency', cur);
+    shown = cur; document.documentElement.setAttribute('data-currency', cur);
+  }
+  function fromCountry(c) { return REGION[c] || 'EUR'; }   /* euro countries and anywhere else: euro */
+  function run() {
+    var forced = null; try { var q = new URLSearchParams(location.search).get('cur'); if (q && (RATES[q.toUpperCase()] || q.toUpperCase() === 'EUR')) forced = q.toUpperCase(); } catch (e) {}
+    if (forced) return render(forced);
+    var saved = null; try { saved = sessionStorage.getItem('sp-country'); } catch (e) {}
+    if (saved) return render(fromCountry(saved));
+    render(guess());   /* right away, then refine from the internet address */
+    var ctl = window.AbortController ? new AbortController() : null; var t = setTimeout(function () { if (ctl) ctl.abort(); }, 3000);
+    fetch(GEO, { signal: ctl ? ctl.signal : undefined, credentials: 'omit' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      clearTimeout(t); var c = j && /^[A-Z]{2}$/.test(j.c || '') ? j.c : ''; if (!c) return;
+      try { sessionStorage.setItem('sp-country', c); } catch (e) {}
+      render(fromCountry(c));
+    }).catch(function () {});
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
