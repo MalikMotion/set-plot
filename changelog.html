@@ -79,7 +79,16 @@ section h2{margin-top:36px}
         .catch(function(x){ st.textContent='Couldn’t send: '+x.message; st.className='msg err'; }).then(function(){ b.disabled=false; b.textContent='Send'; }); };
   })();</script>
 
-  <section><h2>18 November 2026</h2>
+  <section><h2>19 November 2026</h2>
+<div class="ci"><span class="tag new">New</span><div><b>Change brush size on the canvas</b><p>Hold Alt and right-click-drag on the canvas, like in Photoshop: left and right changes the size, up and down the opacity, with a live preview of the brush. On a Mac you can also use Ctrl+Alt and drag.</p></div></div>
+<div class="ci"><span class="tag new">New</span><div><b>More Blender-style controls</b><p>R rotates planes, 3D forms and the infinite ground in perspective. While moving, scaling or rotating you can type a number (for example S 2 Enter), hold Ctrl to snap (to the ground grid if there is one), or hold Shift for fine control. Shift+D duplicates and moves, X or Delete deletes, H hides and Alt+H shows all guides, Tab steps through them and A selects them all.</p></div></div>
+<div class="ci"><span class="tag new">New</span><div><b>Undo for perspective</b><p>⌘Z now also undoes adding, moving, scaling, rotating, hiding and deleting planes, 3D forms and the ground.</p></div></div>
+<div class="ci"><span class="tag improved">Improved</span><div><b>Cleaner canvas</b><p>Handles only show on the selected plane or 3D form. Pick one in Layers, with Tab, or by clicking its outline with the Move tool. Moving a 3D form snaps it to plane corners and edges.</p></div></div>
+<div class="ci"><span class="tag new">New</span><div><b>Infinite ground</b><p>Add an Infinite ground from the grid plane menu: a floor grid that runs all the way to the horizon and follows the vanishing points. Select it in Layers, press G to slide it or S to change the grid size, and turn on Show in image if you want it in the picture.</p></div></div>
+<div class="ci"><span class="tag new">New</span><div><b>G to move, S to scale</b><p>Select a plane or 3D form and press G to move it or S to scale it with the mouse. Press X, Y or Z to lock it to one direction in the perspective, and press the same key again to free it. Click or press Enter to place it, Esc to cancel.</p></div></div>
+<div class="ci"><span class="tag new">New</span><div><b>Select several planes and forms</b><p>Shift-click planes and 3D forms on the canvas or in Layers to select several, then press ⌘J to duplicate them all. Joined planes stay joined in the copy.</p></div></div>
+</section>
+<section><h2>18 November 2026</h2>
 <div class="ci"><span class="tag improved">Improved</span><div><b>Joined planes move together</b><p>Planes that are snapped together now move as one when you drag a plane or a corner. Hold Alt while dragging to pull one away; snap it back to join them again.</p></div></div>
 <div class="ci"><span class="tag new">New</span><div><b>Planes and 3D forms in Layers</b><p>Grid planes and 3D forms now show in the Layers panel under Perspective guides. Click one to select it, and hide, lock or delete it from there.</p></div></div>
 <div class="ci"><span class="tag new">New</span><div><b>Duplicate with ⌘J</b><p>⌘J (Ctrl+J) duplicates the selected layer, plane or 3D form. With nothing selected it copies the top layer.</p></div></div>
